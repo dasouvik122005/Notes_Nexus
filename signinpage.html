@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <title>Sign In - Notes Nexus</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 10px;
+            animation: fadeInRight 2s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            /* background-color: #f0f0f0; */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 80%;
+            max-width: 1200px;
+            background: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .signin-section {
+            /* background-color: #007bff; */
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .logo {
+            /* background-color: #007bff; */
+            height: 100px;
+        }
+
+        .logo img {
+            /* width: 400px; */
+            height: 150px;
+            margin-left: 190px;
+            padding-bottom: 30px;
+            /* background-color: #007bff; */
+
+
+        }
+
+        .sign-in-container {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .sign-in-container h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .sign-in-container p {
+            font-size: 1rem;
+            color: #555;
+            margin: 0;
+        }
+
+        .signin-form {
+            margin-top: 1rem;
+        }
+
+        .signin-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .signin-form input {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .options label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .options a {
+            text-decoration: none;
+            font-size: 14px;
+            color: #007bff;
+            transition: color 0.3s;
+        }
+
+        .options a:hover {
+            color: #0056b3;
+        }
+
+        .signin-button {
+            width: 100%;
+            background-color: #173a5f;
+            color: #fff;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            /* animation:fadeInRight 2s ease; */
+        }
+
+        .photo-section {
+            width: 40%;
+            /* height: 600%; */
+            flex: 1;
+            /* background-color: #ffffff; */
+            /* color: white; */
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .photo-section img {
+
+            width: 105%;
+            height: 100%;
+            object-fit: cover;
+
+        }
+
+        /* Header styles */
+        #header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 12vh;
+            background-color: rgb(255, 255, 255);
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-around;
+            /* z-index: 1000; */
+        }
+
+
+        #logo {
+            height: 100%;
+            margin: 5px;
+            margin-left: 2%;
+        }
+
+        #logo img {
+            width: 200%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #menu {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 50px;
+            margin-left: 40%;
+            height: 100%;
+            font-size: 1.3rem;
+            line-height: 2;
+        }
+
+        #btn1 p {
+            color: white;
+            background-color: rgb(24, 27, 98);
+            padding: 0px 15px;
+            border-radius: 10px;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        #btn1:hover p {
+            /* color: rgb(0, 149, 255); */
+            background-color: rgb(40, 40, 140);
+            transform: scale(1.05);
+        }
+
+        .option {
+            color: rgb(20, 20, 136);
+            margin-left: 15px;
+            text-align: right;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        .option:hover {
+            color: rgb(0, 149, 255);
+            transform: scale(1.2);
+            border-radius: 3px;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        <a href="index.html" id="logo">
+            <img src="logo.png" alt="logo Image">
+        </a>
+            <div id="menu">
+                <a class="option" href="notespage.html" target="_blank">
+                    <p><b>Notes</b></p>
+                </a>
+                <a class="option" href="aboutus.html" target="_blank">
+                    <p><b>About</b></p>
+                </a>
+                <a class="option" href="https://forms.gle/uJmzLDB4S9EQG4XCA" target="_blank">
+                    <p><b>Contact Us</b></p>
+                </a>
+                <a id="btn1" href="signinpage.html" target="_blank">
+                    <p><b>Log in</b></p>
+                </a>
+            </div>
+
+        </div>
+    </div>
+    <div id="header2"></div>
+    <div class="container">
+        <div class="signin-section">
+            <div class="logo">
+                <img src="logo.png" alt="Nexus Logo" />
+            </div>
+            <div class="sign-in-container">
+                <h1>Sign In</h1>
+                <p>Welcome back! Please enter your details</p>
+            </div>
+            <form class="signin-form" action = "notespage.html" method="get">
+                <label for="jisu-id">JISU ID</label>
+                <input type="text" id="jisu-id" placeholder="Enter your JISU ID" required />
+                <label for="password">Password</label>
+                <div class="password-field">
+                    <input type="password" id="password" placeholder="Password" required />
+                </div>
+                <div class="options">
+                    <label>
+                        <input type="checkbox" />
+                        Remember me
+                    </label>
+                    <a href="#">Forgot password?</a>
+                </div>
+                <!-- <button class="signin-button" >Sign in</button> <a href="notespage.html" target="_blank"></a> -->
+                <button class="signin-button" type="submit">
+                    
+                    Sign In</button>
+            </form>
+        </div>
+        <div class="photo-section"><img
+                src="https://img.freepik.com/premium-vector/log-people-isometric-vector-illustration-illustration-with-sign-people-mobile-app-design_123447-4034.jpg?w=900"
+                alt="logo Image">
+        </div>
+    </div>
+</body>
+
+</html>

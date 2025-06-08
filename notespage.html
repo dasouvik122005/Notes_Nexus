@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <title>Notes</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+
+        /* Header Section */
+        #header {
+            height: 12vh;
+            width: 100%;
+            background-color: rgb(255, 255, 255);
+            position: fixed;
+            display: flex;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            justify-content: space-around;
+            z-index: 1000;
+        }
+
+        .option {
+            color: rgb(20, 20, 136);
+            margin-left: 15px;
+            text-align: right;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        #header2 {
+            height: 10vh;
+            width: 100%;
+            background-color: white;
+        }
+
+        #logo {
+            height: 100%;
+            margin: 5px;
+            margin-left: 2%;
+        }
+
+        #logo img {
+            width: 200%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #menu {
+            display: flex;
+            gap: 50px;
+            margin-left: 40%;
+            height: 100%;
+            font-size: 1.3rem;
+            line-height: 2;
+        }
+
+        #btn1 p {
+            color: white;
+            background-color: rgb(24, 27, 98);
+            padding: 0px 15px;
+            border-radius: 10px;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        #btn1:hover p {
+            background-color: rgb(40, 40, 140);
+            transform: scale(1.1);
+        }
+
+        #btn2 p {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .option:hover {
+            color: rgb(0, 149, 255);
+            transform: scale(1.2);
+            border-radius: 3px;
+            text-decoration: underline;
+        }
+
+        /* Cards Section */
+        .container {
+            margin-top: 13vh;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-7px);
+            box-shadow: 0px 8px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .card h3 {
+            margin: 10px 0;
+            color: #333;
+            font-size: large;
+
+        }
+
+        .card p {
+            color: #666;
+            font-size: 0.9rem;
+            padding: 0 15px;
+        }
+
+        .card button {
+            margin: 10px 0;
+            padding: 15px 20px;
+            background-color: rgb(24, 27, 98);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: large;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin-bottom: 50px;  
+        }
+
+        .card button:hover {
+            background-color: #2424dd;
+        }
+
+        
+    </style>
+</head>
+
+<body>
+    <!-- Header Section -->
+    <div id="header">
+        <a href="index.html" id="logo">
+            <img src="logo.png" alt="logo Image">
+        </a>
+        <div id="menu">
+            <a class="option" href="notespage.html" target="_blank">
+                <p><b>Notes</b></p>
+            </a>
+            <a class="option" href="aboutus.html" target="_blank">
+                <p><b>About</b></p>
+            </a>
+            <a class="option" href="https://forms.gle/uJmzLDB4S9EQG4XCA" target="_blank">
+                <p><b>Contact Us</b></p>
+            </a>
+            <a id="btn1" href="index.html" target="_blank">
+                <p><b>Log Out</b></p>
+            </a>
+        </div>
+        
+    </div>
+
+    <div id="header2"></div>
+
+    <!-- Cards Section -->
+    <div class="container">
+        <!-- Card 1 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 1">
+            <h3>Engineering Mathematics-1</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/19Qp9sGX4yeSTF9mr0WkV5gc_DAPjXnuC?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 2">
+            <h3>Basic Electronics</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/1D2OU-9zE-nkKvH7YRc3seo3byAWWuj3W?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 3">
+            <h3>Environmental Studies</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/1vkFhoYksnMAaQPe0cIaPY-C0rDTtuDBK?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 4">
+            <h3>Professional Communication</h3>
+            <p></p>
+            <a href="https://www.google.com" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 5">
+            <h3>C programming</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/14cpebF5l2sjGi_51_JuYwn0RNa5JdEZ4?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 6">
+            <h3>Engineering Physics</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/1PjKnhqgwlWDVfcUkWrhVo59UQlllqhXE?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+
+        
+        <!-- Card 6 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 6">
+            <h3>Engineering Chemistry</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/1WcYLATUrBVMOr_CAYZmJQCETWgcLKAiO?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+        
+        <!-- Card 6 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 6">
+            <h3>HTML</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/11LerP-u-VO534jLXe7UWhBawhEpINK22?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+        
+        <!-- Card 6 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 6">
+            <h3>CSS</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/1x5cgIVbjC8NMStu0xnq-v-Moe0RSbyaB?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+        
+        <!-- Card 6 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 6">
+            <h3>Java Script</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/1Enu4uzASVj2d5jXALZIoAWWtqvVAQFnt?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+        
+        <!-- Card 6 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 6">
+            <h3>Machine Learning</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/1IT4w7Ijl5i6bLYh53RM2xonh47JqPUvE?usp=drive_link" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+        
+        <!-- Card 6 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 6">
+            <h3>Computer Networks</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/1og3uY1n3jUXPMCKUGwoEaXz4kZDWHJ0B?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+        
+        <!-- Card 6 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 6">
+            <h3>Aptitude</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/1AoOILHs9vFyuMsVuOOHNLR43oAmiTvAi?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+        
+        <!-- Card 6 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 6">
+            <h3>AI</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/1v-M963QwhI8GZaOKXhORRMHUFHp56aS-?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+        
+        <!-- Card 6 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 6">
+            <h3>Data Structure</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/1-v40NeVyTZizHmuw-d71Fkn65e8Rruen?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+        
+        <!-- Card 6 -->
+        <div class="card">
+            <img src="subject.png" alt="Image 6">
+            <h3>Basic Elecrtical Engineering</h3>
+            <p></p>
+            <a href="https://drive.google.com/drive/folders/1pALo1iYmINytMzFkzjJHU7yyCpjtHpaM?usp=sharing" target="_blank">
+            <button>View Notes</button>
+            </a>
+        </div>
+        
+    </div>
+</body>
+
+</html>
