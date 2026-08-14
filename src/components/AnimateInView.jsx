@@ -39,7 +39,7 @@ export default function AnimateInView({
     <motion.div
       initial={initialProps}
       whileInView={animateProps}
-      viewport={{ once, margin: "-50px" }}
+      viewport={{ once, margin: "0px" }}
       className={className}
       style={style}
     >
