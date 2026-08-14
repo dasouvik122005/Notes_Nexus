@@ -20,15 +20,17 @@ export default function Navbar() {
 
   return (
     <>
+      <div style={{ height: '100px' }} /> {/* Spacer to offset fixed header */}
       <header style={{
-        position: 'sticky',
+        position: 'fixed',
         top: 0,
+        left: 0,
+        width: '100%',
         zIndex: 1000,
         backgroundColor: 'var(--white)',
         borderBottom: '3px solid var(--black)',
         boxShadow: '0 6px 0 0 rgba(0,0,0,1)',
-        padding: '0.75rem 0',
-        marginBottom: '2rem'
+        padding: '0.75rem 0'
       }}>
         <div className="container nav-container" style={{
           display: 'flex',
