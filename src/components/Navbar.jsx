@@ -75,6 +75,9 @@ export default function Navbar() {
             <Link href="/notes" className="nav-link" style={{ padding: '0.5rem 0', borderBottom: '3px solid transparent' }}>
               NOTES
             </Link>
+            <Link href="/pyq" className="nav-link" style={{ padding: '0.5rem 0', borderBottom: '3px solid transparent' }}>
+              PYQ
+            </Link>
             <Link href="/about" className="nav-link" style={{ padding: '0.5rem 0', borderBottom: '3px solid transparent' }}>
               ABOUT
             </Link>
@@ -109,6 +112,9 @@ export default function Navbar() {
           </Link>
           <Link href="/notes" className="nav-link" onClick={() => setIsOpen(false)}>
             NOTES
+          </Link>
+          <Link href="/pyq" className="nav-link" onClick={() => setIsOpen(false)}>
+            PYQ
           </Link>
           <Link href="/about" className="nav-link" onClick={() => setIsOpen(false)}>
             ABOUT
