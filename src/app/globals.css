@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Outfit:wght@400;600;700;800&display=swap');
-
 :root {
   --primary-yellow: #FDE047;
   --primary-pink: #F472B6;
@@ -25,7 +23,7 @@ body {
   background-color: var(--bg-color);
   background-image: radial-gradient(rgba(0, 0, 0, 0.15) 1.5px, transparent 1.5px);
   background-size: 32px 32px;
-  font-family: 'Outfit', 'Inter', sans-serif;
+  font-family: var(--font-outfit), var(--font-inter), sans-serif;
   color: var(--black);
 }
 

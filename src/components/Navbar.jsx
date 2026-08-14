@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import NeoButton from './NeoButton';
 
 export default function Navbar() {
@@ -56,12 +57,19 @@ export default function Navbar() {
               justifyContent: 'center',
               borderRadius: '4px'
             }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/logo.png" alt="Notes Nexus" style={{ height: '32px', objectFit: 'contain' }} />
+              {/* Logo */}
+              <Image
+                src="/logo.png"
+                alt="Notes Nexus"
+                width={32}
+                height={32}
+                priority
+                style={{ objectFit: 'contain' }}
+              />
             </div>
             NOTES NEXUS
           </Link>
-          
+
           <nav className="nav-links" style={{
             display: 'flex',
             gap: '2.5rem',
@@ -81,9 +89,9 @@ export default function Navbar() {
             <Link href="/about" className="nav-link" style={{ padding: '0.5rem 0', borderBottom: '3px solid transparent' }}>
               ABOUT
             </Link>
-            <NeoButton 
+            <NeoButton
               href="https://forms.gle/uJmzLDB4S9EQG4XCA"
-              target="_blank" 
+              target="_blank"
               rel="noopener noreferrer"
               variant="secondary"
               style={{ padding: '0.5rem 1.25rem', fontSize: '1rem' }}
@@ -119,9 +127,9 @@ export default function Navbar() {
           <Link href="/about" className="nav-link" onClick={() => setIsOpen(false)}>
             ABOUT
           </Link>
-          <NeoButton 
+          <NeoButton
             href="https://forms.gle/uJmzLDB4S9EQG4XCA"
-            target="_blank" 
+            target="_blank"
             rel="noopener noreferrer"
             variant="secondary"
             onClick={() => setIsOpen(false)}

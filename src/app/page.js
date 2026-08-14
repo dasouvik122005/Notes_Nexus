@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import NeoButton from '@/components/NeoButton';
 import AnimateInView from '@/components/AnimateInView';
 import AnimateFloat from '@/components/AnimateFloat';
@@ -89,10 +90,12 @@ export default function Home() {
                 maxWidth: '450px',
                 width: '100%'
               }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
+                <Image 
                   src="/jis.png" 
                   alt="JIS University" 
+                  width={450}
+                  height={300}
+                  priority
                   style={{ width: '100%', height: 'auto', border: '3px solid var(--black)' }} 
                 />
                 <div style={{ marginTop: '1.5rem', borderTop: '3px solid var(--black)', paddingTop: '1rem' }}>

@@ -1,5 +1,9 @@
 import Navbar from '@/components/Navbar';
+import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
+
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 
 export const metadata = {
   metadataBase: new URL(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
@@ -27,7 +31,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <head>
         <link rel="icon" type="image/png" href="/favicon.png" />
       </head>
