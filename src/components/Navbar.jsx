@@ -40,34 +40,16 @@ export default function Navbar() {
         }}>
           <Link href="/" onClick={() => setIsOpen(false)} style={{
             display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            fontSize: '1.75rem',
-            fontWeight: 900,
-            letterSpacing: '-1px',
-            textTransform: 'uppercase'
+            alignItems: 'center'
           }}>
-            <div style={{
-              backgroundColor: 'var(--primary-yellow)',
-              padding: '4px',
-              border: '2px solid var(--black)',
-              boxShadow: '2px 2px 0px 0px var(--black)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '4px'
-            }}>
-              {/* Logo */}
-              <Image
-                src="/logo.png"
-                alt="Notes Nexus"
-                width={32}
-                height={32}
-                priority
-                style={{ objectFit: 'contain' }}
-              />
-            </div>
-            NOTES NEXUS
+            <Image
+              src="/icon2.png"
+              alt="Notes Nexus"
+              width={250}
+              height={60}
+              priority
+              style={{ width: 'auto', height: '60px', objectFit: 'contain' }}
+            />
           </Link>
 
           <nav className="nav-links" style={{
