@@ -1,4 +1,5 @@
 import React from 'react';
+import AnimateInView from '@/components/AnimateInView';
 
 const teamMembers = [
   { name: 'Rajdip Garai', image: '/profilepic1.jpg' },
@@ -13,7 +14,7 @@ export default function AboutPage() {
       <div className="container" style={{ maxWidth: '900px' }}>
         
         {/* About Section */}
-        <div className="animate-fade-in-up" style={{
+        <AnimateInView delay={0.1} direction="up" style={{
           backgroundColor: 'var(--white)',
           padding: '3rem',
           border: '4px solid var(--black)',
@@ -36,23 +37,27 @@ export default function AboutPage() {
             ABOUT US
           </div>
           
-          <p style={{ fontSize: '1.25rem', lineHeight: 1.8, fontWeight: 600, marginTop: '1rem' }}>
-            Welcome to <strong>Notes Nexus</strong>, your ultimate resource hub for comprehensive study materials, notes,
-            and cheatsheets tailored for the Computer Science and Engineering (CSE) Department at JIS University.
-            Our mission is to make learning accessible, organized, and engaging for students, empowering them to
-            excel in their academic pursuits.
-          </p>
+          <AnimateInView delay={0.2} direction="up">
+            <p style={{ fontSize: '1.25rem', lineHeight: 1.8, fontWeight: 600, marginTop: '1rem' }}>
+              Welcome to <strong>Notes Nexus</strong>, your ultimate resource hub for comprehensive study materials, notes,
+              and cheatsheets tailored for the Computer Science and Engineering (CSE) Department at JIS University.
+              Our mission is to make learning accessible, organized, and engaging for students, empowering them to
+              excel in their academic pursuits.
+            </p>
+          </AnimateInView>
           
-          <p style={{ fontSize: '1.25rem', lineHeight: 1.8, fontWeight: 600, marginTop: '1rem' }}>
-            We are committed to providing you the best of Education, with a focus on reliability and Engineering student's notes. 
-            We strive to turn our passion for Education into a thriving website. We hope you enjoy our Education as much as we enjoy giving them to you. 
-            We will keep on posting such valuable and knowledgeable information on our Website for all of you. 
-            Your love and support matters a lot.
-          </p>
-        </div>
+          <AnimateInView delay={0.3} direction="up">
+            <p style={{ fontSize: '1.25rem', lineHeight: 1.8, fontWeight: 600, marginTop: '1rem' }}>
+              We are committed to providing you the best of Education, with a focus on reliability and Engineering student's notes. 
+              We strive to turn our passion for Education into a thriving website. We hope you enjoy our Education as much as we enjoy giving them to you. 
+              We will keep on posting such valuable and knowledgeable information on our Website for all of you. 
+              Your love and support matters a lot.
+            </p>
+          </AnimateInView>
+        </AnimateInView>
 
         {/* Team Section */}
-        <div className="animate-fade-in-up delay-200">
+        <AnimateInView delay={0.2} direction="up">
           <h2 style={{
             fontSize: '2.5rem',
             fontWeight: 900,
@@ -70,24 +75,26 @@ export default function AboutPage() {
             gap: '2rem'
           }}>
             {teamMembers.map((member, index) => (
-              <div key={index} className="team-card">
-                <div style={{
-                  width: '120px',
-                  height: '120px',
-                  borderRadius: '50%',
-                  border: '3px solid var(--black)',
-                  overflow: 'hidden',
-                  marginBottom: '1rem',
-                  backgroundColor: 'var(--primary-yellow)'
-                }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={member.image} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <AnimateInView key={index} delay={0.1 * (index + 1)} direction="up">
+                <div className="team-card" style={{ height: '100%' }}>
+                  <div style={{
+                    width: '120px',
+                    height: '120px',
+                    borderRadius: '50%',
+                    border: '3px solid var(--black)',
+                    overflow: 'hidden',
+                    marginBottom: '1rem',
+                    backgroundColor: 'var(--primary-yellow)'
+                  }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={member.image} alt={member.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>{member.name}</h3>
                 </div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800 }}>{member.name}</h3>
-              </div>
+              </AnimateInView>
             ))}
           </div>
-        </div>
+        </AnimateInView>
 
       </div>
     </div>

@@ -1,16 +1,18 @@
 import React from 'react';
 
-export default function NeoCard({ title, imageSrc, actionLink, actionText = 'View Notes', children }) {
+export default function NeoCard({ title, icon: Icon, actionLink, actionText = 'View Notes', children }) {
   return (
     <div className="neo-card" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {imageSrc && (
-        <div style={{ borderBottom: '3px solid var(--black)', overflow: 'hidden', height: '200px' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img 
-            src={imageSrc} 
-            alt={title} 
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-          />
+      {Icon && (
+        <div style={{ 
+          borderBottom: '3px solid var(--black)', 
+          height: '160px', 
+          backgroundColor: 'var(--primary-yellow)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <Icon size={64} strokeWidth={2.5} color="var(--black)" />
         </div>
       )}
       <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
