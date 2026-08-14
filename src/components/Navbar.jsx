@@ -72,13 +72,13 @@ export default function Navbar() {
               ABOUT
             </Link>
             <NeoButton
-              href="https://forms.gle/uJmzLDB4S9EQG4XCA"
+              href="https://forms.gle/WfbtFjHj3pS9RyQg9"
               target="_blank"
               rel="noopener noreferrer"
               variant="secondary"
               style={{ padding: '0.5rem 1.25rem', fontSize: '1rem' }}
             >
-              CONTACT
+              FEEDBACK
             </NeoButton>
           </nav>
 
@@ -110,14 +110,14 @@ export default function Navbar() {
             ABOUT
           </Link>
           <NeoButton
-            href="https://forms.gle/uJmzLDB4S9EQG4XCA"
+            href="https://forms.gle/WfbtFjHj3pS9RyQg9"
             target="_blank"
             rel="noopener noreferrer"
             variant="secondary"
             onClick={() => setIsOpen(false)}
             style={{ padding: '0.75rem 2rem', fontSize: '1.25rem', marginTop: '1rem' }}
           >
-            CONTACT
+            FEEDBACK
           </NeoButton>
         </div>
       )}
