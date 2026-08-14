@@ -18,7 +18,7 @@ export default function AboutPage() {
         
         {/* Massive Header */}
         <AnimateInView delay={0.1} direction="up" style={{ textAlign: 'center', marginBottom: '4rem' }}>
-          <h1 style={{
+          <h1 className="hero-title" style={{
             fontSize: '4.5rem',
             fontWeight: 900,
             textTransform: 'uppercase',
@@ -106,7 +106,7 @@ export default function AboutPage() {
         <AnimateInView delay={0.2} direction="up">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '4rem' }}>
             <Sparkles size={40} color="var(--primary-pink)" />
-            <h2 style={{
+            <h2 className="hero-title" style={{
               fontSize: '3.5rem',
               fontWeight: 900,
               textAlign: 'center',
