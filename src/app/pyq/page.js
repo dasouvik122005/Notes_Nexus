@@ -24,7 +24,7 @@ export default function PYQPage() {
           <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--primary-pink)', padding: '1rem', border: '3px solid var(--black)', borderRadius: '50%', marginBottom: '1.5rem', boxShadow: '4px 4px 0px 0px var(--black)' }}>
             <GraduationCap size={48} />
           </div>
-          <h1 style={{
+          <h1 className="hero-title" style={{
             fontSize: '4.5rem',
             fontWeight: 900,
             textTransform: 'uppercase',
