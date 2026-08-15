@@ -15,6 +15,14 @@ export const metadata = {
   keywords: ['Notes Nexus', 'JIS University', 'CSE Notes', 'B.Tech Notes', 'Previous Year Questions', 'PYQ', 'Engineering Notes', 'Computer Science Notes'],
   authors: [{ name: 'Notes Nexus Team' }],
   creator: 'Notes Nexus',
+  publisher: 'Notes Nexus Team',
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
   openGraph: {
     title: 'Notes Nexus',
     description: 'Free notes and study materials for JIS University CSE Department',

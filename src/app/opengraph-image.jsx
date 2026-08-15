@@ -11,6 +11,11 @@ export const size = {
 export const contentType = 'image/png';
 
 export default async function Image() {
+  // Load the logo
+  const logoData = await fetch(
+    new URL('../../public/icon2.png', import.meta.url)
+  ).then((res) => res.arrayBuffer());
+
   return new ImageResponse(
     (
       <div
@@ -40,34 +45,7 @@ export default async function Image() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem' }}>
-            <div
-              style={{
-                backgroundColor: '#FDE047',
-                padding: '1rem',
-                border: '4px solid #000000',
-                boxShadow: '8px 8px 0px 0px #000000',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: '2rem',
-                borderRadius: '8px'
-              }}
-            >
-              <span style={{ fontSize: '64px' }}>📚</span>
-            </div>
-            <h1
-              style={{
-                fontSize: '100px',
-                fontWeight: 900,
-                color: '#000000',
-                margin: 0,
-                textTransform: 'uppercase',
-                fontFamily: 'sans-serif',
-                letterSpacing: '-4px'
-              }}
-            >
-              NOTES NEXUS
-            </h1>
+            <img src={logoData} alt="Notes Nexus Logo" style={{ width: '600px', height: 'auto', objectFit: 'contain' }} />
           </div>
           
           <p
