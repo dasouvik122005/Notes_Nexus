@@ -1,5 +1,5 @@
 export default function sitemap() {
-  const baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
+  const baseUrl = 'https://notes-nexus-jisu.vercel.app';
 
   return [
     {
