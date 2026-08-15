@@ -8,14 +8,7 @@ export const size = {
   height: 630,
 };
 
-export const contentType = 'image/png';
-
 export default async function Image() {
-  // Load the logo
-  const logoData = await fetch(
-    new URL('./og-logo.png', import.meta.url)
-  ).then((res) => res.arrayBuffer());
-
   return new ImageResponse(
     (
       <div
@@ -45,7 +38,7 @@ export default async function Image() {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem' }}>
-            <img src={logoData} alt="Notes Nexus Logo" style={{ width: '600px', height: 'auto', objectFit: 'contain' }} />
+            <img src="https://notes-nexus-jisu.vercel.app/icon2.png" alt="Notes Nexus Logo" style={{ width: '600px', height: 'auto', objectFit: 'contain' }} />
           </div>
           
           <p
