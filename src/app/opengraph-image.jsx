@@ -13,7 +13,7 @@ export const contentType = 'image/png';
 export default async function Image() {
   // Load the logo
   const logoData = await fetch(
-    new URL('../../public/icon2.png', import.meta.url)
+    new URL('./og-logo.png', import.meta.url)
   ).then((res) => res.arrayBuffer());
 
   return new ImageResponse(

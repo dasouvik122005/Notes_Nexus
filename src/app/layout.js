@@ -1,4 +1,5 @@
 import Navbar from '@/components/Navbar';
+import { Analytics } from '@vercel/analytics/react';
 import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
 
@@ -6,7 +7,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 
 export const metadata = {
-  metadataBase: new URL(process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
+  metadataBase: new URL('https://notes-nexus-jisu.vercel.app'),
   title: {
     template: '%s | Notes Nexus',
     default: 'Notes Nexus',
@@ -48,6 +49,7 @@ export default function RootLayout({ children }) {
         <main>
           {children}
         </main>
+        <Analytics />
       </body>
     </html>
   );
