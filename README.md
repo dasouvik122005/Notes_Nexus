@@ -2,7 +2,7 @@
 
 > The ultimate resource hub for comprehensive study materials, notes, and previous year questions (PYQs) tailored for the Computer Science and Engineering (CSE) Department at JIS University.
 
-![Notes Nexus Banner](public/logo.png)
+![Notes Nexus Banner](public/icon2.png)
 
 ## 🚀 Features
 
