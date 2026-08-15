@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import logoImg from '../../public/icon2.png';
 import NeoButton from './NeoButton';
 
 export default function Navbar() {
@@ -43,11 +44,12 @@ export default function Navbar() {
             alignItems: 'center'
           }}>
             <Image
-              src="/icon2.png"
+              src={logoImg}
               alt="Notes Nexus"
               width={250}
               height={60}
               priority
+              placeholder="blur"
               style={{ width: 'auto', height: '60px', objectFit: 'contain' }}
             />
           </Link>

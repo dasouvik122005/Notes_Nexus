@@ -1,5 +1,7 @@
 import React from 'react';
+
 import Image from 'next/image';
+import jisImg from '../../public/jis.png';
 import NeoButton from '@/components/NeoButton';
 import AnimateInView from '@/components/AnimateInView';
 import AnimateFloat from '@/components/AnimateFloat';
@@ -91,11 +93,12 @@ export default function Home() {
                 width: '100%'
               }}>
                 <Image 
-                  src="/jis.png" 
+                  src={jisImg} 
                   alt="JIS University" 
                   width={450}
                   height={300}
                   priority
+                  placeholder="blur"
                   style={{ width: '100%', height: 'auto', border: '3px solid var(--black)' }} 
                 />
                 <div style={{ marginTop: '1.5rem', borderTop: '3px solid var(--black)', paddingTop: '1rem' }}>

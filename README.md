@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 📚 Notes Nexus
 
-## Getting Started
+> The ultimate resource hub for comprehensive study materials, notes, and previous year questions (PYQs) tailored for the Computer Science and Engineering (CSE) Department at JIS University.
 
-First, run the development server:
+![Notes Nexus Banner](public/logo.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Blazing Fast Performance**: Built on the Next.js App Router with aggressive optimizations (Static Image Imports with Blur Placeholders, optimized package imports) to ensure instantaneous loads even on slow 3G networks.
+- **Neo-Brutalist Design System**: A completely custom, highly engaging user interface built from scratch with Vanilla CSS. Features bold borders, sharp shadows, and vibrant colors.
+- **Micro-Interactions & Animations**: Powered by `framer-motion`, featuring custom scroll-triggered entrance animations (`AnimateInView`) and floating elements (`AnimateFloat`).
+- **SEO Optimized**: Fully automated dynamic Open Graph images (`next/og`), complete metadata wrappers, dynamic `sitemap.xml`, and `robots.txt` generation for perfect search engine indexing.
+- **Fully Responsive**: Flawless experience across desktop, tablet, and mobile devices.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Library**: [React 19](https://react.dev/)
+- **Styling**: Vanilla CSS with CSS Variables
+- **Animations**: [Framer Motion](https://www.framer.com/motion/)
+- **Icons**: [Lucide React](https://lucide.dev/) & [React Icons](https://react-icons.github.io/react-icons/)
+- **Deployment**: [Vercel](https://vercel.com)
 
-## Learn More
+## 💻 Running Locally
 
-To learn more about Next.js, take a look at the following resources:
+To get a local copy up and running, follow these simple steps:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Prerequisites
+Make sure you have Node.js installed on your machine.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Installation
 
-## Deploy on Vercel
+1. Clone the repo
+   ```sh
+   git clone https://github.com/dasouvik122005/Notes_Nexus.git
+   ```
+2. Navigate into the project directory
+   ```sh
+   cd Notes_Nexus
+   ```
+3. Install NPM packages
+   ```sh
+   npm install
+   ```
+4. Start the development server
+   ```sh
+   npm run dev
+   ```
+5. Open your browser and navigate to `http://localhost:3000`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 👥 The Team
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Notes Nexus is proudly built and maintained by:
+
+- **Rajdip Garai** - [LinkedIn](https://www.linkedin.com/in/rajdip-garai) | [GitHub](https://github.com/rajdipgarai)
+- **Souvik Das** - [LinkedIn](https://www.linkedin.com/in/souvikdas12102005/) | [GitHub](https://github.com/dasouvik122005)
+- **Saikat Das** - [LinkedIn](https://www.linkedin.com/in/i-am-saikat-das/)
+- **Pritam Bhattacharjee**
+
+## 📬 Feedback & Contributions
+
+Found a bug or want to request a feature? Feel free to open an issue or submit a pull request!
+If you are a student and want to contribute notes, please use our [Feedback Form](https://forms.gle/WfbtFjHj3pS9RyQg9).
