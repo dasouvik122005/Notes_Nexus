@@ -106,7 +106,7 @@ export default function Home() {
                     <div style={{ width: '20px', height: '20px', backgroundColor: 'var(--primary-pink)', borderRadius: '50%', border: '2px solid var(--black)' }}></div>
                     <span style={{ fontWeight: 800 }}>LATEST UPLOADS</span>
                   </div>
-                  <ul style={{ listStyleType: 'none', paddingLeft: '2rem', fontWeight: 600 }}>
+                  <ul style={{ listStyleType: 'none', paddingLeft: '2rem', fontWeight: 600, textAlign: 'left' }}>
                     <li style={{ position: 'relative', marginBottom: '0.5rem' }}>
                       <span style={{ position: 'absolute', left: '-1.5rem', top: '2px' }}>✓</span> Engineering Mathematics-1
                     </li>
