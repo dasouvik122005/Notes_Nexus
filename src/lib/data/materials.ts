@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 
 export interface Material {
   id: string;
@@ -102,40 +102,42 @@ const fallbackMaterials: Material[] = [
 ];
 
 export async function getLatestMaterials(limit = 4): Promise<Material[]> {
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('materials')
-      .select('*')
-      .eq('status', 'approved')
-      .order('created_at', { ascending: false })
-      .limit(limit);
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = await createClient();
+      const { data, error } = await supabase
+        .from('materials')
+        .select('*')
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false })
+        .limit(limit);
 
-    if (!error && data && data.length > 0) {
-      return data.map((m) => ({
-        id: m.id,
-        type: m.type,
-        departmentId: m.department_id,
-        paperId: m.paper_id,
-        semester: m.semester,
-        paperName: m.paper_name,
-        paperCode: m.paper_code,
-        section: m.section,
-        facultyName: m.faculty_name,
-        examType: m.exam_type,
-        year: m.year,
-        title: m.title,
-        description: m.description,
-        storageKey: m.storage_key,
-        fileSize: m.file_size,
-        pageCount: m.page_count,
-        ratingAvg: Number(m.rating_avg) || 0,
-        ratingCount: m.rating_count || 0,
-        createdAt: m.created_at,
-      }));
+      if (!error && data && data.length > 0) {
+        return data.map((m) => ({
+          id: m.id,
+          type: m.type,
+          departmentId: m.department_id,
+          paperId: m.paper_id,
+          semester: m.semester,
+          paperName: m.paper_name,
+          paperCode: m.paper_code,
+          section: m.section,
+          facultyName: m.faculty_name,
+          examType: m.exam_type,
+          year: m.year,
+          title: m.title,
+          description: m.description,
+          storageKey: m.storage_key,
+          fileSize: m.file_size,
+          pageCount: m.page_count,
+          ratingAvg: Number(m.rating_avg) || 0,
+          ratingCount: m.rating_count || 0,
+          createdAt: m.created_at,
+        }));
+      }
+    } catch {
+      // Fall back to local items
     }
-  } catch {
-    // Fall back to local items
   }
 
   return fallbackMaterials.slice(0, limit);
@@ -146,20 +148,21 @@ export async function getMaterialsByPaper(
   paperCode: string,
   type?: 'notes' | 'pyq'
 ): Promise<Material[]> {
-  try {
-    const supabase = await createClient();
-    let query = supabase
-      .from('materials')
-      .select('*')
-      .eq('department_id', departmentId)
-      .eq('paper_code', paperCode)
-      .eq('status', 'approved');
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = await createClient();
+      let query = supabase
+        .from('materials')
+        .select('*')
+        .eq('department_id', departmentId)
+        .eq('paper_code', paperCode)
+        .eq('status', 'approved');
 
-    if (type) {
-      query = query.eq('type', type);
-    }
+      if (type) {
+        query = query.eq('type', type);
+      }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
+      const { data, error } = await query.order('created_at', { ascending: false });
 
     if (!error && data && data.length > 0) {
       return data.map((m) => ({
@@ -184,8 +187,9 @@ export async function getMaterialsByPaper(
         createdAt: m.created_at,
       }));
     }
-  } catch {
-    // Fall back to local
+    } catch {
+      // Fall back to local
+    }
   }
 
   return fallbackMaterials.filter(

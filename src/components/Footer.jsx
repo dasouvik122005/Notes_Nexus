@@ -96,6 +96,18 @@ export default function Footer() {
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <li>
+                <Link
+                  href="/upload"
+                  style={{
+                    fontWeight: 700,
+                    color: 'var(--black)',
+                  }}
+                  className="nav-link"
+                >
+                  Upload Notes & PYQ →
+                </Link>
+              </li>
+              <li>
                 <a
                   href={siteConfig.links.feedback}
                   target="_blank"
@@ -106,7 +118,7 @@ export default function Footer() {
                   }}
                   className="nav-link"
                 >
-                  Submit Feedback & Notes →
+                  Feedback Form →
                 </a>
               </li>
               <li>
@@ -127,10 +139,24 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Disclaimer Note */}
+        <div
+          style={{
+            padding: '1rem 0',
+            borderBottom: '1px solid #E5E7EB',
+            fontSize: '0.8rem',
+            fontWeight: 700,
+            color: '#6B7280',
+            textAlign: 'center',
+          }}
+        >
+          A student initiative. Not affiliated with or endorsed by JIS University or its administration.
+        </div>
+
         {/* Bottom Bar */}
         <div
           style={{
-            paddingTop: '1.5rem',
+            paddingTop: '1.25rem',
             display: 'flex',
             flexWrap: 'wrap',
             justifyContent: 'space-between',

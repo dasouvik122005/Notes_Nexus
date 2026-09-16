@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server';
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
 
 export interface Paper {
   id: string;
@@ -143,39 +143,41 @@ export async function getPapersByDepartment(
   semester?: number,
   search?: string
 ): Promise<Paper[]> {
-  try {
-    const supabase = await createClient();
-    let query = supabase
-      .from('papers')
-      .select('*')
-      .eq('department_id', departmentId)
-      .eq('is_active', true);
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = await createClient();
+      let query = supabase
+        .from('papers')
+        .select('*')
+        .eq('department_id', departmentId)
+        .eq('is_active', true);
 
-    if (semester && semester > 0) {
-      query = query.eq('semester', semester);
+      if (semester && semester > 0) {
+        query = query.eq('semester', semester);
+      }
+
+      if (search && search.trim()) {
+        query = query.ilike('paper_name', `%${search.trim()}%`);
+      }
+
+      const { data, error } = await query.order('semester', { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        return data.map((p) => ({
+          id: p.id,
+          departmentId: p.department_id,
+          semester: p.semester,
+          paperName: p.paper_name,
+          paperCode: p.paper_code,
+          isActive: p.is_active,
+          ratingAvg: 4.8,
+          ratingCount: 12,
+          fileCount: 3,
+        }));
+      }
+    } catch {
+      // Fall back to local data
     }
-
-    if (search && search.trim()) {
-      query = query.ilike('paper_name', `%${search.trim()}%`);
-    }
-
-    const { data, error } = await query.order('semester', { ascending: true });
-
-    if (!error && data && data.length > 0) {
-      return data.map((p) => ({
-        id: p.id,
-        departmentId: p.department_id,
-        semester: p.semester,
-        paperName: p.paper_name,
-        paperCode: p.paper_code,
-        isActive: p.is_active,
-        ratingAvg: 4.8,
-        ratingCount: 12,
-        fileCount: 3,
-      }));
-    }
-  } catch {
-    // Fall back to local data
   }
 
   return allFallbackPapers.filter((p) => {
