@@ -143,6 +143,14 @@ export default function Footer() {
           <div>
             © {new Date().getFullYear()} {siteConfig.name}. Built with care by students, for students.
           </div>
+          <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
+            <Link href="/privacy" className="nav-link" style={{ color: 'var(--black)', textDecoration: 'none' }}>
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="nav-link" style={{ color: 'var(--black)', textDecoration: 'none' }}>
+              Terms of Use
+            </Link>
+          </div>
 
         </div>
       </div>
