@@ -6,14 +6,32 @@ import NeoButton from '@/components/NeoButton';
 import AnimateInView from '@/components/AnimateInView';
 import AnimateFloat from '@/components/AnimateFloat';
 
+export const metadata = {
+  title: 'Home | Notes Nexus',
+  description: 'Notes Nexus - Free comprehensive study materials, notes, and previous year questions for JIS University CSE Department.',
+};
+
 export default function Home() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Notes Nexus',
+    url: 'https://notes-nexus-jisu.vercel.app',
+    description: 'Free comprehensive study materials, notes, and previous year questions for JIS University CSE Department.',
+  };
+
   return (
-    <div style={{
-      minHeight: 'calc(100vh - 80px)', // subtracting approx navbar height
-      display: 'flex',
-      alignItems: 'center',
-      padding: '4rem 0'
-    }}>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div style={{
+        minHeight: 'calc(100vh - 80px)', // subtracting approx navbar height
+        display: 'flex',
+        alignItems: 'center',
+        padding: '4rem 0'
+      }}>
       <div className="container hero-container" style={{
         display: 'flex',
         alignItems: 'center',
@@ -121,5 +139,6 @@ export default function Home() {
         </div>
       </div>
     </div>
+    </>
   );
 }

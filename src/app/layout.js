@@ -13,22 +13,50 @@ export const metadata = {
     default: 'Notes Nexus',
   },
   description: 'Notes Nexus - Free comprehensive study materials, notes, and previous year questions for JIS University CSE Department.',
+  applicationName: 'Notes Nexus',
+  generator: 'Next.js',
   keywords: ['Notes Nexus', 'JIS University', 'CSE Notes', 'B.Tech Notes', 'Previous Year Questions', 'PYQ', 'Engineering Notes', 'Computer Science Notes'],
-  authors: [{ name: 'Notes Nexus Team' }],
-  creator: 'Notes Nexus',
+  authors: [{ name: 'Notes Nexus Team', url: 'https://notes-nexus-jisu.vercel.app/about' }],
+  creator: 'Notes Nexus Team',
   publisher: 'Notes Nexus Team',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   alternates: {
     canonical: '/',
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  appleWebApp: {
+    title: 'Notes Nexus',
+    statusBarStyle: 'default',
+    capable: true,
   },
   openGraph: {
     title: 'Notes Nexus',
     description: 'Free notes and study materials for JIS University CSE Department',
     url: '/',
     siteName: 'Notes Nexus',
+    images: [
+      {
+        url: '/opengraph-image', 
+        width: 1200,
+        height: 630,
+        alt: 'Notes Nexus - JIS University CSE Notes',
+      }
+    ],
+    locale: 'en_US',
     type: 'website',
   },
   twitter: {
