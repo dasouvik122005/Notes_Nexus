@@ -47,7 +47,7 @@ export default function Navbar() {
           }}>
             <Image
               src={logoImg}
-              alt={siteConfig.name}
+              alt={`${siteConfig.name} - Official Logo and Home Link`}
               width={250}
               height={60}
               priority

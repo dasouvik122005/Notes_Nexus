@@ -5,7 +5,7 @@
 export const siteConfig = {
   name: "Notes Nexus",
   shortName: "NotesNexus",
-  tagline: "Your Campus Resource & Study Hub",
+  tagline: "Notes Nexus - Your JIS University Study Hub",
   description:
     "Free comprehensive study materials, notes, and previous year questions (PYQs) across all university departments.",
   university: "JIS University",

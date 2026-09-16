@@ -14,12 +14,14 @@ export const metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
     template: `%s | ${siteConfig.name}`,
-    default: siteConfig.name,
+    default: `${siteConfig.name} - JIS University Study Materials`,
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
   generator: 'Next.js',
   keywords: [
+    'Notes Nexus',
+    'Notes Nexus JIS University',
     siteConfig.name,
     siteConfig.university,
     'CSE Notes',
