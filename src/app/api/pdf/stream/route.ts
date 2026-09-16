@@ -120,5 +120,5 @@ export async function GET(request: NextRequest) {
 
   const samplePdfBytes = createSamplePdfBuffer(title, paperCode, department);
 
-  return new NextResponse(samplePdfBytes, { headers });
+  return new NextResponse(samplePdfBytes as any, { headers });
 }
