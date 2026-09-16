@@ -1,8 +1,9 @@
 import { ImageResponse } from 'next/og';
+import { siteConfig } from '@/config/site';
 
 export const runtime = 'edge';
 
-export const alt = 'Notes Nexus';
+export const alt = siteConfig.name;
 export const size = {
   width: 1200,
   height: 630,
@@ -42,7 +43,7 @@ export default async function Image() {
               alignSelf: 'flex-start'
             }}
           >
-            JIS University CSE Dept.
+            {siteConfig.university} • All Departments
           </div>
           
           <h1
@@ -69,7 +70,7 @@ export default async function Image() {
                   transform: 'rotate(1deg)'
                 }}
               >
-                NOTES NEXUS
+                {siteConfig.name.toUpperCase()}
               </span>
             </div>
           </h1>

@@ -1,160 +1,97 @@
-"use client";
-import React, { useState } from 'react';
-import NeoCard from '@/components/NeoCard';
+import React from 'react';
 import AnimateInView from '@/components/AnimateInView';
+import DepartmentCard from '@/components/DepartmentCard';
+import { getDepartments } from '@/lib/data/departments';
+import { siteConfig } from '@/config/site';
 
-import { 
-  Calculator, Zap, Leaf, MessageCircle, Code, 
-  Atom, FlaskConical, Globe, Palette, Braces, 
-  Brain, Network, Lightbulb, Bot, Boxes, Plug,
-  Terminal, Sigma, Library, Hash, Cpu, Server, GitBranch,
-  BarChart, Monitor, GitCommit, Coffee, Briefcase,
-  Database, FileCog, Shield, Shapes, TrendingUp,
-  Wifi, Wrench, Smartphone, Cloud, Scale, Activity, GitMerge,
-  Rocket, Laptop, Key, Radio, HardDrive, Eye, Layers, Gauge,
-  Users, Clock, LineChart, Feather, CircuitBoard, Dna, Router, Target, Image as ImageIcon
-} from 'lucide-react';
+export const metadata = {
+  title: 'Notes by Department',
+  description: `Browse lecture notes and study materials by department at ${siteConfig.university}.`,
+};
 
-const subjects = [
-  { title: 'Engineering Mathematics-1', icon: Calculator, link: 'https://drive.google.com/drive/folders/19Qp9sGX4yeSTF9mr0WkV5gc_DAPjXnuC?usp=sharing' },
-  { title: 'Basic Electronics', icon: Zap, link: 'https://drive.google.com/drive/folders/1D2OU-9zE-nkKvH7YRc3seo3byAWWuj3W?usp=sharing' },
-  { title: 'Environmental Studies', icon: Leaf, link: 'https://drive.google.com/drive/folders/1vkFhoYksnMAaQPe0cIaPY-C0rDTtuDBK?usp=sharing' },
-  { title: 'Professional Communication', icon: MessageCircle, link: 'https://www.google.com' },
-  { title: 'C programming', icon: Code, link: 'https://drive.google.com/drive/folders/14cpebF5l2sjGi_51_JuYwn0RNa5JdEZ4?usp=sharing' },
-  { title: 'Engineering Physics', icon: Atom, link: 'https://drive.google.com/drive/folders/1PjKnhqgwlWDVfcUkWrhVo59UQlllqhXE?usp=sharing' },
-  { title: 'Engineering Chemistry', icon: FlaskConical, link: 'https://drive.google.com/drive/folders/1WcYLATUrBVMOr_CAYZmJQCETWgcLKAiO?usp=sharing' },
-  { title: 'HTML', icon: Globe, link: 'https://drive.google.com/drive/folders/11LerP-u-VO534jLXe7UWhBawhEpINK22?usp=sharing' },
-  { title: 'CSS', icon: Palette, link: 'https://drive.google.com/drive/folders/1x5cgIVbjC8NMStu0xnq-v-Moe0RSbyaB?usp=sharing' },
-  { title: 'Java Script', icon: Braces, link: 'https://drive.google.com/drive/folders/1Enu4uzASVj2d5jXALZIoAWWtqvVAQFnt?usp=sharing' },
-  { title: 'Machine Learning', icon: Brain, link: 'https://drive.google.com/drive/folders/1IT4w7Ijl5i6bLYh53RM2xonh47JqPUvE?usp=drive_link' },
-  { title: 'Computer Networks', icon: Network, link: 'https://drive.google.com/drive/folders/1og3uY1n3jUXPMCKUGwoEaXz4kZDWHJ0B?usp=sharing' },
-  { title: 'Aptitude', icon: Lightbulb, link: 'https://drive.google.com/drive/folders/1AoOILHs9vFyuMsVuOOHNLR43oAmiTvAi?usp=sharing' },
-  { title: 'AI', icon: Bot, link: 'https://drive.google.com/drive/folders/1v-M963QwhI8GZaOKXhORRMHUFHp56aS-?usp=sharing' },
-  { title: 'Data Structure', icon: Boxes, link: 'https://drive.google.com/drive/folders/1-v40NeVyTZizHmuw-d71Fkn65e8Rruen?usp=sharing' },
-  { title: 'Basic Electrical Engineering', icon: Plug, link: 'https://drive.google.com/drive/folders/1pALo1iYmINytMzFkzjJHU7yyCpjtHpaM?usp=sharing' },
-  { title: 'Programming for Problem Solving', icon: Terminal, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Engineering Mathematics-II', icon: Sigma, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Indian Knowledge System', icon: Library, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Discrete Mathematics', icon: Hash, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Digital Logic and Electronics', icon: Cpu, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Computer Organization and Architecture', icon: Server, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Design and Analysis of Algorithms', icon: GitBranch, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Probability and Statistics', icon: BarChart, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Operating Systems', icon: Monitor, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Formal Language and Automata Theory', icon: GitCommit, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Object Oriented Programming using Java', icon: Coffee, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Principles of Management', icon: Briefcase, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Database Management Systems', icon: Database, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Compiler Design', icon: FileCog, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Cryptography and Network Security', icon: Shield, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Computer Graphics', icon: Shapes, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Economics for Engineers', icon: TrendingUp, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Web and Internet Technology', icon: Wifi, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Software Engineering', icon: Wrench, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Mobile Computing', icon: Smartphone, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Natural Language Processing', icon: MessageCircle, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Cloud Computing', icon: Cloud, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Cyber Law and Ethics', icon: Scale, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Neural Networks and Deep Learning', icon: Activity, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Advanced Algorithms', icon: GitMerge, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'High Performance Computing', icon: Rocket, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Advanced Operating Systems', icon: Laptop, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Information and Coding Theory', icon: Key, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Ad-Hoc and Sensor Networks', icon: Radio, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Data Mining and Data Warehouse', icon: HardDrive, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Computer Vision', icon: Eye, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Parallel Computing', icon: Layers, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Learning Optimization Techniques', icon: Gauge, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Human Resource Development and Organizational Behavior', icon: Users, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Real Time Systems', icon: Clock, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Data Analytics', icon: LineChart, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Soft Computing', icon: Feather, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'VLSI', icon: CircuitBoard, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Bioinformatics', icon: Dna, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Robotics', icon: Bot, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Introduction to IoT', icon: Router, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Image Processing', icon: ImageIcon, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' },
-  { title: 'Optimization Techniques', icon: Target, link: 'https://drive.google.com/drive/folders/demo_link?usp=sharing' }
-];
-
-export default function NotesPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const filteredSubjects = subjects.filter(subject => 
-    subject.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+export default async function NotesDepartmentPickerPage() {
+  const departments = await getDepartments();
 
   return (
-    <div style={{ padding: '4rem 0' }}>
+    <div style={{ padding: '4rem 0 6rem 0' }}>
       <div className="container">
-        <AnimateInView delay={0.1} direction="up">
-          <h1 style={{
-            fontSize: '3.5rem',
-            fontWeight: 900,
-            marginBottom: '3rem',
-            textAlign: 'center',
-            textTransform: 'uppercase',
-            letterSpacing: '-1px'
-          }}>
-            Browse <span style={{
-              backgroundColor: 'var(--primary-pink)',
-              padding: '0 0.5rem',
-              border: '4px solid var(--black)',
+        
+        {/* Page Header */}
+        <AnimateInView delay={0.1} direction="up" style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <div
+            style={{
               display: 'inline-block',
-              transform: 'rotate(-2deg)'
-            }}>Notes</span>
+              backgroundColor: 'var(--primary-yellow)',
+              padding: '0.4rem 0.9rem',
+              fontWeight: 900,
+              fontSize: '0.85rem',
+              textTransform: 'uppercase',
+              border: '2px solid var(--black)',
+              boxShadow: '3px 3px 0px 0px var(--black)',
+              marginBottom: '1rem',
+            }}
+          >
+            Academic Departments
+          </div>
+
+          <h1
+            className="hero-title"
+            style={{
+              fontSize: '3.75rem',
+              fontWeight: 900,
+              textTransform: 'uppercase',
+              letterSpacing: '-1.5px',
+              lineHeight: 1.1,
+              marginBottom: '1rem',
+            }}
+          >
+            SELECT YOUR <br />
+            <span
+              style={{
+                backgroundColor: 'var(--primary-pink)',
+                padding: '0 0.5rem',
+                display: 'inline-block',
+                border: '4px solid var(--black)',
+                transform: 'rotate(-2deg)',
+              }}
+            >
+              DEPARTMENT
+            </span>
           </h1>
+
+          <p
+            style={{
+              fontSize: '1.2rem',
+              fontWeight: 600,
+              maxWidth: '600px',
+              margin: '0 auto',
+              color: '#333',
+            }}
+          >
+            Choose your degree program or department below to access semester-wise lecture notes, module guides, and syllabus materials.
+          </p>
         </AnimateInView>
 
-        <AnimateInView delay={0.15} direction="up" style={{ display: 'flex', justifyContent: 'center', marginBottom: '3rem' }}>
-          <input 
-            type="text" 
-            placeholder="Search subjects..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              width: '100%',
-              maxWidth: '500px',
-              padding: '1rem 1.5rem',
-              fontSize: '1.25rem',
-              fontWeight: 700,
-              fontFamily: 'inherit',
-              border: '4px solid var(--black)',
-              boxShadow: '4px 4px 0px 0px var(--black)',
-              outline: 'none',
-              borderRadius: '0'
-            }}
-          />
-        </AnimateInView>
-        
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-          gap: '2rem'
-        }}>
-          {filteredSubjects.length > 0 ? (
-            filteredSubjects.map((subject, index) => (
-              <AnimateInView 
-                key={subject.title} 
-                delay={(index % 4) * 0.1} 
-                direction="up" 
-                style={{ height: '100%' }}
-              >
-                <NeoCard 
-                  title={subject.title}
-                  actionLink={subject.link}
-                  icon={subject.icon}
-                >
-                  Access the complete study materials for {subject.title} from JIS University CSE department.
-                </NeoCard>
-              </AnimateInView>
-            ))
-          ) : (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '3rem', fontWeight: 800, fontSize: '1.5rem' }}>
-              No subjects found matching "{searchTerm}"
-            </div>
-          )}
+        {/* Departments Grid */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            gap: '2.5rem',
+          }}
+        >
+          {departments.map((dept, index) => (
+            <AnimateInView
+              key={dept.id}
+              delay={0.08 * (index % 4)}
+              direction="up"
+              style={{ height: '100%' }}
+            >
+              <DepartmentCard department={dept} basePath="/notes" />
+            </AnimateInView>
+          ))}
         </div>
+
       </div>
     </div>
   );

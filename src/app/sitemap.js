@@ -1,5 +1,7 @@
+import { siteConfig } from '@/config/site';
+
 export default function sitemap() {
-  const baseUrl = 'https://notes-nexus-jisu.vercel.app';
+  const baseUrl = siteConfig.url;
 
   return [
     {

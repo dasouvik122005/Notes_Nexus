@@ -1,14 +1,16 @@
+import { siteConfig } from '@/config/site';
+
 export const metadata = {
   title: 'Notes & Study Materials',
-  description: 'Download comprehensive Computer Science (CSE) study materials, B.Tech lecture notes, and cheat sheets for JIS University students.',
+  description: `Browse comprehensive study materials and lecture notes across all departments at ${siteConfig.university}.`,
   openGraph: {
-    title: 'Notes & Study Materials | Notes Nexus',
-    description: 'Download comprehensive Computer Science (CSE) study materials, B.Tech lecture notes, and cheat sheets for JIS University students.',
+    title: `Notes & Study Materials | ${siteConfig.name}`,
+    description: `Browse comprehensive study materials and lecture notes across all departments at ${siteConfig.university}.`,
     url: '/notes',
   },
   twitter: {
-    title: 'Notes & Study Materials | Notes Nexus',
-    description: 'Download comprehensive Computer Science (CSE) study materials, B.Tech lecture notes, and cheat sheets for JIS University students.',
+    title: `Notes & Study Materials | ${siteConfig.name}`,
+    description: `Browse comprehensive study materials and lecture notes across all departments at ${siteConfig.university}.`,
   },
 };
 
@@ -16,22 +18,17 @@ export default function NotesLayout({ children }) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    'name': 'Notes & Study Materials - Notes Nexus',
-    'description': 'Comprehensive repository of Computer Science study materials and lecture notes.',
-    'url': 'https://notes-nexus-jisu.vercel.app/notes',
-    'provider': {
+    name: `Notes & Study Materials - ${siteConfig.name}`,
+    description: `Comprehensive repository of university study materials and lecture notes at ${siteConfig.university}.`,
+    url: `${siteConfig.url}/notes`,
+    provider: {
       '@type': 'EducationalOrganization',
-      'name': 'Notes Nexus'
+      name: siteConfig.name,
     },
-    'about': {
+    about: {
       '@type': 'LearningResource',
-      'learningResourceType': 'Study material',
-      'educationalAlignment': {
-        '@type': 'AlignmentObject',
-        'alignmentType': 'educationalLevel',
-        'educationalFramework': 'B.Tech Computer Science'
-      }
-    }
+      learningResourceType: 'Study material',
+    },
   };
 
   return (

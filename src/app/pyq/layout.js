@@ -1,14 +1,16 @@
+import { siteConfig } from '@/config/site';
+
 export const metadata = {
   title: 'Previous Year Questions (PYQ)',
-  description: 'Prepare for exams with our extensive archive of Mid Semester and End Semester Previous Year Questions (PYQs) for JIS University CSE.',
+  description: `Access Mid Sem and End Sem previous year questions for all departments and semesters at ${siteConfig.university}.`,
   openGraph: {
-    title: 'Previous Year Questions | Notes Nexus',
-    description: 'Prepare for exams with our extensive archive of Mid Semester and End Semester Previous Year Questions (PYQs) for JIS University CSE.',
+    title: `Previous Year Questions | ${siteConfig.name}`,
+    description: `Access Mid Sem and End Sem previous year questions for all departments and semesters at ${siteConfig.university}.`,
     url: '/pyq',
   },
   twitter: {
-    title: 'Previous Year Questions | Notes Nexus',
-    description: 'Prepare for exams with our extensive archive of Mid Semester and End Semester Previous Year Questions (PYQs) for JIS University CSE.',
+    title: `Previous Year Questions | ${siteConfig.name}`,
+    description: `Access Mid Sem and End Sem previous year questions for all departments and semesters at ${siteConfig.university}.`,
   },
 };
 
@@ -16,22 +18,17 @@ export default function PYQLayout({ children }) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    'name': 'Previous Year Questions (PYQ) - Notes Nexus',
-    'description': 'Archive of Mid Sem and End Sem previous year questions for exam preparation.',
-    'url': 'https://notes-nexus-jisu.vercel.app/pyq',
-    'provider': {
+    name: `Previous Year Questions (PYQ) - ${siteConfig.name}`,
+    description: `Archive of Mid Sem and End Sem previous year questions across all departments at ${siteConfig.university}.`,
+    url: `${siteConfig.url}/pyq`,
+    provider: {
       '@type': 'EducationalOrganization',
-      'name': 'Notes Nexus'
+      name: siteConfig.name,
     },
-    'about': {
+    about: {
       '@type': 'LearningResource',
-      'learningResourceType': 'Past Exam Paper',
-      'educationalAlignment': {
-        '@type': 'AlignmentObject',
-        'alignmentType': 'educationalLevel',
-        'educationalFramework': 'B.Tech Computer Science'
-      }
-    }
+      learningResourceType: 'Past Exam Paper',
+    },
   };
 
   return (

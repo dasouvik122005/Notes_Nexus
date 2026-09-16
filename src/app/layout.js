@@ -1,24 +1,37 @@
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import { Analytics } from '@vercel/analytics/react';
 import { Inter, Outfit } from 'next/font/google';
+import { siteConfig } from '@/config/site';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' });
 
 export const metadata = {
-  metadataBase: new URL('https://notes-nexus-jisu.vercel.app'),
+  metadataBase: new URL(siteConfig.url),
   title: {
-    template: '%s | Notes Nexus',
-    default: 'Notes Nexus',
+    template: `%s | ${siteConfig.name}`,
+    default: siteConfig.name,
   },
-  description: 'Notes Nexus - Free comprehensive study materials, notes, and previous year questions for JIS University CSE Department.',
-  applicationName: 'Notes Nexus',
+  description: siteConfig.description,
+  applicationName: siteConfig.name,
   generator: 'Next.js',
-  keywords: ['Notes Nexus', 'JIS University', 'CSE Notes', 'B.Tech Notes', 'Previous Year Questions', 'PYQ', 'Engineering Notes', 'Computer Science Notes'],
-  authors: [{ name: 'Notes Nexus Team', url: 'https://notes-nexus-jisu.vercel.app/about' }],
-  creator: 'Notes Nexus Team',
-  publisher: 'Notes Nexus Team',
+  keywords: [
+    siteConfig.name,
+    siteConfig.university,
+    'CSE Notes',
+    'B.Tech Notes',
+    'BCA Notes',
+    'Pharmacy Notes',
+    'Previous Year Questions',
+    'PYQ',
+    'Engineering Notes',
+    'Study Materials',
+  ],
+  authors: [{ name: `${siteConfig.name} Team`, url: `${siteConfig.url}/about` }],
+  creator: `${siteConfig.name} Team`,
+  publisher: `${siteConfig.name} Team`,
   formatDetection: {
     email: false,
     address: false,
@@ -44,16 +57,16 @@ export const metadata = {
     capable: true,
   },
   openGraph: {
-    title: 'Notes Nexus',
-    description: 'Free notes and study materials for JIS University CSE Department',
+    title: siteConfig.name,
+    description: siteConfig.description,
     url: '/',
-    siteName: 'Notes Nexus',
+    siteName: siteConfig.name,
     images: [
       {
         url: '/opengraph-image', 
         width: 1200,
         height: 630,
-        alt: 'Notes Nexus - JIS University CSE Notes',
+        alt: `${siteConfig.name} - ${siteConfig.university} Notes & PYQ`,
       }
     ],
     locale: 'en_US',
@@ -61,8 +74,8 @@ export const metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Notes Nexus',
-    description: 'Free notes and study materials for JIS University CSE Department',
+    title: siteConfig.name,
+    description: siteConfig.description,
   },
 };
 
@@ -72,11 +85,12 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" type="image/png" href="/favicon.png" />
       </head>
-      <body>
+      <body style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <Navbar />
-        <main>
+        <main style={{ flex: 1 }}>
           {children}
         </main>
+        <Footer />
         <Analytics />
       </body>
     </html>
