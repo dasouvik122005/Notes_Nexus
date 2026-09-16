@@ -16,86 +16,71 @@ import {
 } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 
-// Seed sample listings for initial browse experience
-const initialListings = [
-  {
-    id: 'inst-1',
-    category: 'instrument',
-    title: 'Mini Drafter (Omega) + T-Square with Carrying Case',
-    description:
-      'Used for one semester in Engineering Drawing. Excellent smooth condition with all tightening screws intact.',
-    condition: 'Like New',
-    expectedPrice: 450,
-    isNegotiable: true,
-    contactName: 'Rahul M.',
-    contactPhone: '+91 98765 43210',
-    createdAt: '2 days ago',
-    department: 'B.Tech CSE / Core',
-  },
-  {
-    id: 'inst-2',
-    category: 'book',
-    title: 'Higher Engineering Mathematics by B.S. Grewal (44th Ed.)',
-    description:
-      'Clean textbook, no pencil markings or torn pages. Covers Engineering Math 1 and 2.',
-    condition: 'Good',
-    expectedPrice: 380,
-    isNegotiable: false,
-    contactName: 'Priya K.',
-    contactPhone: '+91 98234 56789',
-    createdAt: '3 days ago',
-    department: 'B.Tech / Mathematics',
-  },
-  {
-    id: 'inst-3',
-    category: 'instrument',
-    title: 'Clinical Stethoscope & Laboratory Apron (Size M)',
-    description:
-      'Pharmacy laboratory coat and standard dual-head stethoscope. Cleaned and sanitized.',
-    condition: 'Good',
-    expectedPrice: 600,
-    isNegotiable: true,
-    contactName: 'Subhajit D.',
-    contactPhone: '+91 91234 56780',
-    createdAt: '5 days ago',
-    department: 'B.Pharma',
-  },
-  {
-    id: 'inst-4',
-    category: 'book',
-    title: 'Data Structures and Algorithms in C by Reema Thareja',
-    description:
-      'Essential textbook for Semester 3 CSE/IT. Includes code walkthroughs and diagrams.',
-    condition: 'Like New',
-    expectedPrice: 290,
-    isNegotiable: false,
-    contactName: 'Anik B.',
-    contactPhone: '+91 97654 32109',
-    createdAt: '1 week ago',
-    department: 'B.Tech CSE / BCA',
-  },
-];
+import { createClient } from '@/lib/supabase/client';
 
 export default function InstrumentsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all'); // 'all' | 'instrument' | 'book' | 'calculator' | 'lab_gear'
   const [sortBy, setSortBy] = useState('newest'); // 'newest' | 'price_low' | 'price_high'
+  const [listings, setListings] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Load any approved listings from local storage if available
-  const [listings] = useState(() => {
-    if (typeof window !== 'undefined') {
+  useEffect(() => {
+    let isMounted = true;
+    async function loadListings() {
       try {
-        const stored = JSON.parse(localStorage.getItem('notes_nexus_user_listings') || '[]');
-        const approvedStored = stored.filter((s) => s.status === 'approved' || s.status === 'active');
-        if (approvedStored.length > 0) {
-          return [...approvedStored, ...initialListings];
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from('marketplace_items')
+          .select('*')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false });
+
+        if (!error && data && data.length > 0) {
+          const mapped = data.map((item) => ({
+            id: item.id,
+            category: item.category,
+            title: item.title,
+            description: item.description,
+            condition: item.condition,
+            expectedPrice: item.expected_price,
+            isNegotiable: item.is_negotiable,
+            contactName: item.contact_name,
+            contactPhone: item.contact_phone,
+            department: item.department,
+            photos: item.photo_keys || [],
+            createdAt: new Date(item.created_at).toLocaleDateString(),
+          }));
+          if (isMounted) {
+            setListings(mapped);
+            setIsLoading(false);
+          }
+          return;
         }
       } catch {
-        // Fall back
+        // Fall back to client storage
       }
+
+      if (typeof window !== 'undefined') {
+        try {
+          const stored = JSON.parse(localStorage.getItem('notes_nexus_user_listings') || '[]');
+          const approvedStored = stored.filter((s) => s.status === 'approved' || s.status === 'active');
+          if (isMounted) {
+            setListings(approvedStored);
+          }
+        } catch {
+          if (isMounted) setListings([]);
+        }
+      }
+
+      if (isMounted) setIsLoading(false);
     }
-    return initialListings;
-  });
+
+    loadListings();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Filter and sort listings
   const filteredListings = useMemo(() => {
@@ -345,7 +330,22 @@ export default function InstrumentsPage() {
         </div>
 
         {/* Listings Grid */}
-        {filteredListings.length === 0 ? (
+        {isLoading ? (
+          <div
+            className="neo-card"
+            style={{
+              backgroundColor: 'var(--white)',
+              padding: '3.5rem 2rem',
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>⏳</div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 900, marginBottom: '0.5rem' }}>
+              Loading marketplace listings...
+            </h3>
+            <p style={{ color: '#6B7280', fontWeight: 600 }}>Fetching latest student items from database</p>
+          </div>
+        ) : filteredListings.length === 0 ? (
           <div
             className="neo-card"
             style={{

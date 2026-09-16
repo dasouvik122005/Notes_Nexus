@@ -98,14 +98,20 @@ export default function PaperCard({ paper, deptSlug, basePath = '/notes' }) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#B45309' }}>
-            <Star size={16} fill="#F59E0B" color="#B45309" />
-            <span>{paper.ratingAvg.toFixed(1)}</span>
-            <span style={{ color: '#888', fontWeight: 600 }}>({paper.ratingCount})</span>
+            {paper.ratingCount > 0 ? (
+              <>
+                <Star size={16} fill="#F59E0B" color="#B45309" />
+                <span>{paper.ratingAvg.toFixed(1)}</span>
+                <span style={{ color: '#888', fontWeight: 600 }}>({paper.ratingCount})</span>
+              </>
+            ) : (
+              <span style={{ color: '#888', fontWeight: 700, fontSize: '0.8rem' }}>Unrated</span>
+            )}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#4B5563' }}>
             <FileText size={16} />
-            <span>{paper.fileCount} files</span>
+            <span>{paper.fileCount} {paper.fileCount === 1 ? 'file' : 'files'}</span>
           </div>
         </div>
 

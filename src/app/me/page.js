@@ -17,96 +17,105 @@ import {
 } from 'lucide-react';
 import NeoButton from '@/components/NeoButton';
 
-// Sample mock submissions for user dashboard visualization
-const sampleUserMaterials = [
-  {
-    id: 'sub-1',
-    title: 'Computer Networks - Unit 3 (Routing Algorithms & OSPF)',
-    paperName: 'Computer Networks',
-    paperCode: 'CS502',
-    semester: 5,
-    type: 'notes',
-    status: 'approved',
-    createdAt: '2026-09-12',
-    viewCount: 142,
-    ratingAvg: 4.8,
-  },
-  {
-    id: 'sub-2',
-    title: 'Operating Systems - Process Scheduling Handwritten Notes',
-    paperName: 'Operating System',
-    paperCode: 'CS402',
-    semester: 4,
-    type: 'notes',
-    status: 'pending',
-    createdAt: '2026-09-16',
-    viewCount: 0,
-    ratingAvg: 0,
-  },
-  {
-    id: 'sub-3',
-    title: 'Engineering Mathematics-1 Mid Sem 2024 Question Paper',
-    paperName: 'Engineering Mathematics-1',
-    paperCode: 'M101',
-    semester: 1,
-    type: 'pyq',
-    status: 'rejected',
-    rejectReason: 'Page 2 scan is cut off and blurry. Please rescan with adequate lighting.',
-    createdAt: '2026-09-08',
-    viewCount: 0,
-    ratingAvg: 0,
-  },
-];
-
-const sampleUserListings = [
-  {
-    id: 'list-1',
-    title: 'Drafter & Engineering Graphics Kit with Compass',
-    category: 'instrument',
-    price: 450,
-    status: 'active',
-    createdAt: '2026-09-14',
-  },
-  {
-    id: 'list-2',
-    title: 'Galvin Operating System Concepts (9th Edition)',
-    category: 'book',
-    price: 320,
-    status: 'sold',
-    createdAt: '2026-08-28',
-  },
-];
+import { createClient } from '@/lib/supabase/client';
 
 export default function MyDashboardPage() {
   const { user, profile, isLoading, openAuthModal } = useAuth();
   const [activeTab, setActiveTab] = useState('submissions');
-  const [materials, setMaterials] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = JSON.parse(localStorage.getItem('notes_nexus_user_materials') || '[]');
-        if (Array.isArray(stored) && stored.length > 0) {
-          return [...stored, ...sampleUserMaterials];
-        }
-      } catch {
-        // Fall back
-      }
-    }
-    return sampleUserMaterials;
-  });
+  const [materials, setMaterials] = useState([]);
+  const [listings, setListings] = useState([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
-  const [listings, setListings] = useState(() => {
-    if (typeof window !== 'undefined') {
+  useEffect(() => {
+    let isMounted = true;
+    async function loadUserData() {
+      if (!user) {
+        setIsLoadingData(false);
+        return;
+      }
+
+      let userMats = [];
+      let userLists = [];
+
       try {
-        const stored = JSON.parse(localStorage.getItem('notes_nexus_user_listings') || '[]');
-        if (Array.isArray(stored) && stored.length > 0) {
-          return [...stored, ...sampleUserListings];
+        const supabase = createClient();
+        const { data: dbMats } = await supabase
+          .from('materials')
+          .select('*')
+          .eq('uploaded_by', user.id)
+          .order('created_at', { ascending: false });
+
+        if (dbMats && dbMats.length > 0) {
+          userMats = dbMats.map((m) => ({
+            id: m.id,
+            title: m.title,
+            paperName: m.paper_name,
+            paperCode: m.paper_code,
+            semester: m.semester,
+            type: m.type,
+            status: m.status,
+            rejectReason: m.reject_reason,
+            createdAt: m.created_at ? new Date(m.created_at).toLocaleDateString() : '',
+            viewCount: m.view_count || 0,
+            ratingAvg: Number(m.rating_avg) || 0,
+          }));
+        }
+
+        const { data: dbLists } = await supabase
+          .from('marketplace_items')
+          .select('*')
+          .eq('seller_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (dbLists && dbLists.length > 0) {
+          userLists = dbLists.map((l) => ({
+            id: l.id,
+            title: l.title,
+            category: l.category,
+            price: l.expected_price,
+            status: l.status,
+            createdAt: l.created_at ? new Date(l.created_at).toLocaleDateString() : '',
+          }));
         }
       } catch {
         // Fall back
       }
+
+      // Check localStorage for offline demo submissions
+      if (typeof window !== 'undefined') {
+        try {
+          const localMats = JSON.parse(localStorage.getItem('notes_nexus_user_materials') || '[]');
+          if (Array.isArray(localMats) && localMats.length > 0) {
+            const existingIds = new Set(userMats.map((m) => m.id));
+            localMats.forEach((lm) => {
+              if (!existingIds.has(lm.id)) userMats.push(lm);
+            });
+          }
+
+          const localLists = JSON.parse(localStorage.getItem('notes_nexus_user_listings') || '[]');
+          if (Array.isArray(localLists) && localLists.length > 0) {
+            const existingIds = new Set(userLists.map((l) => l.id));
+            localLists.forEach((ll) => {
+              if (!existingIds.has(ll.id)) userLists.push(ll);
+            });
+          }
+        } catch {
+          // ignore
+        }
+      }
+
+      if (isMounted) {
+        setMaterials(userMats);
+        setListings(userLists);
+        setIsLoadingData(false);
+      }
     }
-    return sampleUserListings;
-  });
+
+    loadUserData();
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
 
   if (isLoading) {
     return (
@@ -372,6 +381,27 @@ export default function MyDashboardPage() {
 
         {/* Tab 1: Submissions */}
         {activeTab === 'submissions' && (
+          materials.length === 0 ? (
+            <div
+              className="neo-card"
+              style={{
+                padding: '3.5rem 2rem',
+                textAlign: 'center',
+                backgroundColor: 'var(--white)',
+              }}
+            >
+              <FileText size={40} style={{ margin: '0 auto 1rem auto', color: '#9CA3AF' }} />
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 900, marginBottom: '0.5rem' }}>
+                No Study Materials Uploaded Yet
+              </h3>
+              <p style={{ color: '#6B7280', fontWeight: 600, marginBottom: '1.5rem', maxWidth: '400px', margin: '0 auto 1.5rem auto' }}>
+                Help your campus peers by uploading lecture notes, module guides, or exam papers.
+              </p>
+              <NeoButton href="/upload" variant="primary">
+                Upload Your First Material →
+              </NeoButton>
+            </div>
+          ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {materials.map((item) => (
               <div
@@ -511,10 +541,32 @@ export default function MyDashboardPage() {
               </div>
             ))}
           </div>
+          )
         )}
 
         {/* Tab 2: Marketplace Listings */}
         {activeTab === 'marketplace' && (
+          listings.length === 0 ? (
+            <div
+              className="neo-card"
+              style={{
+                padding: '3.5rem 2rem',
+                textAlign: 'center',
+                backgroundColor: 'var(--white)',
+              }}
+            >
+              <Store size={40} style={{ margin: '0 auto 1rem auto', color: '#9CA3AF' }} />
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 900, marginBottom: '0.5rem' }}>
+                No Marketplace Listings Yet
+              </h3>
+              <p style={{ color: '#6B7280', fontWeight: 600, marginBottom: '1.5rem', maxWidth: '400px', margin: '0 auto 1.5rem auto' }}>
+                Sell your old engineering drafters, lab aprons, calculators, or semester textbooks to campus peers.
+              </p>
+              <NeoButton href="/instruments/new" variant="primary">
+                Post Your First Listing →
+              </NeoButton>
+            </div>
+          ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
             {listings.map((item) => (
               <div
@@ -585,6 +637,7 @@ export default function MyDashboardPage() {
               </div>
             ))}
           </div>
+          )
         )}
 
       </div>

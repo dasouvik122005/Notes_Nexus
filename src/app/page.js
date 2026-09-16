@@ -502,77 +502,98 @@ export default async function Home() {
             </Link>
           </div>
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '1.5rem',
-            }}
-          >
-            {latestUploads.map((item) => (
-              <div
-                key={item.id}
-                className="neo-card"
-                style={{
-                  padding: '1.5rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  backgroundColor: 'var(--white)',
-                }}
-              >
+          {latestUploads && latestUploads.length > 0 ? (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                gap: '1.5rem',
+              }}
+            >
+              {latestUploads.map((item) => (
                 <div
+                  key={item.id}
+                  className="neo-card"
                   style={{
+                    padding: '1.5rem',
                     display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    marginBottom: '0.75rem',
+                    flexDirection: 'column',
+                    backgroundColor: 'var(--white)',
                   }}
                 >
-                  <span
+                  <div
                     style={{
-                      backgroundColor: item.type === 'notes' ? 'var(--primary-yellow)' : 'var(--primary-pink)',
-                      border: '2px solid var(--black)',
-                      padding: '0.15rem 0.5rem',
-                      fontWeight: 900,
-                      fontSize: '0.75rem',
-                      textTransform: 'uppercase',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '0.75rem',
                     }}
                   >
-                    {item.type}
-                  </span>
+                    <span
+                      style={{
+                        backgroundColor: item.type === 'notes' ? 'var(--primary-yellow)' : 'var(--primary-pink)',
+                        border: '2px solid var(--black)',
+                        padding: '0.15rem 0.5rem',
+                        fontWeight: 900,
+                        fontSize: '0.75rem',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      {item.type}
+                    </span>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem', fontWeight: 800 }}>
-                    <Star size={14} fill="#F59E0B" color="#B45309" />
-                    <span>{item.ratingAvg.toFixed(1)}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem', fontWeight: 800 }}>
+                      <Star size={14} fill={item.ratingCount > 0 ? "#F59E0B" : "none"} color={item.ratingCount > 0 ? "#B45309" : "#888"} />
+                      <span>{item.ratingCount > 0 ? item.ratingAvg.toFixed(1) : 'Unrated'}</span>
+                    </div>
+                  </div>
+
+                  <h4 style={{ fontSize: '1.15rem', fontWeight: 900, marginBottom: '0.5rem' }}>
+                    {item.title}
+                  </h4>
+
+                  <p style={{ fontSize: '0.85rem', fontWeight: 700, color: '#555', marginBottom: '1rem' }}>
+                    {item.paperName} ({item.paperCode}) • Sem {item.semester}
+                  </p>
+
+                  <div style={{ marginTop: 'auto', paddingTop: '0.75rem', borderTop: '2px dashed #eee' }}>
+                    <Link
+                      href={`/notes/${item.departmentId}/${item.paperCode}`}
+                      style={{
+                        fontSize: '0.9rem',
+                        fontWeight: 800,
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.3rem',
+                      }}
+                    >
+                      <span>Read file</span>
+                      <span>→</span>
+                    </Link>
                   </div>
                 </div>
-
-                <h4 style={{ fontSize: '1.15rem', fontWeight: 900, marginBottom: '0.5rem' }}>
-                  {item.title}
-                </h4>
-
-                <p style={{ fontSize: '0.85rem', fontWeight: 700, color: '#555', marginBottom: '1rem' }}>
-                  {item.paperName} ({item.paperCode}) • Sem {item.semester}
-                </p>
-
-                <div style={{ marginTop: 'auto', paddingTop: '0.75rem', borderTop: '2px dashed #eee' }}>
-                  <Link
-                    href={`/notes/${item.departmentId}/${item.paperCode}`}
-                    style={{
-                      fontSize: '0.9rem',
-                      fontWeight: 800,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.3rem',
-                    }}
-                  >
-                    <span>Read file</span>
-                    <span>→</span>
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div
+              className="neo-card"
+              style={{
+                padding: '3rem 2rem',
+                textAlign: 'center',
+                backgroundColor: 'var(--white)',
+              }}
+            >
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 900, marginBottom: '0.5rem' }}>
+                No Uploads in Community Repository Yet
+              </h3>
+              <p style={{ color: '#555', fontWeight: 600, marginBottom: '1.5rem', maxWidth: '480px', margin: '0 auto 1.5rem auto' }}>
+                Be the first contributor to share lecture notes or previous year question papers for your department.
+              </p>
+              <NeoButton href="/upload" variant="primary">
+                Upload First Material →
+              </NeoButton>
+            </div>
+          )}
         </div>
 
       </div>

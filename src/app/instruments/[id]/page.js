@@ -18,119 +18,104 @@ import {
   Share2,
 } from 'lucide-react';
 
-const sampleCatalog = [
-  {
-    id: 'inst-1',
-    category: 'instrument',
-    categoryLabel: 'Engineering Drafter / Tools',
-    title: 'Mini Drafter (Omega) + T-Square with Carrying Case',
-    description:
-      'Used for one semester in Engineering Drawing. Excellent smooth condition with all tightening screws and protractor scale intact. Comes with original durable black canvas carrying bag and compass kit.',
-    condition: 'Like New',
-    expectedPrice: 450,
-    isNegotiable: true,
-    contactName: 'Rahul M.',
-    contactPhone: '+91 98765 43210',
-    createdAt: '2 days ago',
-    department: 'B.Tech CSE / Core',
-    photos: [
-      'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?auto=format&fit=crop&w=800&q=80',
-    ],
-  },
-  {
-    id: 'inst-2',
-    category: 'book',
-    categoryLabel: 'Academic Textbook',
-    title: 'Higher Engineering Mathematics by B.S. Grewal (44th Ed.)',
-    description:
-      'Clean textbook, no pencil markings or torn pages. Covers Engineering Mathematics 1 and 2 thoroughly with solved university exam problems.',
-    condition: 'Good',
-    expectedPrice: 380,
-    isNegotiable: false,
-    contactName: 'Priya K.',
-    contactPhone: '+91 98234 56789',
-    createdAt: '3 days ago',
-    department: 'B.Tech / Mathematics',
-    photos: [
-      'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80',
-    ],
-  },
-  {
-    id: 'inst-3',
-    category: 'instrument',
-    categoryLabel: 'Lab Apron / Medical Gear',
-    title: 'Clinical Stethoscope & Laboratory Apron (Size M)',
-    description:
-      'Pharmacy laboratory coat with university-approved white cotton fabric and standard dual-head stethoscope. Cleaned and sanitized, ideal for 1st/2nd year B.Pharma lab practicals.',
-    condition: 'Good',
-    expectedPrice: 600,
-    isNegotiable: true,
-    contactName: 'Subhajit D.',
-    contactPhone: '+91 91234 56780',
-    createdAt: '5 days ago',
-    department: 'B.Pharma',
-    photos: [
-      'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&w=800&q=80',
-    ],
-  },
-  {
-    id: 'inst-4',
-    category: 'book',
-    categoryLabel: 'Academic Textbook',
-    title: 'Data Structures and Algorithms in C by Reema Thareja',
-    description:
-      'Essential textbook for Semester 3 CSE/IT. Includes detailed code walkthroughs, Big-O analysis, and tree traversal diagrams.',
-    condition: 'Like New',
-    expectedPrice: 290,
-    isNegotiable: false,
-    contactName: 'Anik B.',
-    contactPhone: '+91 97654 32109',
-    createdAt: '1 week ago',
-    department: 'B.Tech CSE / BCA',
-    photos: [
-      'https://images.unsplash.com/photo-1532012164546-f432f2e3777a?auto=format&fit=crop&w=800&q=80',
-    ],
-  },
-];
+import { createClient } from '@/lib/supabase/client';
 
 export default function ListingDetailPage({ params }) {
   const unwrappedParams = use(params);
   const { id } = unwrappedParams;
 
-  // Find listing from sample or local storage
-  const [listing] = useState(() => {
-    const found = sampleCatalog.find((i) => i.id === id);
-    if (found) return found;
-
-    if (typeof window !== 'undefined') {
-      try {
-        const stored = JSON.parse(localStorage.getItem('notes_nexus_user_listings') || '[]');
-        const storedItem = stored.find((i) => i.id === id);
-        if (storedItem) {
-          return {
-            ...storedItem,
-            contactName: 'Student Seller',
-            contactPhone: '+91 98301 23456',
-            photos: [],
-          };
-        }
-      } catch {
-        // Ignore
-      }
-    }
-    return sampleCatalog[0];
-  });
+  const [listing, setListing] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Anti-Scraping Phone Reveal State
   const [isPhoneRevealed, setIsPhoneRevealed] = useState(false);
   const [hasReported, setHasReported] = useState(false);
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadItem() {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from('marketplace_items')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (!error && data) {
+          if (isMounted) {
+            setListing({
+              id: data.id,
+              category: data.category,
+              categoryLabel: data.category === 'instrument' ? 'Engineering Drafter / Tools' : data.category === 'book' ? 'Academic Textbook' : 'Student Item',
+              title: data.title,
+              description: data.description,
+              condition: data.condition,
+              expectedPrice: data.expected_price,
+              isNegotiable: data.is_negotiable,
+              contactName: data.contact_name,
+              contactPhone: data.contact_phone,
+              department: data.department,
+              photos: data.photo_keys || [],
+              createdAt: new Date(data.created_at).toLocaleDateString(),
+            });
+            setIsLoading(false);
+          }
+          return;
+        }
+      } catch {
+        // Fall back
+      }
+
+      if (typeof window !== 'undefined') {
+        try {
+          const stored = JSON.parse(localStorage.getItem('notes_nexus_user_listings') || '[]');
+          const storedItem = stored.find((i) => i.id === id);
+          if (storedItem && isMounted) {
+            setListing({
+              ...storedItem,
+              categoryLabel: storedItem.category === 'instrument' ? 'Engineering Drafter / Tools' : 'Academic Textbook',
+              photos: storedItem.photos || [],
+            });
+            setIsLoading(false);
+            return;
+          }
+        } catch {
+          // Ignore
+        }
+      }
+
+      if (isMounted) {
+        setIsLoading(false);
+      }
+    }
+
+    loadItem();
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: '4rem 0 8rem 0' }}>
+        <div className="container" style={{ maxWidth: '800px', textAlign: 'center' }}>
+          <div className="neo-card" style={{ padding: '3rem', backgroundColor: 'var(--white)' }}>
+            <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>⏳</div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 900 }}>Loading listing details...</h3>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (!listing) {
     notFound();
   }
 
-  const cleanPhone = listing.contactPhone.replace(/[^0-9]/g, '');
+  const cleanPhone = (listing.contactPhone || '').replace(/[^0-9]/g, '');
   const whatsAppUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(
     `Hi ${listing.contactName}, I saw your listing for "${listing.title}" on Notes Nexus. Is it still available?`
   )}`;
