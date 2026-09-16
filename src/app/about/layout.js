@@ -1,14 +1,16 @@
+import { siteConfig } from '@/config/site';
+
 export const metadata = {
   title: 'About Us',
-  description: 'Meet the team behind Notes Nexus and learn about our mission to provide the best free study materials for JIS University CSE students.',
+  description: `Meet the team behind ${siteConfig.name} and learn about our mission to provide open study materials for ${siteConfig.university} students.`,
   openGraph: {
-    title: 'About Us | Notes Nexus',
-    description: 'Meet the team behind Notes Nexus and learn about our mission to provide the best free study materials for JIS University CSE students.',
+    title: `About Us | ${siteConfig.name}`,
+    description: `Meet the team behind ${siteConfig.name} and learn about our mission to provide open study materials for ${siteConfig.university} students.`,
     url: '/about',
   },
   twitter: {
-    title: 'About Us | Notes Nexus',
-    description: 'Meet the team behind Notes Nexus and learn about our mission to provide the best free study materials for JIS University CSE students.',
+    title: `About Us | ${siteConfig.name}`,
+    description: `Meet the team behind ${siteConfig.name} and learn about our mission to provide open study materials for ${siteConfig.university} students.`,
   },
 };
 
@@ -16,13 +18,13 @@ export default function AboutLayout({ children }) {
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
-    'name': 'About Notes Nexus',
-    'description': 'Learn about the mission and team behind Notes Nexus.',
-    'url': 'https://notes-nexus-jisu.vercel.app/about',
-    'publisher': {
+    name: `About ${siteConfig.name}`,
+    description: `Learn about the mission and team behind ${siteConfig.name}.`,
+    url: `${siteConfig.url}/about`,
+    publisher: {
       '@type': 'EducationalOrganization',
-      'name': 'Notes Nexus'
-    }
+      name: siteConfig.name,
+    },
   };
 
   return (

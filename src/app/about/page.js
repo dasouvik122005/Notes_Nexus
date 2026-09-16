@@ -1,15 +1,12 @@
 "use client";
+
 import React from 'react';
+import Image from 'next/image';
 import AnimateInView from '@/components/AnimateInView';
 import { Target, Info, Sparkles, UserCircle2 } from 'lucide-react';
-import { FaLinkedin, FaGithub } from 'react-icons/fa';
-
-const teamMembers = [
-  { name: 'Rajdip Garai', linkedin: 'https://www.linkedin.com/in/rajdip-garai', github: 'https://github.com/rajdipgarai', image: '/profilepic1.jpg', color: 'var(--primary-pink)' },
-  { name: 'Souvik Das', linkedin: 'https://www.linkedin.com/in/souvikdas12102005/', github: 'https://github.com/dasouvik122005', image: '/profilepic2.jpg', color: 'var(--primary-yellow)' },
-  { name: 'Saikat Das', linkedin: 'https://www.linkedin.com/in/i-am-saikat-das/', github: 'https://github.com', image: '/profilepic3.jpg', color: 'var(--primary-green)' },
-  { name: 'Pritam Bhattacharjee', linkedin: 'https://linkedin.com', github: 'https://github.com', image: '/profilepic4.jpg', color: 'var(--primary-blue)' }
-];
+import { FaLinkedin, FaGithub, FaInstagram } from 'react-icons/fa';
+import { teamMembers } from '@/config/team';
+import { siteConfig } from '@/config/site';
 
 export default function AboutPage() {
   return (
@@ -34,9 +31,27 @@ export default function AboutPage() {
               border: '4px solid var(--black)',
               transform: 'rotate(-2deg)'
             }}>
-              NOTES NEXUS
+              {siteConfig.name.toUpperCase()}
             </span>
           </h1>
+
+          {/* Unofficial Disclaimer Banner */}
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            backgroundColor: '#FEE2E2',
+            border: '2px solid var(--black)',
+            boxShadow: '3px 3px 0px 0px var(--black)',
+            padding: '0.5rem 1rem',
+            fontSize: '0.9rem',
+            fontWeight: 800,
+            color: '#991B1B',
+            marginTop: '1.5rem',
+          }}>
+            <span>⚠️</span>
+            <span>{siteConfig.disclaimer}</span>
+          </div>
         </AnimateInView>
 
         {/* Split Layout About Section */}
@@ -69,8 +84,8 @@ export default function AboutPage() {
               Who We Are
             </h2>
             <p style={{ fontSize: '1.2rem', lineHeight: 1.7, fontWeight: 600 }}>
-              Welcome to <strong>Notes Nexus</strong>, your ultimate resource hub for comprehensive study materials, notes,
-              and cheatsheets tailored for the Computer Science and Engineering (CSE) Department at JIS University.
+              Welcome to <strong>{siteConfig.name}</strong>, a student-run academic hub designed to bring organized notes,
+              previous year questions (PYQs), and study resources to university students across all departments — from Engineering and Computer Applications to Pharmacy, Law, and Sciences.
             </p>
           </AnimateInView>
 
@@ -96,8 +111,7 @@ export default function AboutPage() {
               Our Mission
             </h2>
             <p style={{ fontSize: '1.2rem', lineHeight: 1.7, fontWeight: 600 }}>
-              We are committed to providing you the best of Education. We strive to turn our passion for learning into a thriving platform. 
-              Our mission is to make studying accessible, organized, and engaging for all students.
+              We are passionate about removing friction from student life. By providing a curated, peer-moderated repository of lecture notes and past exams, our goal is to ensure no student is left stranded before an exam.
             </p>
           </AnimateInView>
         </div>
@@ -121,81 +135,136 @@ export default function AboutPage() {
           
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-            gap: '2.5rem'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: '2.5rem',
+            maxWidth: '900px',
+            margin: '0 auto',
           }}>
-            {teamMembers.map((member, index) => (
-              <AnimateInView key={index} delay={0.1 * (index + 1)} direction="up">
-                <div 
-                  className="neo-card" 
-                  style={{ 
-                    height: '100%', 
-                    padding: '0', 
-                    overflow: 'hidden',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    backgroundColor: 'var(--white)'
-                  }}
-                >
-                  <div style={{
-                    height: '250px',
-                    borderBottom: '4px solid var(--black)',
-                    position: 'relative',
-                    backgroundColor: member.color
-                  }}>
-                    <div style={{
-                      width: '100%',
-                      height: '100%',
+            {teamMembers.map((member, index) => {
+              const panelBg = index % 2 === 0 ? 'var(--white)' : 'var(--accent-blue)';
+              
+              return (
+                <AnimateInView key={member.name} delay={0.1 * (index + 1)} direction="up">
+                  <div 
+                    className="neo-card" 
+                    style={{ 
+                      height: '100%', 
+                      padding: '0', 
+                      overflow: 'hidden',
                       display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '6rem',
-                      fontWeight: 900,
-                      color: 'var(--black)',
-                      letterSpacing: '-2px'
-                    }}>
-                      {member.name.split(' ').map(n => n[0]).join('')}
-                    </div>
+                      flexDirection: 'column',
+                      backgroundColor: 'var(--white)'
+                    }}
+                  >
+                    {/* Header Panel (Square / Aspect-Ratio Container with Alternating White / Blue) */}
                     <div style={{
-                      position: 'absolute',
-                      top: '10px',
-                      right: '10px',
-                      backgroundColor: 'var(--white)',
-                      border: '2px solid var(--black)',
-                      padding: '0.25rem',
-                      borderRadius: '50%'
+                      aspectRatio: '1 / 1',
+                      width: '100%',
+                      borderBottom: '4px solid var(--black)',
+                      position: 'relative',
+                      backgroundColor: panelBg,
+                      overflow: 'hidden',
                     }}>
-                      <UserCircle2 size={24} />
+                      {member.photo ? (
+                        <Image
+                          src={member.photo}
+                          alt={member.name}
+                          fill
+                          style={{ objectFit: 'cover' }}
+                        />
+                      ) : (
+                        <div style={{
+                          width: '100%',
+                          height: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '5.5rem',
+                          fontWeight: 900,
+                          color: 'var(--black)',
+                          letterSpacing: '-2px'
+                        }}>
+                          {member.initials}
+                        </div>
+                      )}
+                      <div style={{
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        backgroundColor: 'var(--white)',
+                        border: '2px solid var(--black)',
+                        padding: '0.25rem',
+                        borderRadius: '50%',
+                        zIndex: 2,
+                      }}>
+                        <UserCircle2 size={24} />
+                      </div>
+                    </div>
+                    
+                    {/* Body */}
+                    <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1, backgroundColor: 'var(--white)' }}>
+                      <h3 style={{ fontSize: '1.4rem', fontWeight: 900, textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+                        {member.name}
+                      </h3>
+                      <div style={{ 
+                        display: 'flex', 
+                        gap: '1rem', 
+                        marginTop: 'auto',
+                        paddingTop: '0.5rem',
+                      }}>
+                        {member.socials.linkedin && (
+                          <a
+                            href={member.socials.linkedin}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${member.name} on LinkedIn`}
+                            style={{ color: 'var(--black)', transition: 'transform 0.2s' }}
+                            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.15)'}
+                            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                          >
+                            <FaLinkedin size={24} />
+                          </a>
+                        )}
+                        {member.socials.github && (
+                          <a
+                            href={member.socials.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${member.name} on GitHub`}
+                            style={{ color: 'var(--black)', transition: 'transform 0.2s' }}
+                            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.15)'}
+                            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                          >
+                            <FaGithub size={24} />
+                          </a>
+                        )}
+                        {member.socials.instagram && member.socials.instagram[0] && (
+                          <a
+                            href={member.socials.instagram[0]}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${member.name} on Instagram`}
+                            style={{ color: 'var(--black)', transition: 'transform 0.2s' }}
+                            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.15)'}
+                            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
+                          >
+                            <FaInstagram size={24} />
+                          </a>
+                        )}
+                      </div>
+                      
+                      {/* Fake barcode for the ID badge look */}
+                      <div style={{ 
+                        height: '20px', 
+                        marginTop: '1.25rem',
+                        backgroundImage: 'repeating-linear-gradient(90deg, var(--black), var(--black) 2px, transparent 2px, transparent 4px, var(--black) 4px, var(--black) 5px, transparent 5px, transparent 8px)',
+                        opacity: 0.5
+                      }}></div>
                     </div>
                   </div>
-                  
-                  <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1, backgroundColor: 'var(--white)' }}>
-                    <h3 style={{ fontSize: '1.5rem', fontWeight: 900, textTransform: 'uppercase', marginBottom: '0.25rem' }}>
-                      {member.name}
-                    </h3>
-                    <div style={{ 
-                      display: 'flex', 
-                      gap: '1rem', 
-                      marginTop: 'auto' 
-                    }}>
-                      <a href={member.linkedin} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--black)', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'} onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}>
-                        <FaLinkedin size={24} />
-                      </a>
-                      <a href={member.github} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--black)', transition: 'transform 0.2s' }} onMouseOver={e => e.currentTarget.style.transform = 'scale(1.1)'} onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}>
-                        <FaGithub size={24} />
-                      </a>
-                    </div>
-                    {/* Fake barcode for the ID badge look */}
-                    <div style={{ 
-                      height: '20px', 
-                      marginTop: '1rem',
-                      backgroundImage: 'repeating-linear-gradient(90deg, var(--black), var(--black) 2px, transparent 2px, transparent 4px, var(--black) 4px, var(--black) 5px, transparent 5px, transparent 8px)',
-                      opacity: 0.5
-                    }}></div>
-                  </div>
-                </div>
-              </AnimateInView>
-            ))}
+                </AnimateInView>
+              );
+            })}
           </div>
         </AnimateInView>
 

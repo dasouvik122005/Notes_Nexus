@@ -5,13 +5,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import logoImg from '../../public/icon2.png';
 import NeoButton from './NeoButton';
+import { siteConfig } from '@/config/site';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
-  // Close menu when route changes or window resizes
+  // Close menu when window resizes
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768) setIsOpen(false);
@@ -45,7 +46,7 @@ export default function Navbar() {
           }}>
             <Image
               src={logoImg}
-              alt="Notes Nexus"
+              alt={siteConfig.name}
               width={250}
               height={60}
               priority
@@ -61,20 +62,18 @@ export default function Navbar() {
             fontWeight: 700,
             fontSize: '1.1rem'
           }}>
-            <Link href="/" className="nav-link" style={{ padding: '0.5rem 0', borderBottom: '3px solid transparent' }}>
-              HOME
-            </Link>
-            <Link href="/notes" className="nav-link" style={{ padding: '0.5rem 0', borderBottom: '3px solid transparent' }}>
-              NOTES
-            </Link>
-            <Link href="/pyq" className="nav-link" style={{ padding: '0.5rem 0', borderBottom: '3px solid transparent' }}>
-              PYQ
-            </Link>
-            <Link href="/about" className="nav-link" style={{ padding: '0.5rem 0', borderBottom: '3px solid transparent' }}>
-              ABOUT
-            </Link>
+            {siteConfig.nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="nav-link"
+                style={{ padding: '0.5rem 0', borderBottom: '3px solid transparent' }}
+              >
+                {item.label}
+              </Link>
+            ))}
             <NeoButton
-              href="https://forms.gle/WfbtFjHj3pS9RyQg9"
+              href={siteConfig.links.feedback}
               target="_blank"
               rel="noopener noreferrer"
               variant="secondary"
@@ -84,7 +83,12 @@ export default function Navbar() {
             </NeoButton>
           </nav>
 
-          <button className="mobile-menu-btn" onClick={toggleMenu} aria-label="Toggle menu">
+          <button
+            className="mobile-menu-btn"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+            aria-expanded={isOpen}
+          >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square">
               {isOpen ? (
                 <path d="M18 6L6 18M6 6l12 12" />
@@ -99,20 +103,18 @@ export default function Navbar() {
       {/* Mobile Menu Overlay */}
       {isOpen && (
         <div className="mobile-menu">
-          <Link href="/" className="nav-link" onClick={() => setIsOpen(false)}>
-            HOME
-          </Link>
-          <Link href="/notes" className="nav-link" onClick={() => setIsOpen(false)}>
-            NOTES
-          </Link>
-          <Link href="/pyq" className="nav-link" onClick={() => setIsOpen(false)}>
-            PYQ
-          </Link>
-          <Link href="/about" className="nav-link" onClick={() => setIsOpen(false)}>
-            ABOUT
-          </Link>
+          {siteConfig.nav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="nav-link"
+              onClick={() => setIsOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
           <NeoButton
-            href="https://forms.gle/WfbtFjHj3pS9RyQg9"
+            href={siteConfig.links.feedback}
             target="_blank"
             rel="noopener noreferrer"
             variant="secondary"

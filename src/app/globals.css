@@ -2,6 +2,8 @@
   --primary-yellow: #FDE047;
   --primary-pink: #F472B6;
   --primary-blue: #60A5FA;
+  --primary-green: #4ADE80;
+  --accent-blue: #6BA6F7;
   --bg-color: #FDFBF7;
   --black: #000000;
   --white: #FFFFFF;
@@ -78,7 +80,17 @@ a {
 
 .neo-button.secondary {
   background-color: var(--primary-pink);
-  color: var(--white);
+  color: var(--black);
+}
+
+.neo-button.blue {
+  background-color: var(--primary-blue);
+  color: var(--black);
+}
+
+.neo-button.outline {
+  background-color: var(--white);
+  color: var(--black);
 }
 
 .neo-card {
