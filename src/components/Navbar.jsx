@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import logoImg from '../../public/icon2.png';
 import NeoButton from './NeoButton';
+import UserMenu from './auth/UserMenu';
 import { siteConfig } from '@/config/site';
 
 export default function Navbar() {
@@ -81,6 +82,7 @@ export default function Navbar() {
             >
               FEEDBACK
             </NeoButton>
+            <UserMenu />
           </nav>
 
           <button
@@ -123,6 +125,9 @@ export default function Navbar() {
           >
             FEEDBACK
           </NeoButton>
+          <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+            <UserMenu />
+          </div>
         </div>
       )}
     </>

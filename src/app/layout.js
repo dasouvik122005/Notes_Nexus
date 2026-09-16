@@ -1,5 +1,7 @@
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { AuthProvider } from '@/lib/auth/AuthContext';
+import AuthModal from '@/components/auth/AuthModal';
 import { Analytics } from '@vercel/analytics/react';
 import { Inter, Outfit } from 'next/font/google';
 import { siteConfig } from '@/config/site';
@@ -86,12 +88,15 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/png" href="/favicon.png" />
       </head>
       <body style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        <Navbar />
-        <main style={{ flex: 1 }}>
-          {children}
-        </main>
-        <Footer />
-        <Analytics />
+        <AuthProvider>
+          <Navbar />
+          <main style={{ flex: 1 }}>
+            {children}
+          </main>
+          <Footer />
+          <AuthModal />
+          <Analytics />
+        </AuthProvider>
       </body>
     </html>
   );

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { FileText, Star, Eye, ExternalLink, Calendar } from 'lucide-react';
 import PdfModal from '@/components/PdfModal';
+import StarRating from '@/components/StarRating';
 
 export default function MaterialListClient({
   materials = [],
@@ -144,11 +145,13 @@ export default function MaterialListClient({
                   {mat.fileSize > 0 && (
                     <span>• {(mat.fileSize / (1024 * 1024)).toFixed(1)} MB</span>
                   )}
-                  {mat.ratingAvg > 0 && (
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
-                      • <Star size={14} fill="#F59E0B" color="#B45309" /> {mat.ratingAvg.toFixed(1)} ({mat.ratingCount})
-                    </span>
-                  )}
+                  <div style={{ marginLeft: 'auto' }}>
+                    <StarRating
+                      materialId={mat.id}
+                      initialAvg={mat.ratingAvg || 0}
+                      initialCount={mat.ratingCount || 0}
+                    />
+                  </div>
                 </div>
               </div>
 
