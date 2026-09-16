@@ -26,7 +26,7 @@ export const r2Client = new S3Client({
 });
 
 /**
- * Generate a short-lived presigned upload URL for student contributions (max 50MB)
+ * Generate a short-lived presigned upload URL for student contributions (max 20MB)
  */
 export async function getPresignedUploadUrl(
   key: string,

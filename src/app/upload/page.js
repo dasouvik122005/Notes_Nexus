@@ -1116,7 +1116,7 @@ export default function UploadPage() {
                   marginBottom: '0.75rem',
                 }}
               >
-                5. Select PDF Document (Max 50 MB) *
+                5. Select PDF Document (Max 20 MB) *
               </label>
 
               <PdfDropzone

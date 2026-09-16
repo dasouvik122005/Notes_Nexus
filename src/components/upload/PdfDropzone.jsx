@@ -3,7 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { UploadCloud, FileCheck2, AlertCircle, X, CheckCircle2 } from 'lucide-react';
 
-const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
+const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024; // 20 MB
 const PDF_MAGIC_BYTES = [0x25, 0x50, 0x44, 0x46, 0x2d]; // %PDF-
 
 function formatBytes(bytes) {
@@ -38,11 +38,11 @@ export default function PdfDropzone({
       return;
     }
 
-    // 2. 50 MB hard cap check
+    // 2. 20 MB hard cap check
     if (selectedFile.size > MAX_FILE_SIZE_BYTES) {
       const sizeMb = (selectedFile.size / (1024 * 1024)).toFixed(1);
       setError(
-        `File size (${sizeMb} MB) exceeds the 50 MB limit. Please split the notes into individual units or chapters before uploading.`
+        `File size (${sizeMb} MB) exceeds the 20 MB limit. Please split the notes into individual units or chapters before uploading.`
       );
       return;
     }
@@ -185,7 +185,7 @@ export default function PdfDropzone({
               marginBottom: '0.75rem',
             }}
           >
-            Strictly PDF format only • Maximum 50 MB per file
+            Strictly PDF format only • Maximum 20 MB per file
           </p>
 
           <span
