@@ -9,8 +9,6 @@ export const siteConfig = {
   description:
     "Free comprehensive study materials, notes, and previous year questions (PYQs) across all university departments.",
   university: "JIS University",
-  disclaimer: "A student initiative. Not affiliated with or endorsed by JIS University or any educational institution.",
-  shortDisclaimer: "Unofficial Student Initiative",
   url: "https://notes-nexus-jisu.vercel.app",
   links: {
     feedback: "https://forms.gle/WfbtFjHj3pS9RyQg9",

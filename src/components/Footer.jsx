@@ -47,19 +47,7 @@ export default function Footer() {
               {siteConfig.description}
             </p>
             <div
-              style={{
-                marginTop: '1rem',
-                display: 'inline-block',
-                backgroundColor: '#FEE2E2',
-                border: '2px solid var(--black)',
-                padding: '0.35rem 0.6rem',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                color: '#991B1B',
-              }}
-            >
-              ⚠️ {siteConfig.disclaimer}
-            </div>
+
           </div>
 
           {/* Quick Navigation */}
@@ -157,9 +145,7 @@ export default function Footer() {
           <div>
             © {new Date().getFullYear()} {siteConfig.name}. Built with care by students, for students.
           </div>
-          <div style={{ color: '#555' }}>
-            {siteConfig.shortDisclaimer}
-          </div>
+
         </div>
       </div>
     </footer>

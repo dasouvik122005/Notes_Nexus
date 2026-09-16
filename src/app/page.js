@@ -121,25 +121,6 @@ export default async function Home() {
               {siteConfig.description} Everything you need to prepare for semester exams, peer-shared and open.
             </p>
 
-            {/* Disclaimer pill */}
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                backgroundColor: '#FEE2E2',
-                border: '2px solid var(--black)',
-                boxShadow: '3px 3px 0px 0px var(--black)',
-                padding: '0.4rem 0.8rem',
-                fontSize: '0.85rem',
-                fontWeight: 800,
-                color: '#991B1B',
-                marginBottom: '2rem',
-              }}
-            >
-              <span>⚠️</span>
-              <span>{siteConfig.disclaimer}</span>
-            </div>
 
             {/* Action CTA Buttons */}
             <div

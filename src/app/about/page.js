@@ -35,23 +35,6 @@ export default function AboutPage() {
             </span>
           </h1>
 
-          {/* Unofficial Disclaimer Banner */}
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            backgroundColor: '#FEE2E2',
-            border: '2px solid var(--black)',
-            boxShadow: '3px 3px 0px 0px var(--black)',
-            padding: '0.5rem 1rem',
-            fontSize: '0.9rem',
-            fontWeight: 800,
-            color: '#991B1B',
-            marginTop: '1.5rem',
-          }}>
-            <span>⚠️</span>
-            <span>{siteConfig.disclaimer}</span>
-          </div>
         </AnimateInView>
 
         {/* Split Layout About Section */}
