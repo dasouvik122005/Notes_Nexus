@@ -8,16 +8,31 @@ import AnimateFloat from '@/components/AnimateFloat';
 
 export const metadata = {
   title: 'Home | Notes Nexus',
-  description: 'Notes Nexus - Free comprehensive study materials, notes, and previous year questions for JIS University CSE Department.',
+  description: 'Notes Nexus is the ultimate free resource for JIS University CSE students to download B.Tech Computer Science study materials, notes, and previous year questions (PYQs).',
 };
 
 export default function Home() {
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'Notes Nexus',
-    url: 'https://notes-nexus-jisu.vercel.app',
-    description: 'Free comprehensive study materials, notes, and previous year questions for JIS University CSE Department.',
+    '@graph': [
+      {
+        '@type': 'EducationalOrganization',
+        '@id': 'https://notes-nexus-jisu.vercel.app/#organization',
+        'name': 'Notes Nexus',
+        'url': 'https://notes-nexus-jisu.vercel.app',
+        'logo': 'https://notes-nexus-jisu.vercel.app/favicon.png',
+        'description': 'Providing free comprehensive study materials, notes, and previous year questions for the JIS University CSE Department.'
+      },
+      {
+        '@type': 'WebSite',
+        '@id': 'https://notes-nexus-jisu.vercel.app/#website',
+        'url': 'https://notes-nexus-jisu.vercel.app',
+        'name': 'Notes Nexus',
+        'publisher': {
+          '@id': 'https://notes-nexus-jisu.vercel.app/#organization'
+        }
+      }
+    ]
   };
 
   return (
