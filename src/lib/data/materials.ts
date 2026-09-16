@@ -195,3 +195,8 @@ export async function getMaterialsByPaper(
       (!type || m.type === type)
   );
 }
+
+export function getMaterialById(id: string): Material | undefined {
+  return fallbackMaterials.find((m) => m.id === id);
+}
+

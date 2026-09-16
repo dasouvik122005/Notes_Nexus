@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { getDepartmentBySlug } from '@/lib/data/departments';
 import { getPaperByCode } from '@/lib/data/papers';
 import { getMaterialsByPaper } from '@/lib/data/materials';
+import MaterialListClient from '@/components/MaterialListClient';
 import { FileText, Calendar, Upload, ShieldAlert } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 
@@ -146,102 +147,11 @@ export default async function PYQPaperDetailPage({ params }) {
             </Link>
           </div>
 
-          {/* List of PYQ Papers */}
-          {pyqMaterials.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              {pyqMaterials.map((mat) => (
-                <div
-                  key={mat.id}
-                  className="neo-card"
-                  style={{
-                    padding: '1.5rem',
-                    backgroundColor: 'var(--white)',
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '1.5rem',
-                  }}
-                >
-                  <div style={{ flex: '1 1 300px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                      <span
-                        style={{
-                          backgroundColor: mat.examType === 'mid_sem' ? 'var(--primary-yellow)' : 'var(--primary-pink)',
-                          border: '2px solid var(--black)',
-                          padding: '0.15rem 0.5rem',
-                          fontWeight: 900,
-                          fontSize: '0.75rem',
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        {mat.examType === 'mid_sem' ? 'Mid Semester' : 'Final Semester'}
-                      </span>
-                      {mat.year && (
-                        <span
-                          style={{
-                            backgroundColor: 'var(--white)',
-                            border: '2px solid var(--black)',
-                            padding: '0.15rem 0.5rem',
-                            fontWeight: 800,
-                            fontSize: '0.75rem',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.3rem',
-                          }}
-                        >
-                          <Calendar size={12} />
-                          <span>Year {mat.year}</span>
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 900, margin: '0 0 0.5rem 0' }}>
-                      {mat.title}
-                    </h3>
-
-                    {mat.description && (
-                      <p style={{ color: '#444', fontSize: '0.95rem', fontWeight: 600, margin: 0 }}>
-                        {mat.description}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <a
-                      href={mat.driveLink || '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="neo-button primary"
-                    >
-                      View Question Paper →
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            /* Empty State */
-            <div
-              className="neo-card"
-              style={{
-                padding: '3rem 2rem',
-                textAlign: 'center',
-                backgroundColor: 'var(--white)',
-              }}
-            >
-              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>📄</div>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: 900, marginBottom: '0.5rem' }}>
-                No question papers uploaded yet for {paper.paperName}
-              </h3>
-              <p style={{ color: '#555', fontWeight: 600, maxWidth: '420px', margin: '0 auto 1.5rem auto' }}>
-                Help your classmates by contributing Mid Sem or Final Sem question papers from previous years!
-              </p>
-              <Link href="/upload" className="neo-button primary">
-                Upload Question Paper
-              </Link>
-            </div>
-          )}
+          {/* List of PYQ Papers with Secure In-App Viewer */}
+          <MaterialListClient
+            materials={pyqMaterials}
+            emptyMessage={`No question papers uploaded yet for ${paper.paperName}`}
+          />
         </div>
 
         {/* Security / Watermark Notice */}
