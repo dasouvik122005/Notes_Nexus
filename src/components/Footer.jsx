@@ -46,8 +46,6 @@ export default function Footer() {
             <p style={{ fontWeight: 600, fontSize: '0.95rem', lineHeight: 1.5, color: '#222' }}>
               {siteConfig.description}
             </p>
-            <div
-
           </div>
 
           {/* Quick Navigation */}
