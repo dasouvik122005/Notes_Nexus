@@ -93,7 +93,20 @@ export default function MyDashboardPage() {
     }
     return sampleUserMaterials;
   });
-  const [listings, setListings] = useState(sampleUserListings);
+
+  const [listings, setListings] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = JSON.parse(localStorage.getItem('notes_nexus_user_listings') || '[]');
+        if (Array.isArray(stored) && stored.length > 0) {
+          return [...stored, ...sampleUserListings];
+        }
+      } catch {
+        // Fall back
+      }
+    }
+    return sampleUserListings;
+  });
 
   if (isLoading) {
     return (
