@@ -80,7 +80,19 @@ const sampleUserListings = [
 export default function MyDashboardPage() {
   const { user, profile, isLoading, openAuthModal } = useAuth();
   const [activeTab, setActiveTab] = useState('submissions');
-  const [materials, setMaterials] = useState(sampleUserMaterials);
+  const [materials, setMaterials] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = JSON.parse(localStorage.getItem('notes_nexus_user_materials') || '[]');
+        if (Array.isArray(stored) && stored.length > 0) {
+          return [...stored, ...sampleUserMaterials];
+        }
+      } catch {
+        // Fall back
+      }
+    }
+    return sampleUserMaterials;
+  });
   const [listings, setListings] = useState(sampleUserListings);
 
   if (isLoading) {
