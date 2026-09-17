@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { r2Client, isR2Configured } from '@/lib/storage/r2';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { uploadToGoogleDrive, isDriveConfigured } from '@/lib/storage/drive';
+import { PDFDocument, rgb, degrees } from 'pdf-lib';
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 const PDF_MAGIC_BYTES = [0x25, 0x50, 0x44, 0x46, 0x2d]; // %PDF-
-const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME || 'notes-nexus-materials';
 
 export async function POST(request: NextRequest) {
   try {
@@ -79,7 +78,6 @@ export async function POST(request: NextRequest) {
 
     // 4. Authentication & Contributor check
     let userId = 'demo-contributor-id';
-    let userEmail = 'student@jisuniversity.ac.in';
     let isContributorVerified = true;
 
     try {
@@ -90,7 +88,6 @@ export async function POST(request: NextRequest) {
 
       if (user) {
         userId = user.id;
-        userEmail = user.email || userEmail;
 
         // Check account status in users
         const { data: profile } = await supabase
@@ -121,36 +118,59 @@ export async function POST(request: NextRequest) {
       // Offline / demo auth
     }
 
-    // 5. Upload to Cloudflare R2
+    // 5. PDF Watermarking
+    let watermarkedBuffer = buffer;
+    try {
+      const pdfDoc = await PDFDocument.load(buffer);
+      const pages = pdfDoc.getPages();
+      
+      for (const page of pages) {
+        const { width, height } = page.getSize();
+        page.drawText('Notes Nexus • JIS University', {
+          x: 50,
+          y: height / 2,
+          size: 50,
+          color: rgb(0.9, 0.9, 0.9), // Very light gray watermark
+          rotate: degrees(45),
+          opacity: 0.3,
+        });
+      }
+      
+      const pdfBytes = await pdfDoc.save();
+      watermarkedBuffer = Buffer.from(pdfBytes);
+    } catch (wmErr) {
+      console.error('[Upload API] Failed to watermark PDF:', wmErr);
+      // Proceed with original buffer if watermarking fails
+    }
+
+    // 6. Upload to Google Drive
     const sanitizedFileName = file.name
       .replace(/[^a-zA-Z0-9.-]/g, '_')
       .replace(/_{2,}/g, '_');
-    const storageKey = `pending/${type}/${departmentId}/${Date.now()}-${sanitizedFileName}`;
+    const driveFileName = `[${paperCode}] ${sanitizedFileName}`;
 
-    if (isR2Configured) {
+    let webViewLink = '';
+    if (isDriveConfigured) {
       try {
-        const putCommand = new PutObjectCommand({
-          Bucket: R2_BUCKET_NAME,
-          Key: storageKey,
-          Body: buffer,
-          ContentType: 'application/pdf',
-          Metadata: {
-            uploadedBy: userId,
-            uploaderEmail: userEmail,
-            paperCode,
-            title,
-          },
-        });
-        await r2Client.send(putCommand);
-      } catch (r2Err) {
-        console.error('[Upload API] R2 Upload failed:', r2Err);
-        // Fallback: Proceed with database registration so workflow doesn't completely halt
+        const link = await uploadToGoogleDrive(watermarkedBuffer, driveFileName, 'application/pdf');
+        if (link) {
+          webViewLink = link;
+        } else {
+          throw new Error('Google Drive returned null link');
+        }
+      } catch (driveErr) {
+        console.error('[Upload API] Google Drive Upload failed:', driveErr);
+        return NextResponse.json(
+          { error: 'Failed to upload to Google Drive. Please contact administrators.' },
+          { status: 500 }
+        );
       }
     } else {
-      console.warn('[Upload API] R2 is not configured. Saved in pending storage key:', storageKey);
+      console.warn('[Upload API] Google Drive is not configured. Saving placeholder link.');
+      webViewLink = `https://drive.google.com/file/d/demo-${Date.now()}/view`;
     }
 
-    // 6. Check/Insert dynamic paper row & insert material into database
+    // 7. Check/Insert dynamic paper row & insert material into database
     let paperId: string | null = null;
 
     try {
@@ -202,8 +222,8 @@ export async function POST(request: NextRequest) {
         section: section ? section.trim() : null,
         exam_type: type === 'pyq' ? examType || 'final_sem' : null,
         year,
-        storage_key: storageKey,
-        file_size: file.size,
+        storage_key: webViewLink, // Storing Drive link in existing column
+        file_size: watermarkedBuffer.length,
         mime_type: 'application/pdf',
         uploaded_by: userId,
         status: 'pending',
@@ -223,7 +243,6 @@ export async function POST(request: NextRequest) {
       }
     } catch (dbErr) {
       console.error('[Upload API] Database insertion error:', dbErr);
-      // Local demo fallback
     }
 
     const fallbackMaterial = {
@@ -240,8 +259,8 @@ export async function POST(request: NextRequest) {
       section: section ? section.trim() : null,
       exam_type: type === 'pyq' ? examType || 'final_sem' : null,
       year,
-      storage_key: storageKey,
-      file_size: file.size,
+      storage_key: webViewLink,
+      file_size: watermarkedBuffer.length,
       mime_type: 'application/pdf',
       uploaded_by: userId,
       status: 'pending',

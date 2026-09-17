@@ -2,7 +2,6 @@
 
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
-import SecurePdfViewer from './SecurePdfViewer';
 
 export default function PdfModal({
   isOpen,
@@ -142,13 +141,14 @@ export default function PdfModal({
           </button>
         </div>
 
-        {/* Embedded Secure Canvas Viewer */}
+        {/* Embedded Google Drive Viewer */}
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
-          <SecurePdfViewer
-            pdfUrl={pdfUrl}
-            documentTitle={title}
-            viewerEmail={viewerEmail}
-          />
+          <iframe
+            src={pdfUrl.replace('/view', '/preview')}
+            style={{ width: '100%', height: '100%', border: 'none' }}
+            title={title}
+            allow="autoplay"
+          ></iframe>
         </div>
       </div>
     </div>

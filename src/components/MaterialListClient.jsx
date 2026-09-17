@@ -14,7 +14,7 @@ export default function MaterialListClient({
 
   const openViewer = (material) => {
     setActiveModal({
-      pdfUrl: `/api/pdf/stream?id=${material.id}${material.storageKey ? `&key=${encodeURIComponent(material.storageKey)}` : ''}`,
+      pdfUrl: material.storageKey || '',
       title: material.title,
       contributorName: material.uploadedByName,
     });
