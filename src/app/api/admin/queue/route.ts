@@ -25,11 +25,29 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch pending materials
-        const { data: dbMaterials, error: matErr } = await supabase
-          .from('materials')
-          .select('*')
-          .eq('status', 'pending')
-          .order('created_at', { ascending: false });
+    const { data: dbMaterials, error: matErr } = await supabase
+      .from('materials')
+      .select('*, users!uploaded_by(name, email)')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+
+    if (matErr) console.error('[Admin Queue] Materials query error:', matErr);
+
+    const formattedMaterials = (dbMaterials || []).map((m: any) => ({
+      id: m.id,
+      type: m.type,
+      semester: m.semester,
+      paperCode: m.paper_code,
+      departmentId: m.department_id,
+      title: m.title,
+      description: m.description,
+      uploaderName: m.users?.name || 'Unknown User',
+      uploaderEmail: m.users?.email || 'N/A',
+      fileSize: m.file_size,
+      facultyName: m.faculty_name,
+      status: m.status,
+      createdAt: m.created_at,
+    }));
 
         if (matErr) console.error('[Admin Queue] Materials query error:', matErr);
 
@@ -41,12 +59,28 @@ export async function GET(request: NextRequest) {
 
         if (usrErr) console.error('[Admin Queue] Users query error:', usrErr);
 
-        const { data: dbListings, error: lstErr } = await supabase
-          .from('listings')
-          .select('*')
-          .eq('status', 'pending')
-          .order('created_at', { ascending: false });
-        if (lstErr) console.error('[Admin Queue] Listings query error:', lstErr);
+    // Fetch pending listings
+    const { data: dbListings, error: lstErr } = await supabase
+      .from('marketplace_items')
+      .select('*')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false });
+    if (lstErr) console.error('[Admin Queue] Listings query error:', lstErr);
+
+    const formattedListings = (dbListings || []).map((l: any) => ({
+      id: l.id,
+      category: l.category,
+      condition: l.condition,
+      title: l.title,
+      description: l.description,
+      price: l.expected_price,
+      sellerName: l.contact_name || 'Unknown',
+      sellerPhone: l.contact_phone || 'N/A',
+      sellerEmail: l.contact_email || 'N/A',
+      department: l.department,
+      status: l.status,
+      createdAt: l.created_at,
+    }));
 
         let dbLogs: any[] = [];
         try {
@@ -62,14 +96,14 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      materials: dbMaterials || [],
+      materials: formattedMaterials,
       accounts: dbUsers || [],
-      listings: dbListings || [],
+      listings: formattedListings,
       auditLogs: dbLogs || [],
       stats: {
-        pendingMaterialsCount: (dbMaterials || []).length,
+        pendingMaterialsCount: formattedMaterials.length,
         pendingAccountsCount: (dbUsers || []).length,
-        pendingListingsCount: (dbListings || []).length,
+        pendingListingsCount: formattedListings.length,
         totalAuditCount: (dbLogs || []).length,
       },
     });
