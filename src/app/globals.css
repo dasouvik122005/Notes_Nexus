@@ -688,52 +688,54 @@ a:visited {
 }
 
 /* ========================================================================= */
-/* Marketplace Listing Detail Layout                                         */
+/* Marketplace Listing Detail Layout (Canonical Hardcoded Order)            */
 /* ========================================================================= */
-.listing-detail-wrapper {
+.item-detail-wrapper {
   padding: 2.5rem 0 5rem 0;
 }
 
-.listing-detail-grid {
+.item-detail-grid {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
-  gap: 2rem;
+  column-gap: 2rem;
+  row-gap: 1.5rem;
   align-items: flex-start;
 }
 
-.listing-gallery-card {
+/* Desktop: 2-column layout (Gallery, Desc, Safety on left; Sticky Card on right) */
+.item-gallery-card {
   grid-column: 1;
   grid-row: 1;
   background-color: var(--white);
-  border: 3px solid var(--black);
-  box-shadow: 4px 4px 0px 0px var(--black);
   padding: 1rem;
-  border-radius: 4px;
 }
 
-.listing-safety-banner {
-  grid-column: 1;
-  grid-row: 2;
-  background-color: #EFF6FF;
-  border: 2.5px solid var(--black);
-  box-shadow: 3px 3px 0px 0px var(--black);
-  padding: 1rem 1.25rem;
-  border-radius: 4px;
-}
-
-.listing-main-card {
+.item-main-card {
   grid-column: 2;
-  grid-row: 1 / span 2;
+  grid-row: 1 / span 3;
   background-color: var(--white);
-  border: 3px solid var(--black);
-  box-shadow: 4px 4px 0px 0px var(--black);
   padding: 1.75rem;
-  border-radius: 4px;
   position: sticky;
   top: 6rem;
 }
 
-.listing-photo-container {
+.item-desc-card {
+  grid-column: 1;
+  grid-row: 2;
+  background-color: var(--white);
+  padding: 1.75rem;
+}
+
+.item-safety-card {
+  grid-column: 1;
+  grid-row: 3;
+  background-color: #EFF6FF;
+  border: 3px solid var(--black);
+  box-shadow: 4px 4px 0px 0px var(--black);
+  padding: 1.25rem 1.5rem;
+}
+
+.item-photo-box {
   width: 100%;
   height: 380px;
   background-color: #F3F4F6;
@@ -743,10 +745,9 @@ a:visited {
   justify-content: center;
   overflow: hidden;
   position: relative;
-  border-radius: 2px;
 }
 
-.listing-thumbnail-btn {
+.item-thumb-btn {
   width: 68px;
   height: 68px;
   border: 2.5px solid #D1D5DB;
@@ -754,52 +755,50 @@ a:visited {
   padding: 0;
   overflow: hidden;
   position: relative;
-  border-radius: 2px;
   transition: all 0.1s ease;
 }
 
-.listing-thumbnail-btn.active {
+.item-thumb-btn.active {
   border-color: var(--black);
   box-shadow: 2px 2px 0px 0px var(--black);
 }
 
+/* Mobile: Natural un-reordered DOM flow (100% stable across all entry points) */
 @media (max-width: 768px) {
-  .listing-detail-wrapper {
+  .item-detail-wrapper {
     padding: 1rem 0 3.5rem 0;
   }
 
-  .listing-detail-grid {
+  .item-detail-grid {
     display: flex;
     flex-direction: column;
-    gap: 1.15rem;
+    gap: 1.25rem;
   }
 
-  .listing-gallery-card {
-    order: 1;
-    padding: 0.75rem;
-    box-shadow: 3px 3px 0px 0px var(--black);
+  .item-gallery-card {
+    padding: 0.85rem;
   }
 
-  .listing-photo-container {
-    height: 270px;
+  .item-photo-box {
+    height: 300px;
   }
 
-  .listing-thumbnail-btn {
-    width: 52px;
-    height: 52px;
+  .item-thumb-btn {
+    width: 58px;
+    height: 58px;
   }
 
-  .listing-main-card {
-    order: 2;
-    padding: 1.25rem 1rem;
+  .item-main-card {
+    padding: 1.35rem 1.15rem;
     position: static !important;
-    box-shadow: 3px 3px 0px 0px var(--black);
   }
 
-  .listing-safety-banner {
-    order: 3;
-    padding: 0.85rem 1rem;
-    box-shadow: 2.5px 2.5px 0px 0px var(--black);
+  .item-desc-card {
+    padding: 1.35rem 1.15rem;
+  }
+
+  .item-safety-card {
+    padding: 1.15rem 1rem;
   }
 }
 

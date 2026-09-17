@@ -184,7 +184,7 @@ export default function ListingDetailPage({ params }) {
   )}`;
 
   return (
-    <div className="listing-detail-wrapper">
+    <div className="item-detail-wrapper">
       <div className="container" style={{ maxWidth: '1020px' }}>
         {/* Back Link */}
         <div style={{ marginBottom: '1.25rem' }}>
@@ -204,11 +204,11 @@ export default function ListingDetailPage({ params }) {
           </Link>
         </div>
 
-        {/* Main 2-Column Desktop / Unified Mobile Grid */}
-        <div className="listing-detail-grid">
-          {/* 1. Gallery Card */}
-          <div className="listing-gallery-card">
-            <div className="listing-photo-container">
+        {/* Main Grid: Hardcoded canonical DOM order (1. Gallery -> 2. Details/Contact -> 3. Description -> 4. Safety) */}
+        <div className="item-detail-grid">
+          {/* 1. Image Gallery Card */}
+          <div className="neo-card item-gallery-card">
+            <div className="item-photo-box">
               {listing.photos && listing.photos.length > 0 ? (
                 <Image
                   unoptimized
@@ -235,7 +235,7 @@ export default function ListingDetailPage({ params }) {
                     key={idx}
                     type="button"
                     onClick={() => setActivePhotoIdx(idx)}
-                    className={`listing-thumbnail-btn ${activePhotoIdx === idx ? 'active' : ''}`}
+                    className={`item-thumb-btn ${activePhotoIdx === idx ? 'active' : ''}`}
                     aria-label={`View photo ${idx + 1}`}
                   >
                     <Image
@@ -251,42 +251,8 @@ export default function ListingDetailPage({ params }) {
             )}
           </div>
 
-          {/* 2. Safety Guidelines Banner */}
-          <div className="listing-safety-banner">
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-                fontWeight: 900,
-                fontSize: '0.82rem',
-                color: '#1E40AF',
-                marginBottom: '0.4rem',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-              }}
-            >
-              <ShieldCheck size={16} />
-              <span>Campus Safety Guidelines</span>
-            </div>
-            <ul
-              style={{
-                margin: 0,
-                paddingLeft: '1.15rem',
-                fontSize: '0.8rem',
-                color: '#1E3A8A',
-                fontWeight: 700,
-                lineHeight: 1.5,
-              }}
-            >
-              <li>Always meet in public campus areas (Central Library, Canteen, Cafeteria).</li>
-              <li>Inspect item condition, knobs, and completeness before paying.</li>
-              <li>Notes Nexus is a student board and never asks for upfront online payments.</li>
-            </ul>
-          </div>
-
-          {/* 3. Main Product Details, Description & Contact Card (Unified) */}
-          <div className="listing-main-card">
+          {/* 2. Main Details, Price, Seller & Contact Card */}
+          <div className="neo-card item-main-card">
             {/* Category & Condition Badges */}
             <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.65rem' }}>
               <span
@@ -333,7 +299,7 @@ export default function ListingDetailPage({ params }) {
             {/* Title */}
             <h1
               style={{
-                fontSize: '1.5rem',
+                fontSize: '1.6rem',
                 fontWeight: 900,
                 lineHeight: 1.25,
                 margin: '0 0 0.85rem 0',
@@ -346,21 +312,21 @@ export default function ListingDetailPage({ params }) {
             {/* Price Box */}
             <div
               style={{
-                backgroundColor: '#F0FDF4',
-                border: '2px solid var(--black)',
+                backgroundColor: '#F9FAFB',
+                border: '2.5px solid var(--black)',
                 boxShadow: '2.5px 2.5px 0px 0px var(--black)',
-                padding: '0.65rem 1rem',
+                padding: '0.75rem 1rem',
                 display: 'flex',
-                alignItems: 'center',
+                alignItems: 'baseline',
                 justifyContent: 'space-between',
                 marginBottom: '1rem',
               }}
             >
               <div>
-                <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#166534', textTransform: 'uppercase', display: 'block' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', display: 'block' }}>
                   Expected Price
                 </span>
-                <span style={{ fontSize: '1.85rem', fontWeight: 900, color: '#15803D', lineHeight: 1 }}>
+                <span style={{ fontSize: '2rem', fontWeight: 900, color: '#166534', lineHeight: 1 }}>
                   ₹{listing.expectedPrice}
                 </span>
               </div>
@@ -382,88 +348,54 @@ export default function ListingDetailPage({ params }) {
               )}
             </div>
 
-            {/* Seller & Date Bar */}
+            {/* Seller & Date Metadata */}
             <div
               style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                gap: '0.5rem',
-                padding: '0.5rem 0',
-                borderTop: '1.5px solid #E5E7EB',
-                borderBottom: '1.5px solid #E5E7EB',
-                fontSize: '0.8rem',
+                borderTop: '1.5px dashed #E5E7EB',
+                paddingTop: '0.75rem',
+                marginBottom: '1.15rem',
+                fontSize: '0.82rem',
                 fontWeight: 700,
                 color: '#4B5563',
-                marginBottom: '1rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.35rem',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <User size={14} color="#6B7280" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <User size={15} color="#6B7280" />
                 <span>Seller: <strong>{listing.contactName}</strong></span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <Calendar size={14} color="#6B7280" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Calendar size={15} color="#6B7280" />
                 <span>Posted: <strong>{listing.createdAt}</strong></span>
               </div>
             </div>
 
-            {/* Description Section */}
-            <div style={{ marginBottom: '1.25rem' }}>
-              <h3
-                style={{
-                  fontSize: '0.82rem',
-                  fontWeight: 900,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                  color: '#374151',
-                  margin: '0 0 0.35rem 0',
-                }}
-              >
-                Item Description
-              </h3>
-              <p
-                style={{
-                  color: '#1F2937',
-                  fontWeight: 600,
-                  fontSize: '0.9rem',
-                  lineHeight: 1.55,
-                  whiteSpace: 'pre-line',
-                  margin: 0,
-                  backgroundColor: '#F9FAFB',
-                  padding: '0.75rem',
-                  border: '1.5px solid #E5E7EB',
-                }}
-              >
-                {listing.description}
-              </p>
-            </div>
-
-            {/* Contact Action Section */}
+            {/* Contact Action Box */}
             <div
               style={{
+                border: '2.5px solid var(--black)',
                 backgroundColor: isPhoneRevealed ? '#FEF9C3' : '#F9FAFB',
-                border: '2px solid var(--black)',
                 boxShadow: '2.5px 2.5px 0px 0px var(--black)',
-                padding: '1rem',
+                padding: '1.15rem 1rem',
                 textAlign: 'center',
-                marginBottom: '0.85rem',
+                marginBottom: '1rem',
               }}
             >
               <div style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', color: '#4B5563', marginBottom: '0.35rem' }}>
-                Contact Seller (Phone / WhatsApp)
+                Contact Seller Phone / WhatsApp
               </div>
 
               {!isPhoneRevealed ? (
                 <div>
                   <div
                     style={{
-                      fontSize: '1.25rem',
+                      fontSize: '1.3rem',
                       fontWeight: 900,
                       letterSpacing: '1px',
                       color: '#4B5563',
-                      marginBottom: '0.65rem',
+                      marginBottom: '0.75rem',
                       fontFamily: 'monospace',
                     }}
                   >
@@ -477,7 +409,7 @@ export default function ListingDetailPage({ params }) {
                       backgroundColor: 'var(--primary-yellow)',
                       border: '2px solid var(--black)',
                       boxShadow: '2px 2px 0px 0px var(--black)',
-                      padding: '0.55rem 1.15rem',
+                      padding: '0.6rem 1.25rem',
                       fontWeight: 900,
                       fontSize: '0.85rem',
                       cursor: 'pointer',
@@ -490,7 +422,7 @@ export default function ListingDetailPage({ params }) {
                     <Phone size={15} /> Click to Reveal Contact
                   </button>
 
-                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#6B7280', marginTop: '0.45rem' }}>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#6B7280', marginTop: '0.5rem' }}>
                     Protected against automated scrapers
                   </div>
                 </div>
@@ -515,7 +447,7 @@ export default function ListingDetailPage({ params }) {
                         backgroundColor: 'var(--white)',
                         border: '2px solid var(--black)',
                         boxShadow: '2px 2px 0px 0px var(--black)',
-                        padding: '0.5rem 0.9rem',
+                        padding: '0.55rem 0.95rem',
                         fontWeight: 900,
                         fontSize: '0.82rem',
                         display: 'inline-flex',
@@ -538,7 +470,7 @@ export default function ListingDetailPage({ params }) {
                         color: 'var(--white)',
                         border: '2px solid var(--black)',
                         boxShadow: '2px 2px 0px 0px var(--black)',
-                        padding: '0.5rem 0.95rem',
+                        padding: '0.55rem 1rem',
                         fontWeight: 900,
                         fontSize: '0.82rem',
                         display: 'inline-flex',
@@ -555,7 +487,7 @@ export default function ListingDetailPage({ params }) {
               )}
             </div>
 
-            {/* Report Listing Link */}
+            {/* Report Listing */}
             <div style={{ textAlign: 'center' }}>
               <button
                 type="button"
@@ -577,6 +509,68 @@ export default function ListingDetailPage({ params }) {
                 {hasReported ? '✓ Listing reported to admins' : 'Report this listing'}
               </button>
             </div>
+          </div>
+
+          {/* 3. Item Description Card */}
+          <div className="neo-card item-desc-card">
+            <h2
+              style={{
+                fontSize: '1.2rem',
+                fontWeight: 900,
+                textTransform: 'uppercase',
+                marginBottom: '0.75rem',
+                color: 'var(--black)',
+              }}
+            >
+              Item Description
+            </h2>
+
+            <p
+              style={{
+                color: '#374151',
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                lineHeight: 1.6,
+                whiteSpace: 'pre-line',
+                margin: 0,
+              }}
+            >
+              {listing.description}
+            </p>
+          </div>
+
+          {/* 4. Safety Guidelines Card */}
+          <div className="neo-card item-safety-card">
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.45rem',
+                fontWeight: 900,
+                fontSize: '0.85rem',
+                color: '#1E40AF',
+                marginBottom: '0.5rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+              }}
+            >
+              <ShieldCheck size={18} />
+              <span>Campus Exchange Safety Guidelines</span>
+            </div>
+            <ul
+              style={{
+                margin: 0,
+                paddingLeft: '1.25rem',
+                fontSize: '0.82rem',
+                color: '#1E3A8A',
+                fontWeight: 700,
+                lineHeight: 1.55,
+              }}
+            >
+              <li>Always meet in well-lit public campus locations (e.g. Central Library, Canteen).</li>
+              <li>Inspect all tightening knobs, screws, and page integrity before paying.</li>
+              <li>Notes Nexus is a free noticeboard and never asks for upfront online payments.</li>
+            </ul>
           </div>
         </div>
       </div>

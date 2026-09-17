@@ -608,7 +608,14 @@ export default function MyDashboardPage() {
                   </div>
 
                   <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: '0 0 0.4rem 0' }}>
-                    {item.title}
+                    <Link
+                      href={`/instruments/${item.id}`}
+                      style={{ color: 'inherit', textDecoration: 'none' }}
+                      onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                      onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
+                    >
+                      {item.title}
+                    </Link>
                   </h3>
 
                   <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: 900, color: 'var(--black)' }}>
@@ -617,6 +624,23 @@ export default function MyDashboardPage() {
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <Link
+                    href={`/instruments/${item.id}`}
+                    className="neo-button"
+                    style={{
+                      fontSize: '0.85rem',
+                      padding: '0.5rem 1rem',
+                      backgroundColor: 'var(--white)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <Eye size={15} />
+                    <span>View Listing</span>
+                  </Link>
+
                   <button
                     onClick={() => markAsSold(item.id)}
                     className="neo-button"
