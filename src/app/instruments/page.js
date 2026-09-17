@@ -43,7 +43,7 @@ export default function InstrumentsPage() {
             category: item.category,
             title: item.title,
             description: item.description,
-            condition: item.condition,
+            condition: item.condition === 'like_new' ? 'Like New' : item.condition === 'fair' ? 'Fair' : 'Good',
             expectedPrice: item.expected_price,
             isNegotiable: item.is_negotiable,
             contactName: item.contact_name,

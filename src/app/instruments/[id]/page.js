@@ -60,7 +60,7 @@ export default function ListingDetailPage({ params }) {
                 categoryLabel: data.category === 'instrument' ? 'Engineering Drafter / Tools' : data.category === 'book' ? 'Academic Textbook' : 'Student Item',
                 title: data.title,
                 description: data.description,
-                condition: data.condition,
+                condition: data.condition === 'like_new' ? 'Like New' : data.condition === 'fair' ? 'Fair' : 'Good',
                 expectedPrice: data.expected_price,
                 isNegotiable: data.is_negotiable,
                 contactName: data.contact_name,

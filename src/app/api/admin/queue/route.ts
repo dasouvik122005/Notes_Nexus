@@ -71,7 +71,7 @@ export async function GET(request: NextRequest) {
     const formattedListings = (dbListings || []).map((l: any) => ({
       id: l.id,
       category: l.category,
-      condition: l.condition,
+      condition: l.condition === 'like_new' ? 'Like New' : l.condition === 'fair' ? 'Fair' : 'Good',
       title: l.title,
       description: l.description,
       price: l.expected_price,
