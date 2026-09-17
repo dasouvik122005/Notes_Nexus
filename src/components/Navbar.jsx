@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import logoImg from '../../public/icon2.png';
 import NeoButton from './NeoButton';
 import UserMenu from './auth/UserMenu';
@@ -10,6 +11,7 @@ import { siteConfig } from '@/config/site';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -58,27 +60,29 @@ export default function Navbar() {
 
           <nav className="nav-links" style={{
             display: 'flex',
-            gap: '2.5rem',
+            gap: '1.25rem',
             alignItems: 'center',
             fontWeight: 700,
-            fontSize: '1.1rem'
+            fontSize: '1rem'
           }}>
-            {siteConfig.nav.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="nav-link"
-                style={{ padding: '0.5rem 0', borderBottom: '3px solid transparent' }}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {siteConfig.nav.map((item) => {
+              const isActive = item.href === '/' ? pathname === '/' : pathname?.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`nav-link ${isActive ? 'active' : ''}`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
             <NeoButton
               href={siteConfig.links.feedback}
               target="_blank"
               rel="noopener noreferrer"
               variant="secondary"
-              style={{ padding: '0.5rem 1.25rem', fontSize: '1rem' }}
+              style={{ padding: '0.45rem 1.15rem', fontSize: '0.95rem' }}
             >
               FEEDBACK
             </NeoButton>
@@ -105,16 +109,19 @@ export default function Navbar() {
       {/* Mobile Menu Overlay */}
       {isOpen && (
         <div className="mobile-menu">
-          {siteConfig.nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="nav-link"
-              onClick={() => setIsOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
+          {siteConfig.nav.map((item) => {
+            const isActive = item.href === '/' ? pathname === '/' : pathname?.startsWith(item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`nav-link ${isActive ? 'active' : ''}`}
+                onClick={() => setIsOpen(false)}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
           <NeoButton
             href={siteConfig.links.feedback}
             target="_blank"
