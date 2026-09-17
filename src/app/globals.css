@@ -401,3 +401,217 @@ a:visited {
   box-shadow: 2px 2px 0px 0px var(--black);
   transform: translate(-1px, -1px);
 }
+
+/* ========================================================================= */
+/* Footer Styles & Responsive Layout                                         */
+/* ========================================================================= */
+.main-footer {
+  background-color: var(--white);
+  border-top: 3px solid var(--black);
+  box-shadow: 0 -4px 0 0 rgba(0, 0, 0, 1);
+  padding: 2.5rem 0 1.5rem 0;
+  margin-top: auto;
+}
+
+.footer-main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2.5rem;
+  padding-bottom: 1.75rem;
+  border-bottom: 2px solid var(--black);
+}
+
+.footer-brand {
+  max-width: 380px;
+}
+
+.footer-logo-badge {
+  display: inline-block;
+  background-color: var(--primary-yellow);
+  border: 3px solid var(--black);
+  box-shadow: 3px 3px 0px 0px var(--black);
+  padding: 0.25rem 0.75rem;
+  font-weight: 900;
+  font-size: 1.25rem;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.5px;
+}
+
+.footer-desc {
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #222;
+}
+
+.footer-links-wrapper {
+  display: flex;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+
+.footer-col {
+  min-width: 130px;
+}
+
+.footer-heading {
+  font-size: 1rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.5px;
+}
+
+.footer-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-link {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--black);
+  text-decoration: none;
+  display: inline-block;
+  transition: transform 0.1s ease, color 0.1s ease;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+  transform: translateX(2px);
+}
+
+.footer-bottom {
+  padding-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.footer-copy {
+  color: #333;
+}
+
+.footer-legal {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.footer-legal-link {
+  color: var(--black);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.footer-legal-link:hover {
+  text-decoration: underline;
+}
+
+.footer-legal-sep {
+  color: #888;
+}
+
+/* ========================================================================= */
+/* About Page Responsive Layout                                              */
+/* ========================================================================= */
+.about-page-wrapper {
+  padding: 3.5rem 0;
+}
+
+.about-split-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2.5rem;
+  margin-bottom: 5rem;
+}
+
+.about-card-padding {
+  padding: 2.25rem;
+}
+
+/* Footer & About Mobile Optimizations */
+@media (max-width: 768px) {
+  .main-footer {
+    padding: 1.25rem 0 1rem 0;
+    box-shadow: 0 -3px 0 0 rgba(0, 0, 0, 1);
+  }
+
+  .footer-main {
+    gap: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .footer-brand {
+    max-width: 100%;
+  }
+
+  .footer-logo-badge {
+    font-size: 1.05rem;
+    padding: 0.2rem 0.5rem;
+    margin-bottom: 0.4rem;
+    border-width: 2px;
+    box-shadow: 2px 2px 0px 0px var(--black);
+  }
+
+  .footer-desc {
+    font-size: 0.82rem;
+    line-height: 1.4;
+    color: #444;
+  }
+
+  .footer-links-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .footer-col {
+    min-width: 0;
+  }
+
+  .footer-heading {
+    font-size: 0.85rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .footer-list {
+    gap: 0.25rem;
+  }
+
+  .footer-link {
+    font-size: 0.8rem;
+  }
+
+  .footer-bottom {
+    padding-top: 0.75rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  .about-page-wrapper {
+    padding: 1.5rem 0;
+  }
+
+  .about-split-grid {
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .about-card-padding {
+    padding: 1.25rem !important;
+  }
+}

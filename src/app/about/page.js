@@ -11,13 +11,13 @@ import { siteConfig } from '@/config/site';
 
 export default function AboutPage() {
   return (
-    <div style={{ padding: '4rem 0' }}>
+    <div className="about-page-wrapper">
       <div className="container">
         
         {/* Massive Header */}
-        <AnimateInView delay={0.1} direction="up" style={{ textAlign: 'center', marginBottom: '4rem' }}>
+        <AnimateInView delay={0.1} direction="up" className="about-hero-header" style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
           <h1 className="hero-title" style={{
-            fontSize: '4.5rem',
+            fontSize: '4rem',
             fontWeight: 900,
             textTransform: 'uppercase',
             letterSpacing: '-2px',
@@ -39,62 +39,55 @@ export default function AboutPage() {
         </AnimateInView>
 
         {/* Split Layout About Section */}
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
-          gap: '3rem',
-          marginBottom: '6rem'
-        }}>
+        <div className="about-split-grid">
           
-          <AnimateInView delay={0.2} direction="left" style={{
+          <AnimateInView delay={0.2} direction="left" className="about-card-padding" style={{
             backgroundColor: 'var(--white)',
-            padding: '2.5rem',
             border: '4px solid var(--black)',
             boxShadow: '6px 6px 0px 0px var(--black)',
             position: 'relative'
           }}>
             <div style={{
               position: 'absolute',
-              top: '-20px',
-              left: '-20px',
+              top: '-16px',
+              left: '-16px',
               backgroundColor: 'var(--primary-pink)',
               border: '3px solid var(--black)',
-              padding: '0.5rem',
+              padding: '0.4rem',
               borderRadius: '50%'
             }}>
-              <Info size={32} />
+              <Info size={26} />
             </div>
-            <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               Who We Are
             </h2>
-            <p style={{ fontSize: '1.2rem', lineHeight: 1.7, fontWeight: 600 }}>
+            <p style={{ fontSize: '1.05rem', lineHeight: 1.6, fontWeight: 600 }}>
               Welcome to <strong>{siteConfig.name}</strong>, a student-run academic hub designed to bring organized notes,
               previous year questions (PYQs), and study resources to university students across all departments — from Engineering and Computer Applications to Pharmacy, Law, and Sciences.
             </p>
           </AnimateInView>
 
-          <AnimateInView delay={0.3} direction="right" style={{
+          <AnimateInView delay={0.3} direction="right" className="about-card-padding" style={{
             backgroundColor: 'var(--primary-yellow)',
-            padding: '2.5rem',
             border: '4px solid var(--black)',
             boxShadow: '6px 6px 0px 0px var(--black)',
             position: 'relative'
           }}>
             <div style={{
               position: 'absolute',
-              top: '-20px',
-              right: '-20px',
+              top: '-16px',
+              right: '-16px',
               backgroundColor: 'var(--white)',
               border: '3px solid var(--black)',
-              padding: '0.5rem',
+              padding: '0.4rem',
               borderRadius: '50%'
             }}>
-              <Target size={32} />
+              <Target size={26} />
             </div>
-            <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               Our Mission
             </h2>
-            <p style={{ fontSize: '1.2rem', lineHeight: 1.7, fontWeight: 600 }}>
+            <p style={{ fontSize: '1.05rem', lineHeight: 1.6, fontWeight: 600 }}>
               We are passionate about removing friction from student life. By providing a curated, peer-moderated repository of lecture notes and past exams, our goal is to ensure no student is left stranded before an exam.
             </p>
           </AnimateInView>
