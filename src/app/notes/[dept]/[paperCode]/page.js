@@ -11,7 +11,7 @@ import { siteConfig } from '@/config/site';
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const dept = await getDepartmentBySlug(resolvedParams.dept);
-  const paper = await getPaperByCode(resolvedParams.dept, resolvedParams.paperCode);
+  const paper = await getPaperByCode(dept.id, resolvedParams.paperCode);
 
   if (!dept || !paper) return { title: 'Subject Not Found' };
 
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }) {
 export default async function PaperDetailPage({ params }) {
   const resolvedParams = await params;
   const department = await getDepartmentBySlug(resolvedParams.dept);
-  const paper = await getPaperByCode(resolvedParams.dept, resolvedParams.paperCode);
+  const paper = await getPaperByCode(department.id, resolvedParams.paperCode);
 
   if (!department || !paper) {
     notFound();
