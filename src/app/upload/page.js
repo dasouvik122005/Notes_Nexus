@@ -199,10 +199,10 @@ export default function UploadPage() {
       cloudFormData.append('timestamp', timestamp);
       cloudFormData.append('signature', signature);
       cloudFormData.append('folder', folder);
-      cloudFormData.append('resource_type', 'raw');
+      cloudFormData.append('resource_type', 'image');
 
       const cloudRes = await fetch(
-        `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
+        `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
         { method: 'POST', body: cloudFormData }
       );
 
