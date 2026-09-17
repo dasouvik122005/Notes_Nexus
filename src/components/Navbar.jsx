@@ -72,6 +72,7 @@ export default function Navbar() {
                   key={item.href}
                   href={item.href}
                   className={`nav-link ${isActive ? 'active' : ''}`}
+                  style={{ color: 'var(--black)' }}
                 >
                   {item.label}
                 </Link>
@@ -111,16 +112,17 @@ export default function Navbar() {
         <div className="mobile-menu">
           {siteConfig.nav.map((item) => {
             const isActive = item.href === '/' ? pathname === '/' : pathname?.startsWith(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`nav-link ${isActive ? 'active' : ''}`}
-                onClick={() => setIsOpen(false)}
-              >
-                {item.label}
-              </Link>
-            );
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`nav-link ${isActive ? 'active' : ''}`}
+                  style={{ color: 'var(--black)' }}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              );
           })}
           <NeoButton
             href={siteConfig.links.feedback}
