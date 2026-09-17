@@ -8,6 +8,8 @@ import dynamic from 'next/dynamic';
 const AnimateInView = dynamic(() => import('@/components/AnimateInView'));
 import { siteConfig } from '@/config/site';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const dept = await getDepartmentBySlug(resolvedParams.dept);
