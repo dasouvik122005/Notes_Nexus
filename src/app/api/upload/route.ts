@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
       );
     } else {
       console.error('[Upload API] Database insertion error:', error);
-      return NextResponse.json({ error: 'Failed to insert material into database.' }, { status: 500 });
+      return NextResponse.json({ error: `Database error: ${error?.message || 'Unknown database error'}` }, { status: 500 });
     }
   } catch (err) {
     console.error('[Upload API] Unexpected error:', err);
