@@ -10,6 +10,11 @@ export default function robots() {
         allow: '/',
         disallow: ['/admin', '/api/admin', '/me'],
       },
+      {
+        userAgent: ['GPTBot', 'CCBot', 'Google-Extended', 'Anthropic-ai', 'PerplexityBot'],
+        allow: '/',
+        disallow: ['/admin', '/api/admin', '/me'],
+      },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
   };

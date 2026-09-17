@@ -1,0 +1,10 @@
+/* TEAM */
+  Developer: Souvik Das (dasouvik122005)
+  Site: https://github.com/dasouvik122005
+  From: JIS University
+
+/* SITE */
+  Last update: 2026
+  Standards: HTML5, CSS3, ES6
+  Components: Next.js, React, Tailwind, Supabase
+  Software: Notes Nexus

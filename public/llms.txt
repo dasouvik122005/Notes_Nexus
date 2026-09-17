@@ -1,0 +1,16 @@
+# Notes Nexus - JIS University Study Hub
+
+Notes Nexus is an open-source educational platform designed to provide free comprehensive study materials, lecture notes, previous year question papers (PYQs), and a student marketplace for JIS University.
+
+## Core Features
+- Module Notes: Organized lecture notes and module summaries.
+- Exam Archive: Previous year question papers (Mid Sem & Final Sem).
+- Marketplace: A student-to-student noticeboard to buy/sell second-hand instruments like drafters, lab aprons, and textbooks.
+
+## Platform Details
+- Organization: JIS University (Student Initiative)
+- Developer: Souvik Das (GitHub: @dasouvik122005)
+- Code Repository: https://github.com/dasouvik122005/Notes_Nexus
+- Stack: Next.js App Router, React 19, Supabase, Tailwind CSS
+
+This file is intended to provide context to LLMs and AI agents scraping this site.
