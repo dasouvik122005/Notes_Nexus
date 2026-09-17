@@ -3,7 +3,7 @@ import { Readable } from 'stream';
 
 const GOOGLE_SERVICE_ACCOUNT_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '';
 const GOOGLE_PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY 
-  ? process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n') 
+  ? process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n').replace(/"/g, '').replace(/'/g, '')
   : '';
 
 export const isDriveConfigured = Boolean(GOOGLE_SERVICE_ACCOUNT_EMAIL && GOOGLE_PRIVATE_KEY);
@@ -32,9 +32,7 @@ export async function uploadToGoogleDrive(
     const drive = google.drive({ version: 'v3', auth });
 
     // Convert Buffer to Readable Stream for upload
-    const stream = new Readable();
-    stream.push(buffer);
-    stream.push(null);
+    const stream = Readable.from(buffer);
 
     // 1. Upload the file
     const fileMetadata = {
