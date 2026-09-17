@@ -5,20 +5,20 @@ const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB per photo
 
 export async function POST(request: NextRequest) {
   try {
-    const formData = await request.formData();
+    const {
+      category = 'other',
+      title,
+      description = '',
+      condition = 'Good',
+      price: priceStr,
+      isNegotiable,
+      department = '',
+      contactName,
+      contactPhone,
+      contactEmail = '',
+      photoLinks = []
+    } = await request.json();
 
-    const category = (formData.get('category') as string) || 'other';
-    const title = formData.get('title') as string;
-    const description = (formData.get('description') as string) || '';
-    const condition = (formData.get('condition') as string) || 'Good';
-    const priceStr = formData.get('price') as string;
-    const isNegotiable = formData.get('isNegotiable') === 'true';
-    const department = (formData.get('department') as string) || '';
-    const contactName = formData.get('contactName') as string;
-    const contactPhone = formData.get('contactPhone') as string;
-    const contactEmail = (formData.get('contactEmail') as string) || '';
-
-    // 1. Validate required fields
     if (!title || !priceStr || !contactName || !contactPhone) {
       return NextResponse.json(
         { error: 'Title, expected price, contact name, and contact phone are required.' },
@@ -32,23 +32,6 @@ export async function POST(request: NextRequest) {
         { error: 'Expected price must be a valid positive number.' },
         { status: 400 }
       );
-    }
-
-    // 2. Extract and validate uploaded photos (up to 3)
-    const photoFiles: File[] = [];
-    const photoLinks: string[] = [];
-
-    const files = formData.getAll('photos') as File[];
-    for (const f of files) {
-      if (f && typeof f === 'object' && f.size > 0) {
-        if (f.size > MAX_IMAGE_SIZE_BYTES) {
-          return NextResponse.json(
-            { error: `Photo "${f.name}" exceeds the 5 MB limit per image.` },
-            { status: 400 }
-          );
-        }
-        photoFiles.push(f);
-      }
     }
 
     // 3. User verification check
@@ -83,11 +66,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 4. Photo uploads (handled client-side via Cloudinary in the future)
-    // For now, photos are stored as placeholder keys
-    for (let i = 0; i < photoFiles.length; i++) {
-      photoLinks.push(`placeholder-photo-${Date.now()}-${i}`);
-    }
+    // 4. Photo uploads (handled client-side via Cloudinary)
+    // The client now uploads directly to Cloudinary and passes the URLs in photoLinks array.
 
     // 5. Construct listing object
     const newListing = {

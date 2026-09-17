@@ -116,25 +116,65 @@ export default function CreateListingPage() {
     setIsSubmitting(true);
 
     try {
-      const formData = new FormData();
-      formData.append('category', category);
-      formData.append('title', title.trim());
-      formData.append('description', description.trim());
-      formData.append('condition', condition);
-      formData.append('price', priceNum.toString());
-      formData.append('isNegotiable', isNegotiable ? 'true' : 'false');
-      formData.append('department', department.trim());
-      formData.append('contactName', contactName.trim());
-      formData.append('contactPhone', contactPhone.trim());
-      if (user?.email) formData.append('contactEmail', user.email);
+      // 1. Get signed Cloudinary credentials if there are photos
+      let uploadedPhotoLinks = [];
+      if (photos.length > 0) {
+        const signRes = await fetch('/api/cloudinary/sign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ folder: 'notes-nexus/marketplace' }),
+        });
 
-      for (const p of photos) {
-        formData.append('photos', p.file);
+        if (!signRes.ok) {
+          const signErr = await signRes.json();
+          throw new Error(signErr.error || 'Failed to get image upload credentials.');
+        }
+
+        const { signature, timestamp, folder, apiKey, cloudName } = await signRes.json();
+
+        // 2. Upload each photo directly to Cloudinary
+        for (const p of photos) {
+          const cloudFormData = new FormData();
+          cloudFormData.append('file', p.file);
+          cloudFormData.append('api_key', apiKey);
+          cloudFormData.append('timestamp', timestamp);
+          cloudFormData.append('signature', signature);
+          cloudFormData.append('folder', folder);
+          cloudFormData.append('resource_type', 'image');
+
+          const cloudRes = await fetch(
+            `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+            { method: 'POST', body: cloudFormData }
+          );
+
+          if (!cloudRes.ok) {
+            throw new Error(`Failed to upload image: ${p.file.name}`);
+          }
+
+          const cloudData = await cloudRes.json();
+          uploadedPhotoLinks.push(cloudData.secure_url);
+        }
       }
+
+      // 3. Send JSON payload to our backend
+      const payload = {
+        category,
+        title: title.trim(),
+        description: description.trim(),
+        condition,
+        price: priceNum.toString(),
+        isNegotiable: isNegotiable ? 'true' : 'false',
+        department: department.trim(),
+        contactName: contactName.trim(),
+        contactPhone: contactPhone.trim(),
+        contactEmail: user?.email || '',
+        photoLinks: uploadedPhotoLinks,
+      };
 
       const res = await fetch('/api/marketplace/create', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
