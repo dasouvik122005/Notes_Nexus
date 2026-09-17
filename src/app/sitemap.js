@@ -61,27 +61,5 @@ export default async function sitemap() {
     priority: 0.8,
   }));
 
-  // High-traffic sample subject detail routes
-  const paperDetailRoutes = [
-    {
-      url: `${baseUrl}/notes/btech-cse/CS301`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/notes/btech-cse/M101`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/pyq/btech-cse/CS301`,
-      lastModified: currentDate,
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-  ];
-
-  return [...staticRoutes, ...deptNotesRoutes, ...deptPyqRoutes, ...paperDetailRoutes];
+  return [...staticRoutes, ...deptNotesRoutes, ...deptPyqRoutes];
 }

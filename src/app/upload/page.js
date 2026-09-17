@@ -121,21 +121,26 @@ export default function UploadPage() {
     let paperName = '';
     let paperCode = '';
 
-    if (isCustomPaper) {
-      if (!customPaperName.trim() || !customPaperCode.trim()) {
-        setSubmitError('Please enter both the custom paper name and paper code.');
-        return;
+    if (materialType === 'notes') {
+      if (papers.length === 0 || isCustomPaper) {
+        if (!customPaperName.trim() || !customPaperCode.trim()) {
+          setSubmitError('Please enter both the paper name and paper code.');
+          return;
+        }
+        paperName = customPaperName.trim();
+        paperCode = customPaperCode.trim().toUpperCase();
+      } else {
+        const found = papers.find((p) => p.paperCode === selectedPaperCode);
+        if (!found) {
+          setSubmitError('Please choose a valid subject paper or enter a new one.');
+          return;
+        }
+        paperName = found.paperName;
+        paperCode = found.paperCode;
       }
-      paperName = customPaperName.trim();
-      paperCode = customPaperCode.trim().toUpperCase();
     } else {
-      const found = papers.find((p) => p.paperCode === selectedPaperCode);
-      if (!found) {
-        setSubmitError('Please choose a valid subject paper from the list.');
-        return;
-      }
-      paperName = found.paperName;
-      paperCode = found.paperCode;
+      paperName = `${selectedDept.name} Semester ${selectedSemester} ${examType === 'mid_sem' ? 'Mid Sem' : 'Final Sem'} Combined PYQ`;
+      paperCode = `${selectedDept.shortCode.toUpperCase()}-S${selectedSemester}-PYQ`;
     }
 
     if (!title.trim()) {
@@ -176,14 +181,14 @@ export default function UploadPage() {
 
       // Persist to local / session storage for dashboard /me immediate sync
       const newRecord = {
-        id: data.material?.id || `mat-${Date.now()}`,
+        id: data.material?.id || 'mat-new',
         title: title.trim(),
         paperName,
         paperCode,
         semester: selectedSemester,
         type: materialType,
         status: 'pending',
-        createdAt: new Date().toISOString().split('T')[0],
+        createdAt: data.material?.created_at?.split('T')[0] || '',
         viewCount: 0,
         ratingAvg: 0,
       };
@@ -740,115 +745,213 @@ export default function UploadPage() {
             </div>
 
             {/* 3. Paper / Subject Selector */}
-            <div style={{ marginBottom: '2rem' }}>
-              <label
-                style={{
-                  display: 'block',
-                  fontWeight: 900,
-                  fontSize: '0.95rem',
-                  textTransform: 'uppercase',
-                  marginBottom: '0.75rem',
-                }}
-              >
-                3. Subject / Paper *
-              </label>
-
-              <select
-                value={selectedPaperCode}
-                onChange={handlePaperChange}
-                disabled={isLoadingPapers}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem 1rem',
-                  border: '3px solid var(--black)',
-                  boxShadow: '3px 3px 0px 0px var(--black)',
-                  fontWeight: 800,
-                  fontSize: '0.95rem',
-                  backgroundColor: isLoadingPapers ? '#F3F4F6' : 'var(--white)',
-                  outline: 'none',
-                  marginBottom: isCustomPaper ? '1rem' : '0',
-                }}
-              >
-                {papers.map((p) => (
-                  <option key={p.id || p.paperCode} value={p.paperCode}>
-                    {p.paperName} ({p.paperCode})
-                  </option>
-                ))}
-                <option value="custom">+ Add New Paper / Subject (Not in list)</option>
-              </select>
-
-              {/* Custom Paper Sub-inputs */}
-              {isCustomPaper && (
-                <div
+            {materialType === 'notes' ? (
+              <div style={{ marginBottom: '2rem' }}>
+                <label
                   style={{
-                    backgroundColor: '#FEF9C3',
-                    border: '3px solid var(--black)',
-                    boxShadow: '3px 3px 0px 0px var(--black)',
-                    padding: '1.25rem',
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-                    gap: '1rem',
+                    display: 'block',
+                    fontWeight: 900,
+                    fontSize: '0.95rem',
+                    textTransform: 'uppercase',
+                    marginBottom: '0.75rem',
                   }}
                 >
-                  <div>
-                    <label
-                      style={{
-                        display: 'block',
-                        fontWeight: 800,
-                        fontSize: '0.8rem',
-                        marginBottom: '0.35rem',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      New Paper Name *
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Distributed Operating Systems"
-                      value={customPaperName}
-                      onChange={(e) => setCustomPaperName(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '0.65rem 0.85rem',
-                        border: '2px solid var(--black)',
-                        fontWeight: 700,
-                        fontSize: '0.9rem',
-                        backgroundColor: 'var(--white)',
-                      }}
-                    />
-                  </div>
+                  3. Subject / Paper *
+                </label>
 
-                  <div>
-                    <label
-                      style={{
-                        display: 'block',
-                        fontWeight: 800,
-                        fontSize: '0.8rem',
-                        marginBottom: '0.35rem',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      Paper Code *
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. CS702"
-                      value={customPaperCode}
-                      onChange={(e) => setCustomPaperCode(e.target.value)}
+                {papers.length > 0 ? (
+                  <>
+                    <select
+                      value={selectedPaperCode}
+                      onChange={handlePaperChange}
+                      disabled={isLoadingPapers}
                       style={{
                         width: '100%',
-                        padding: '0.65rem 0.85rem',
-                        border: '2px solid var(--black)',
-                        fontWeight: 700,
-                        fontSize: '0.9rem',
-                        backgroundColor: 'var(--white)',
-                        textTransform: 'uppercase',
+                        padding: '0.75rem 1rem',
+                        border: '3px solid var(--black)',
+                        boxShadow: '3px 3px 0px 0px var(--black)',
+                        fontWeight: 800,
+                        fontSize: '0.95rem',
+                        backgroundColor: isLoadingPapers ? '#F3F4F6' : 'var(--white)',
+                        outline: 'none',
+                        marginBottom: isCustomPaper ? '1rem' : '0',
                       }}
-                    />
+                    >
+                      {papers.map((p) => (
+                        <option key={p.id || p.paperCode} value={p.paperCode}>
+                          {p.paperName} ({p.paperCode})
+                        </option>
+                      ))}
+                      <option value="custom">+ Add New Paper / Subject (Enter Code & Name)</option>
+                    </select>
+
+                    {isCustomPaper && (
+                      <div
+                        style={{
+                          backgroundColor: '#FEF9C3',
+                          border: '3px solid var(--black)',
+                          boxShadow: '3px 3px 0px 0px var(--black)',
+                          padding: '1.25rem',
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                          gap: '1rem',
+                          marginTop: '0.75rem',
+                        }}
+                      >
+                        <div>
+                          <label
+                            style={{
+                              display: 'block',
+                              fontWeight: 800,
+                              fontSize: '0.8rem',
+                              marginBottom: '0.35rem',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            New Paper Name *
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Distributed Operating Systems"
+                            value={customPaperName}
+                            onChange={(e) => setCustomPaperName(e.target.value)}
+                            style={{
+                              width: '100%',
+                              padding: '0.65rem 0.85rem',
+                              border: '2px solid var(--black)',
+                              fontWeight: 700,
+                              fontSize: '0.9rem',
+                              backgroundColor: 'var(--white)',
+                            }}
+                          />
+                        </div>
+
+                        <div>
+                          <label
+                            style={{
+                              display: 'block',
+                              fontWeight: 800,
+                              fontSize: '0.8rem',
+                              marginBottom: '0.35rem',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            Paper Code *
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. CS702"
+                            value={customPaperCode}
+                            onChange={(e) => setCustomPaperCode(e.target.value)}
+                            style={{
+                              width: '100%',
+                              padding: '0.65rem 0.85rem',
+                              border: '2px solid var(--black)',
+                              fontWeight: 700,
+                              fontSize: '0.9rem',
+                              backgroundColor: 'var(--white)',
+                              textTransform: 'uppercase',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div
+                    style={{
+                      backgroundColor: '#FEF9C3',
+                      border: '3px solid var(--black)',
+                      boxShadow: '3px 3px 0px 0px var(--black)',
+                      padding: '1.25rem',
+                    }}
+                  >
+                    <p style={{ margin: '0 0 1rem 0', fontSize: '0.85rem', fontWeight: 800, color: 'var(--black)' }}>
+                      No existing papers recorded for Semester {selectedSemester} yet. Enter the paper name and code below to create it:
+                    </p>
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                        gap: '1rem',
+                      }}
+                    >
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            fontWeight: 800,
+                            fontSize: '0.8rem',
+                            marginBottom: '0.35rem',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          Paper / Subject Name *
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. Data Structures & Algorithms"
+                          value={customPaperName}
+                          onChange={(e) => setCustomPaperName(e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '0.65rem 0.85rem',
+                            border: '2px solid var(--black)',
+                            fontWeight: 700,
+                            fontSize: '0.9rem',
+                            backgroundColor: 'var(--white)',
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          style={{
+                            display: 'block',
+                            fontWeight: 800,
+                            fontSize: '0.8rem',
+                            marginBottom: '0.35rem',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          Paper Code *
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. CS301"
+                          value={customPaperCode}
+                          onChange={(e) => setCustomPaperCode(e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '0.65rem 0.85rem',
+                            border: '2px solid var(--black)',
+                            fontWeight: 700,
+                            fontSize: '0.9rem',
+                            backgroundColor: 'var(--white)',
+                            textTransform: 'uppercase',
+                          }}
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            ) : (
+              <div
+                style={{
+                  backgroundColor: '#EFF6FF',
+                  border: '3px solid var(--black)',
+                  boxShadow: '3px 3px 0px 0px var(--black)',
+                  padding: '1rem 1.25rem',
+                  marginBottom: '2rem',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  color: '#1E40AF',
+                }}
+              >
+                ℹ️ <strong>Semester-Level PYQ:</strong> Previous Year Questions are grouped per semester as full exam papers. You do not need to enter a paper code.
+              </div>
+            )}
 
             {/* 4. Document Metadata */}
             <div style={{ marginBottom: '2rem' }}>

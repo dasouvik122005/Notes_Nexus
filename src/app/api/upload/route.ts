@@ -150,30 +150,66 @@ export async function POST(request: NextRequest) {
       console.warn('[Upload API] R2 is not configured. Saved in pending storage key:', storageKey);
     }
 
-    // 6. Insert material into database
-    const newMaterial = {
-      id: `mat-${Date.now()}`,
-      type,
-      department_id: departmentId,
-      semester,
-      paper_name: paperName,
-      paper_code: paperCode,
-      title,
-      description,
-      faculty_name: facultyName || null,
-      section: section || null,
-      exam_type: type === 'pyq' ? examType || 'final_sem' : null,
-      year,
-      storage_key: storageKey,
-      file_size: file.size,
-      mime_type: 'application/pdf',
-      uploaded_by: userId,
-      status: 'pending',
-      created_at: new Date().toISOString(),
-    };
+    // 6. Check/Insert dynamic paper row & insert material into database
+    let paperId: string | null = null;
 
     try {
       const supabase = await createClient();
+
+      if (type === 'notes') {
+        // Check if paper already exists for this department + semester (matching code)
+        const { data: existingPaper } = await supabase
+          .from('papers')
+          .select('id, is_active')
+          .eq('department_id', departmentId)
+          .eq('semester', semester)
+          .ilike('paper_code', paperCode.trim())
+          .maybeSingle();
+
+        if (existingPaper) {
+          paperId = existingPaper.id;
+        } else {
+          // Insert new paper row dynamically in inactive state (becomes active when notes approved)
+          const { data: insertedPaper } = await supabase
+            .from('papers')
+            .insert({
+              department_id: departmentId,
+              semester,
+              paper_name: paperName.trim(),
+              paper_code: paperCode.trim().toUpperCase(),
+              is_active: false,
+            })
+            .select('id')
+            .single();
+
+          if (insertedPaper) {
+            paperId = insertedPaper.id;
+          }
+        }
+      }
+
+      const newMaterial = {
+        id: `mat-${Date.now()}`,
+        type,
+        department_id: departmentId,
+        paper_id: paperId,
+        semester,
+        paper_name: paperName.trim(),
+        paper_code: paperCode.trim().toUpperCase(),
+        title: title.trim(),
+        description: description.trim(),
+        faculty_name: facultyName ? facultyName.trim() : null,
+        section: section ? section.trim() : null,
+        exam_type: type === 'pyq' ? examType || 'final_sem' : null,
+        year,
+        storage_key: storageKey,
+        file_size: file.size,
+        mime_type: 'application/pdf',
+        uploaded_by: userId,
+        status: 'pending',
+        created_at: new Date().toISOString(),
+      };
+
       const { data, error } = await supabase.from('materials').insert(newMaterial).select().single();
       if (!error && data) {
         return NextResponse.json(
@@ -185,14 +221,37 @@ export async function POST(request: NextRequest) {
           { status: 201 }
         );
       }
-    } catch {
+    } catch (dbErr) {
+      console.error('[Upload API] Database insertion error:', dbErr);
       // Local demo fallback
     }
+
+    const fallbackMaterial = {
+      id: `mat-${Date.now()}`,
+      type,
+      department_id: departmentId,
+      paper_id: paperId || 'paper-auto',
+      semester,
+      paper_name: paperName.trim(),
+      paper_code: paperCode.trim().toUpperCase(),
+      title: title.trim(),
+      description: description.trim(),
+      faculty_name: facultyName ? facultyName.trim() : null,
+      section: section ? section.trim() : null,
+      exam_type: type === 'pyq' ? examType || 'final_sem' : null,
+      year,
+      storage_key: storageKey,
+      file_size: file.size,
+      mime_type: 'application/pdf',
+      uploaded_by: userId,
+      status: 'pending',
+      created_at: new Date().toISOString(),
+    };
 
     return NextResponse.json(
       {
         success: true,
-        material: newMaterial,
+        material: fallbackMaterial,
         message: 'Material successfully submitted for moderation review (pending queue).',
       },
       { status: 201 }

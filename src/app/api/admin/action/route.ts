@@ -36,14 +36,30 @@ export async function POST(request: NextRequest) {
 
         // Perform live DB update based on action
         if (action === 'approve_material') {
-          await supabase
+          const { data: updatedMaterial } = await supabase
             .from('materials')
             .update({
               status: 'approved',
               reviewed_by: user.id,
               reviewed_at: new Date().toISOString(),
             })
-            .eq('id', id);
+            .eq('id', id)
+            .select('paper_id, department_id, semester, paper_code')
+            .single();
+
+          if (updatedMaterial?.paper_id) {
+            await supabase
+              .from('papers')
+              .update({ is_active: true })
+              .eq('id', updatedMaterial.paper_id);
+          } else if (updatedMaterial?.department_id && updatedMaterial?.paper_code) {
+            await supabase
+              .from('papers')
+              .update({ is_active: true })
+              .eq('department_id', updatedMaterial.department_id)
+              .eq('semester', updatedMaterial.semester)
+              .ilike('paper_code', updatedMaterial.paper_code);
+          }
         } else if (action === 'reject_material') {
           await supabase
             .from('materials')
