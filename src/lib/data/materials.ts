@@ -24,6 +24,14 @@ export interface Material {
   createdAt: string;
 }
 
+function extractExamYear(title?: string, fallbackYear?: any): number | undefined {
+  if (title) {
+    const match = title.match(/\b(20[1-2][0-9])\b/);
+    if (match) return parseInt(match[1], 10);
+  }
+  return fallbackYear ? Number(fallbackYear) : undefined;
+}
+
 export async function getLatestMaterials(limit = 4): Promise<Material[]> {
   if (isSupabaseConfigured) {
     try {
@@ -47,7 +55,7 @@ export async function getLatestMaterials(limit = 4): Promise<Material[]> {
           section: m.section,
           facultyName: m.faculty_name,
           examType: m.exam_type,
-          year: m.year,
+          year: m.type === 'pyq' ? extractExamYear(m.title, m.year) : m.year,
           title: m.title,
           description: m.description,
           storageKey: m.storage_key,
@@ -100,7 +108,7 @@ export async function getMaterialsByPaper(
           section: m.section,
           facultyName: m.faculty_name,
           examType: m.exam_type,
-          year: m.year,
+          year: m.type === 'pyq' ? extractExamYear(m.title, m.year) : m.year,
           title: m.title,
           description: m.description,
           storageKey: m.storage_key,
@@ -143,7 +151,7 @@ export async function getMaterialById(id: string): Promise<Material | undefined>
           section: d.section,
           facultyName: d.faculty_name,
           examType: d.exam_type,
-          year: d.year,
+          year: d.type === 'pyq' ? extractExamYear(d.title, d.year) : d.year,
           title: d.title,
           description: d.description,
           storageKey: d.storage_key,
@@ -199,7 +207,7 @@ export async function getPYQMaterialsByDepartment(
           section: m.section,
           facultyName: m.faculty_name,
           examType: m.exam_type,
-          year: m.year,
+          year: m.type === 'pyq' ? extractExamYear(m.title, m.year) : m.year,
           title: m.title,
           description: m.description,
           storageKey: m.storage_key,

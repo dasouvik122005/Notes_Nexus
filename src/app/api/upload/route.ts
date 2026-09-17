@@ -43,7 +43,13 @@ export async function POST(request: NextRequest) {
     }
 
     const semester = parseInt(semesterStr, 10);
-    const year = yearStr ? parseInt(yearStr, 10) : new Date().getFullYear();
+    let year = yearStr ? parseInt(yearStr, 10) : new Date().getFullYear();
+    if (type === 'pyq') {
+      const titleYearMatch = title.match(/\b(20[1-2][0-9])\b/);
+      if (titleYearMatch) {
+        year = parseInt(titleYearMatch[1], 10);
+      }
+    }
 
     // 2. Authentication & Contributor check
     const supabase = await createClient();

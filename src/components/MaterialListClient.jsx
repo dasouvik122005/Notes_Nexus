@@ -102,7 +102,7 @@ export default function MaterialListClient({
                       {mat.examType === 'mid_sem' ? 'Mid Sem' : 'Final Sem'}
                     </span>
                   )}
-                  {mat.year && (
+                  {(mat.year || mat.title?.match(/\b(20[1-2][0-9])\b/)) && (
                     <span
                       style={{
                         backgroundColor: 'var(--white)',
@@ -116,7 +116,12 @@ export default function MaterialListClient({
                       }}
                     >
                       <Calendar size={12} />
-                      <span>{mat.year}</span>
+                      <span>
+                        {(() => {
+                          const titleMatch = mat.title?.match(/\b(20[1-2][0-9])\b/);
+                          return titleMatch ? titleMatch[1] : mat.year;
+                        })()}
+                      </span>
                     </span>
                   )}
                   <FileText size={18} />

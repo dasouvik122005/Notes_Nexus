@@ -43,7 +43,7 @@ export default function UploadPage() {
   const [facultyName, setFacultyName] = useState('');
   const [section, setSection] = useState('');
   const [examType, setExamType] = useState('final_sem'); // 'mid_sem' | 'final_sem'
-  const [year, setYear] = useState(new Date().getFullYear().toString());
+  const [year, setYear] = useState('2025');
 
   // File Upload State
   const [file, setFile] = useState(null);
@@ -1100,7 +1100,16 @@ export default function UploadPage() {
                       : 'e.g. 2023 End-Semester Examination Paper'
                   }
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setTitle(val);
+                    if (materialType === 'pyq') {
+                      const match = val.match(/\b(20[1-2][0-9])\b/);
+                      if (match) {
+                        setYear(match[1]);
+                      }
+                    }
+                  }}
                   style={{
                     width: '100%',
                     padding: '0.75rem 1rem',
@@ -1276,7 +1285,7 @@ export default function UploadPage() {
                         backgroundColor: 'var(--white)',
                       }}
                     >
-                      {[2025, 2024, 2023, 2022, 2021, 2020, 2019].map((y) => (
+                      {[2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018].map((y) => (
                         <option key={y} value={y}>
                           {y}
                         </option>

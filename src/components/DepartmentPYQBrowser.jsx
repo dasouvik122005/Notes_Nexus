@@ -272,7 +272,10 @@ export default function DepartmentPYQBrowser({ department, initialMaterials = []
                       }}
                     >
                       <Calendar size={14} />
-                      {material.year || 'Unknown Year'}
+                      {(() => {
+                        const titleYearMatch = material.title?.match(/\b(20[1-2][0-9])\b/);
+                        return titleYearMatch ? titleYearMatch[1] : (material.year || 'Unknown Year');
+                      })()}
                     </span>
 
                     <span
