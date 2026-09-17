@@ -160,15 +160,10 @@ export default function UploadPage() {
         const pages = pdfDoc.getPages();
 
         const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-        const footerFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
         const watermarkText = 'Notes Nexus • JIS University';
         const fontSize = 54;
         const textWidth = font.widthOfTextAtSize(watermarkText, fontSize);
-
-        const footerText = 'Downloaded from Notes Nexus - notes-nexus.vercel.app';
-        const footerSize = 11;
-        const footerWidth = footerFont.widthOfTextAtSize(footerText, footerSize);
 
         for (const page of pages) {
           const { width, height } = page.getSize();
@@ -185,16 +180,6 @@ export default function UploadPage() {
             color: rgb(0.65, 0.65, 0.65), // Premium gray
             rotate: degrees(45),
             opacity: 0.22, // Subtle opacity
-          });
-
-          // Draw professional footer
-          page.drawText(footerText, {
-            x: (width / 2) - (footerWidth / 2),
-            y: 25,
-            size: footerSize,
-            font: footerFont,
-            color: rgb(0.5, 0.5, 0.5),
-            opacity: 0.6,
           });
         }
 
