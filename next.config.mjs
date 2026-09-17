@@ -4,7 +4,6 @@ const analyze = process.env.ANALYZE === 'true';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactCompiler: true,
   experimental: {
     optimizePackageImports: ['lucide-react'],
   }
