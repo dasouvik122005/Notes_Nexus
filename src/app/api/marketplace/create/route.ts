@@ -64,9 +64,8 @@ export async function POST(request: NextRequest) {
     const sellerId = user.id;
     const sellerEmail = user.email || contactEmail || 'student@jisuniversity.ac.in';
 
-    // Check account status
     const { data: profile } = await supabase
-      .from('profiles')
+      .from('users')
       .select('account_status, role')
       .eq('id', user.id)
       .single();

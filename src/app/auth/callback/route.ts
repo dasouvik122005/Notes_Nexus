@@ -20,30 +20,29 @@ export async function GET(request: Request) {
 
       const userEmail = user.email?.toLowerCase() || '';
 
-      // If user is in ADMIN_EMAILS allowlist, elevate to admin role and verified status
-      if (adminEmails.includes(userEmail)) {
-        try {
-          const adminClient = createAdminClient();
-          await adminClient
-            .from('users')
-            .upsert(
-              {
-                id: user.id,
-                email: userEmail,
-                name:
-                  user.user_metadata?.full_name ||
-                  user.user_metadata?.name ||
-                  userEmail.split('@')[0],
-                avatar_url: user.user_metadata?.avatar_url || null,
-                role: 'admin',
-                account_status: 'verified',
-                verified_at: new Date().toISOString(),
-              },
-              { onConflict: 'id' }
-            );
-        } catch (adminErr) {
-          console.error('Error promoting admin user:', adminErr);
-        }
+      const isAdmin = adminEmails.includes(userEmail);
+      
+      try {
+        const adminClient = createAdminClient();
+        await adminClient
+          .from('users')
+          .upsert(
+            {
+              id: user.id,
+              email: userEmail,
+              name:
+                user.user_metadata?.full_name ||
+                user.user_metadata?.name ||
+                userEmail.split('@')[0],
+              avatar_url: user.user_metadata?.avatar_url || null,
+              role: isAdmin ? 'admin' : 'student',
+              account_status: isAdmin ? 'verified' : 'pending',
+              ...(isAdmin ? { verified_at: new Date().toISOString() } : {}),
+            },
+            { onConflict: 'id' }
+          );
+      } catch (adminErr) {
+        console.error('Error upserting user profile:', adminErr);
       }
 
       return NextResponse.redirect(`${origin}${next}`);
