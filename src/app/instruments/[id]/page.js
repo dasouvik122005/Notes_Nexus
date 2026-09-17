@@ -40,7 +40,7 @@ export default function ListingDetailPage({ params }) {
       try {
         const supabase = createClient();
         const { data, error } = await supabase
-          .from('marketplace_items')
+          .from('listings')
           .select('*')
           .eq('id', id)
           .single();
