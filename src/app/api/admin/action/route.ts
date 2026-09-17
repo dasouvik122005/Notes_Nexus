@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
@@ -115,6 +116,15 @@ export async function POST(request: NextRequest) {
           },
           created_at: new Date().toISOString(),
         });
+
+        // Revalidate the public pages so new materials show up instantly
+        if (action.includes('material')) {
+          revalidatePath('/notes', 'layout');
+          revalidatePath('/pyq', 'layout');
+          revalidatePath('/', 'layout');
+        } else if (action.includes('listing')) {
+          revalidatePath('/instruments', 'layout');
+        }
 
     return NextResponse.json({
       success: true,
