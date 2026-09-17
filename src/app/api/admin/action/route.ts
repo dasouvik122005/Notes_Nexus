@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
               .ilike('paper_code', updatedMaterial.paper_code);
           }
         } else if (action === 'hide_material') {
-          await supabase
+          const { error: hideErr } = await supabase
             .from('materials')
             .update({
               status: 'hidden',
@@ -66,8 +66,13 @@ export async function POST(request: NextRequest) {
               reviewed_at: new Date().toISOString(),
             })
             .eq('id', id);
+            
+          if (hideErr) {
+            console.error('[Admin Action] Error hiding material:', hideErr);
+            return NextResponse.json({ error: `Database error: ${hideErr.message}` }, { status: 500 });
+          }
         } else if (action === 'unhide_material') {
-          await supabase
+          const { error: unhideErr } = await supabase
             .from('materials')
             .update({
               status: 'approved',
@@ -75,6 +80,11 @@ export async function POST(request: NextRequest) {
               reviewed_at: new Date().toISOString(),
             })
             .eq('id', id);
+
+          if (unhideErr) {
+             console.error('[Admin Action] Error unhiding material:', unhideErr);
+             return NextResponse.json({ error: `Database error: ${unhideErr.message}` }, { status: 500 });
+          }
         } else if (action === 'reject_material') {
           await supabase
             .from('materials')
