@@ -57,6 +57,24 @@ export async function POST(request: NextRequest) {
               .eq('semester', updatedMaterial.semester)
               .ilike('paper_code', updatedMaterial.paper_code);
           }
+        } else if (action === 'hide_material') {
+          await supabase
+            .from('materials')
+            .update({
+              status: 'hidden',
+              reviewed_by: user.id,
+              reviewed_at: new Date().toISOString(),
+            })
+            .eq('id', id);
+        } else if (action === 'unhide_material') {
+          await supabase
+            .from('materials')
+            .update({
+              status: 'approved',
+              reviewed_by: user.id,
+              reviewed_at: new Date().toISOString(),
+            })
+            .eq('id', id);
         } else if (action === 'reject_material') {
           await supabase
             .from('materials')

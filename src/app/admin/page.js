@@ -57,6 +57,7 @@ export default function AdminModerationPage() {
 
   // Material Filter
   const [materialFilterType, setMaterialFilterType] = useState('all'); // 'all' | 'notes' | 'pyq'
+  const [materialStatusFilter, setMaterialStatusFilter] = useState('pending'); // 'pending' | 'approved' | 'hidden'
 
   // Modal States
   const [previewPdf, setPreviewPdf] = useState(null); // { url, title }
@@ -165,6 +166,86 @@ export default function AdminModerationPage() {
       }
     } catch (err) {
       console.error('Failed to approve material:', err);
+    } finally {
+      setIsProcessingAction(false);
+    }
+  };
+
+  // Handle Hide Material
+  const handleHideMaterial = async (item) => {
+    setIsProcessingAction(true);
+    try {
+      const res = await fetch('/api/admin/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'hide_material',
+          id: item.id,
+          targetSummary: `${item.title} (${item.paperCode})`,
+        }),
+      });
+
+      if (res.ok) {
+        setMaterials((prev) =>
+          prev.map((m) => (m.id === item.id ? { ...m, status: 'hidden' } : m))
+        );
+        setAuditLogs((prev) => [
+          {
+            id: `log-${Date.now()}`,
+            actorName: user?.name || 'Admin',
+            actorEmail: user?.email || 'admin@jisuniversity.ac.in',
+            action: 'hide_material',
+            entityType: 'material',
+            entityId: item.id,
+            entitySummary: `${item.title} (${item.paperCode})`,
+            timestamp: new Date().toISOString(),
+          },
+          ...prev,
+        ]);
+        setStatusNotification(`Hidden "${item.title}" from public catalog.`);
+      }
+    } catch (err) {
+      console.error('Failed to hide material:', err);
+    } finally {
+      setIsProcessingAction(false);
+    }
+  };
+
+  // Handle Unhide Material
+  const handleUnhideMaterial = async (item) => {
+    setIsProcessingAction(true);
+    try {
+      const res = await fetch('/api/admin/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'unhide_material',
+          id: item.id,
+          targetSummary: `${item.title} (${item.paperCode})`,
+        }),
+      });
+
+      if (res.ok) {
+        setMaterials((prev) =>
+          prev.map((m) => (m.id === item.id ? { ...m, status: 'approved' } : m))
+        );
+        setAuditLogs((prev) => [
+          {
+            id: `log-${Date.now()}`,
+            actorName: user?.name || 'Admin',
+            actorEmail: user?.email || 'admin@jisuniversity.ac.in',
+            action: 'unhide_material',
+            entityType: 'material',
+            entityId: item.id,
+            entitySummary: `${item.title} (${item.paperCode})`,
+            timestamp: new Date().toISOString(),
+          },
+          ...prev,
+        ]);
+        setStatusNotification(`Restored "${item.title}" to public catalog.`);
+      }
+    } catch (err) {
+      console.error('Failed to restore material:', err);
     } finally {
       setIsProcessingAction(false);
     }
@@ -478,10 +559,14 @@ export default function AdminModerationPage() {
     );
   }
 
+  // Computations
+  const pendingMaterialsOnly = materials.filter((m) => m.status === 'pending');
+
   // Filtered materials
   const filteredMaterials = materials.filter((m) => {
-    if (materialFilterType === 'all') return true;
-    return m.type === materialFilterType;
+    if (m.status !== materialStatusFilter) return false;
+    if (materialFilterType !== 'all' && m.type !== materialFilterType) return false;
+    return true;
   });
 
   // 4. Authorized Admin Dashboard View
@@ -615,7 +700,7 @@ export default function AdminModerationPage() {
               <BookOpen size={20} />
             </div>
             <div style={{ fontSize: '2.4rem', fontWeight: 900, marginTop: '0.5rem' }}>
-              {stats.pendingMaterialsCount}
+              {pendingMaterialsOnly.length}
             </div>
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#374151' }}>
               Pending verification
@@ -723,7 +808,7 @@ export default function AdminModerationPage() {
             }}
           >
             <BookOpen size={16} />
-            <span>Materials Queue ({stats.pendingMaterialsCount})</span>
+            <span>Materials Queue ({pendingMaterialsOnly.length})</span>
           </button>
 
           <button
@@ -830,6 +915,48 @@ export default function AdminModerationPage() {
                     border: '2px solid var(--black)',
                     boxShadow:
                       materialFilterType === f.id
+                        ? '3px 3px 0px 0px var(--black)'
+                        : '1px 1px 0px 0px var(--black)',
+                    padding: '0.35rem 0.8rem',
+                    fontWeight: 800,
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Status Filter Chips */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                marginBottom: '2rem',
+                flexWrap: 'wrap',
+              }}
+            >
+              <span style={{ fontWeight: 900, fontSize: '0.8rem', textTransform: 'uppercase' }}>
+                Status:
+              </span>
+              {[
+                { id: 'pending', label: `Pending (${pendingMaterialsOnly.length})` },
+                { id: 'approved', label: 'Live/Approved' },
+                { id: 'hidden', label: 'Hidden' },
+              ].map((f) => (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setMaterialStatusFilter(f.id)}
+                  style={{
+                    backgroundColor:
+                      materialStatusFilter === f.id ? 'var(--primary-yellow)' : 'var(--white)',
+                    border: '2px solid var(--black)',
+                    boxShadow:
+                      materialStatusFilter === f.id
                         ? '3px 3px 0px 0px var(--black)'
                         : '1px 1px 0px 0px var(--black)',
                     padding: '0.35rem 0.8rem',
@@ -1003,57 +1130,109 @@ export default function AdminModerationPage() {
 
 
                       <div style={{ display: 'flex', gap: '0.75rem' }}>
-                        {/* Reject */}
-                        <button
-                          type="button"
-                          disabled={isProcessingAction}
-                          onClick={() =>
-                            setRejectItem({
-                              id: item.id,
-                              title: item.title,
-                              type: 'material',
-                            })
-                          }
-                          style={{
-                            backgroundColor: '#FEE2E2',
-                            color: '#991B1B',
-                            border: '2px solid var(--black)',
-                            boxShadow: '2px 2px 0px 0px var(--black)',
-                            padding: '0.5rem 1.1rem',
-                            fontWeight: 900,
-                            fontSize: '0.85rem',
-                            cursor: isProcessingAction ? 'not-allowed' : 'pointer',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.35rem',
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          <XCircle size={16} /> Reject
-                        </button>
+                        {item.status === 'pending' && (
+                          <>
+                            {/* Reject */}
+                            <button
+                              type="button"
+                              disabled={isProcessingAction}
+                              onClick={() =>
+                                setRejectItem({
+                                  id: item.id,
+                                  title: item.title,
+                                  type: 'material',
+                                })
+                              }
+                              style={{
+                                backgroundColor: '#FEE2E2',
+                                color: '#991B1B',
+                                border: '2px solid var(--black)',
+                                boxShadow: '2px 2px 0px 0px var(--black)',
+                                padding: '0.5rem 1.1rem',
+                                fontWeight: 900,
+                                fontSize: '0.85rem',
+                                cursor: isProcessingAction ? 'not-allowed' : 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              <XCircle size={16} /> Reject
+                            </button>
 
-                        {/* Approve */}
-                        <button
-                          type="button"
-                          disabled={isProcessingAction}
-                          onClick={() => handleApproveMaterial(item)}
-                          style={{
-                            backgroundColor: '#22C55E',
-                            color: 'var(--white)',
-                            border: '2px solid var(--black)',
-                            boxShadow: '3px 3px 0px 0px var(--black)',
-                            padding: '0.5rem 1.3rem',
-                            fontWeight: 900,
-                            fontSize: '0.85rem',
-                            cursor: isProcessingAction ? 'not-allowed' : 'pointer',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.35rem',
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          <CheckCircle2 size={16} /> Approve & Publish
-                        </button>
+                            {/* Approve */}
+                            <button
+                              type="button"
+                              disabled={isProcessingAction}
+                              onClick={() => handleApproveMaterial(item)}
+                              style={{
+                                backgroundColor: '#22C55E',
+                                color: 'var(--white)',
+                                border: '2px solid var(--black)',
+                                boxShadow: '3px 3px 0px 0px var(--black)',
+                                padding: '0.5rem 1.3rem',
+                                fontWeight: 900,
+                                fontSize: '0.85rem',
+                                cursor: isProcessingAction ? 'not-allowed' : 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.35rem',
+                                textTransform: 'uppercase',
+                              }}
+                            >
+                              <CheckCircle2 size={16} /> Approve & Publish
+                            </button>
+                          </>
+                        )}
+
+                        {item.status === 'approved' && (
+                          <button
+                            type="button"
+                            disabled={isProcessingAction}
+                            onClick={() => handleHideMaterial(item)}
+                            style={{
+                              backgroundColor: '#F97316', // Orange
+                              color: 'var(--white)',
+                              border: '2px solid var(--black)',
+                              boxShadow: '3px 3px 0px 0px var(--black)',
+                              padding: '0.5rem 1.3rem',
+                              fontWeight: 900,
+                              fontSize: '0.85rem',
+                              cursor: isProcessingAction ? 'not-allowed' : 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.35rem',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            <Eye size={16} /> Hide from Public
+                          </button>
+                        )}
+
+                        {item.status === 'hidden' && (
+                          <button
+                            type="button"
+                            disabled={isProcessingAction}
+                            onClick={() => handleUnhideMaterial(item)}
+                            style={{
+                              backgroundColor: '#3B82F6', // Blue
+                              color: 'var(--white)',
+                              border: '2px solid var(--black)',
+                              boxShadow: '3px 3px 0px 0px var(--black)',
+                              padding: '0.5rem 1.3rem',
+                              fontWeight: 900,
+                              fontSize: '0.85rem',
+                              cursor: isProcessingAction ? 'not-allowed' : 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.35rem',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            <RefreshCw size={16} /> Restore to Public
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

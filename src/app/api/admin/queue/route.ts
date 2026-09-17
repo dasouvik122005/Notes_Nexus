@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     const { data: dbMaterials, error: matErr } = await supabase
       .from('materials')
       .select('*, users!uploaded_by(name, email)')
-      .eq('status', 'pending')
+      .in('status', ['pending', 'approved', 'hidden'])
       .order('created_at', { ascending: false });
 
     if (matErr) console.error('[Admin Queue] Materials query error:', matErr);
