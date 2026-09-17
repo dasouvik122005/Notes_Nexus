@@ -24,6 +24,16 @@ export default function InstrumentsPage() {
   const [sortBy, setSortBy] = useState('newest'); // 'newest' | 'price_low' | 'price_high'
   const [listings, setListings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -220,18 +230,22 @@ export default function InstrumentsPage() {
               />
               <input
                 type="text"
-                placeholder="Search drafters, textbooks, calculators, aprons..."
+                placeholder={isMobile ? "Search items, books, tools..." : "Search drafters, textbooks, calculators, aprons..."}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '0.7rem 1rem 0.7rem 2.75rem',
+                  padding: isMobile ? '0.7rem 0.85rem 0.7rem 2.6rem' : '0.7rem 1rem 0.7rem 2.75rem',
                   border: '2px solid var(--black)',
                   boxShadow: '2px 2px 0px 0px var(--black)',
                   fontWeight: 700,
-                  fontSize: '0.9rem',
+                  fontSize: isMobile ? '0.85rem' : '0.9rem',
                   backgroundColor: '#F9FAFB',
                   outline: 'none',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  boxSizing: 'border-box',
                 }}
               />
             </div>

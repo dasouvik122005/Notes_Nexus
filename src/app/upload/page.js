@@ -51,6 +51,33 @@ export default function UploadPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [submittedMaterial, setSubmittedMaterial] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const getDepartmentLabel = (dept) => {
+    if (!isMobile) return `${dept.name} (${dept.shortCode})`;
+    const shortNames = {
+      'btech-cse': 'B.Tech CSE',
+      'bca': 'BCA',
+      'bpharma': 'B.Pharma',
+      'mpharma': 'M.Pharma',
+      'bba-llb': 'BBA LL.B',
+      'bba': 'BBA',
+      'bioscience': 'Bioscience & Biotech',
+      'physics': 'Physics',
+      'mathematics': 'Mathematics',
+      'education': 'Education (B.Ed)',
+    };
+    return shortNames[dept.id] || `${dept.shortCode} - ${dept.degreeType || dept.name}`;
+  };
 
   const selectedDept = departments.find((d) => d.id === selectedDeptId) || departments[0];
 
@@ -761,18 +788,23 @@ export default function UploadPage() {
                     onChange={handleDepartmentChange}
                     style={{
                       width: '100%',
-                      padding: '0.75rem 1rem',
+                      maxWidth: '100%',
+                      padding: isMobile ? '0.7rem 0.75rem' : '0.75rem 1rem',
                       border: '3px solid var(--black)',
                       boxShadow: '3px 3px 0px 0px var(--black)',
                       fontWeight: 800,
-                      fontSize: '0.9rem',
+                      fontSize: isMobile ? '0.85rem' : '0.9rem',
                       backgroundColor: 'var(--white)',
                       outline: 'none',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      boxSizing: 'border-box',
                     }}
                   >
                     {departments.map((dept) => (
                       <option key={dept.id} value={dept.id}>
-                        {dept.name} ({dept.shortCode})
+                        {getDepartmentLabel(dept)}
                       </option>
                     ))}
                   </select>
@@ -840,13 +872,18 @@ export default function UploadPage() {
                       disabled={isLoadingPapers}
                       style={{
                         width: '100%',
-                        padding: '0.75rem 1rem',
+                        maxWidth: '100%',
+                        padding: isMobile ? '0.7rem 0.75rem' : '0.75rem 1rem',
                         border: '3px solid var(--black)',
                         boxShadow: '3px 3px 0px 0px var(--black)',
                         fontWeight: 800,
-                        fontSize: '0.95rem',
+                        fontSize: isMobile ? '0.85rem' : '0.95rem',
                         backgroundColor: isLoadingPapers ? '#F3F4F6' : 'var(--white)',
                         outline: 'none',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        boxSizing: 'border-box',
                         marginBottom: isCustomPaper ? '1rem' : '0',
                       }}
                     >

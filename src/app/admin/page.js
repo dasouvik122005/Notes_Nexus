@@ -778,34 +778,11 @@ export default function AdminModerationPage() {
         </div>
 
         {/* Tab Navigation */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '0.5rem',
-            borderBottom: '3px solid var(--black)',
-            marginBottom: '2rem',
-            overflowX: 'auto',
-          }}
-        >
+        <div className="admin-tab-container">
           <button
             type="button"
             onClick={() => setActiveTab('materials')}
-            style={{
-              padding: '0.85rem 1.4rem',
-              fontWeight: 900,
-              fontSize: '0.95rem',
-              borderTop: '3px solid var(--black)',
-              borderLeft: '3px solid var(--black)',
-              borderRight: '3px solid var(--black)',
-              borderBottom: activeTab === 'materials' ? 'none' : '3px solid var(--black)',
-              backgroundColor: activeTab === 'materials' ? 'var(--white)' : '#E5E7EB',
-              marginBottom: '-3px',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              textTransform: 'uppercase',
-            }}
+            className={`admin-tab-btn ${activeTab === 'materials' ? 'active' : ''}`}
           >
             <BookOpen size={16} />
             <span>Materials Queue ({pendingMaterialsOnly.length})</span>
@@ -814,22 +791,7 @@ export default function AdminModerationPage() {
           <button
             type="button"
             onClick={() => setActiveTab('accounts')}
-            style={{
-              padding: '0.85rem 1.4rem',
-              fontWeight: 900,
-              fontSize: '0.95rem',
-              borderTop: '3px solid var(--black)',
-              borderLeft: '3px solid var(--black)',
-              borderRight: '3px solid var(--black)',
-              borderBottom: activeTab === 'accounts' ? 'none' : '3px solid var(--black)',
-              backgroundColor: activeTab === 'accounts' ? 'var(--white)' : '#E5E7EB',
-              marginBottom: '-3px',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              textTransform: 'uppercase',
-            }}
+            className={`admin-tab-btn ${activeTab === 'accounts' ? 'active' : ''}`}
           >
             <UserCheck size={16} />
             <span>Accounts ({stats.pendingAccountsCount})</span>
@@ -838,22 +800,7 @@ export default function AdminModerationPage() {
           <button
             type="button"
             onClick={() => setActiveTab('listings')}
-            style={{
-              padding: '0.85rem 1.4rem',
-              fontWeight: 900,
-              fontSize: '0.95rem',
-              borderTop: '3px solid var(--black)',
-              borderLeft: '3px solid var(--black)',
-              borderRight: '3px solid var(--black)',
-              borderBottom: activeTab === 'listings' ? 'none' : '3px solid var(--black)',
-              backgroundColor: activeTab === 'listings' ? 'var(--white)' : '#E5E7EB',
-              marginBottom: '-3px',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              textTransform: 'uppercase',
-            }}
+            className={`admin-tab-btn ${activeTab === 'listings' ? 'active' : ''}`}
           >
             <Store size={16} />
             <span>Marketplace ({stats.pendingListingsCount})</span>
@@ -862,22 +809,7 @@ export default function AdminModerationPage() {
           <button
             type="button"
             onClick={() => setActiveTab('audit')}
-            style={{
-              padding: '0.85rem 1.4rem',
-              fontWeight: 900,
-              fontSize: '0.95rem',
-              borderTop: '3px solid var(--black)',
-              borderLeft: '3px solid var(--black)',
-              borderRight: '3px solid var(--black)',
-              borderBottom: activeTab === 'audit' ? 'none' : '3px solid var(--black)',
-              backgroundColor: activeTab === 'audit' ? 'var(--white)' : '#E5E7EB',
-              marginBottom: '-3px',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              textTransform: 'uppercase',
-            }}
+            className={`admin-tab-btn ${activeTab === 'audit' ? 'active' : ''}`}
           >
             <History size={16} />
             <span>Audit Trail</span>
