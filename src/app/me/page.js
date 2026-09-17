@@ -62,7 +62,7 @@ export default function MyDashboardPage() {
         }
 
         const { data: dbLists } = await supabase
-          .from('marketplace_items')
+          .from('listings')
           .select('*')
           .eq('seller_id', user.id)
           .order('created_at', { ascending: false });

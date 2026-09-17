@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch pending listings
     const { data: dbListings, error: lstErr } = await supabase
-      .from('marketplace_items')
+      .from('listings')
       .select('*')
       .eq('status', 'pending')
       .order('created_at', { ascending: false });
