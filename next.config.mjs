@@ -1,8 +1,15 @@
+import withBundleAnalyzer from '@next/bundle-analyzer';
+
+const analyze = process.env.ANALYZE === 'true';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    optimizePackageImports: ['lucide-react']
+    optimizePackageImports: ['lucide-react'],
+    reactCompiler: true,
   }
 };
 
-export default nextConfig;
+export default withBundleAnalyzer({
+  enabled: analyze,
+})(nextConfig);

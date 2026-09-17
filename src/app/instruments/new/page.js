@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import NeoButton from '@/components/NeoButton';
@@ -730,11 +731,12 @@ export default function CreateListingPage() {
                       backgroundColor: '#F3F4F6',
                     }}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
+                      unoptimized
+                      fill
                       src={p.previewUrl}
                       alt={`Item photo ${idx + 1}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      style={{ objectFit: 'cover' }}
                     />
                     <button
                       type="button"

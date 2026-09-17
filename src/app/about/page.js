@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Image from 'next/image';
-import AnimateInView from '@/components/AnimateInView';
+import dynamic from 'next/dynamic';
+const AnimateInView = dynamic(() => import('@/components/AnimateInView'));
 import { Target, Info, Sparkles, UserCircle2 } from 'lucide-react';
 import { FaLinkedin, FaGithub, FaInstagram } from 'react-icons/fa';
 import { teamMembers } from '@/config/team';

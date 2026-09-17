@@ -3,7 +3,8 @@
 import React, { useState, useMemo } from 'react';
 import SearchAndFilters from '@/components/SearchAndFilters';
 import PaperCard from '@/components/PaperCard';
-import AnimateInView from '@/components/AnimateInView';
+import dynamic from 'next/dynamic';
+const AnimateInView = dynamic(() => import('@/components/AnimateInView'));
 
 export default function DepartmentPYQCatalog({ department, initialPapers }) {
   const [searchTerm, setSearchTerm] = useState('');

@@ -4,7 +4,8 @@ import { notFound } from 'next/navigation';
 import { getDepartmentBySlug } from '@/lib/data/departments';
 import { getPYQMaterialsByDepartment } from '@/lib/data/materials';
 import DepartmentPYQBrowser from '@/components/DepartmentPYQBrowser';
-import AnimateInView from '@/components/AnimateInView';
+import dynamic from 'next/dynamic';
+const AnimateInView = dynamic(() => import('@/components/AnimateInView'));
 import { siteConfig } from '@/config/site';
 
 export async function generateMetadata({ params }) {

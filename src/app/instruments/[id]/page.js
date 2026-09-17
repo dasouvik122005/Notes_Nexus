@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, use } from 'react';
+import React, { useState, use, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import NeoButton from '@/components/NeoButton';
 import {
@@ -236,11 +237,12 @@ export default function ListingDetailPage({ params }) {
                 }}
               >
                 {listing.photos && listing.photos.length > 0 ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
+                    unoptimized
+                    fill
                     src={listing.photos[activePhotoIdx] || listing.photos[0]}
                     alt={listing.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={{ objectFit: 'cover' }}
                   />
                 ) : (
                   <div style={{ textAlign: 'center', color: '#9CA3AF' }}>
@@ -271,11 +273,12 @@ export default function ListingDetailPage({ params }) {
                         overflow: 'hidden',
                       }}
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
+                        unoptimized
+                        fill
                         src={photo}
                         alt="Thumbnail"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        style={{ objectFit: 'cover' }}
                       />
                     </button>
                   ))}

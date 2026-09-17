@@ -1,5 +1,6 @@
 import React from 'react';
-import AnimateInView from '@/components/AnimateInView';
+import dynamic from 'next/dynamic';
+const AnimateInView = dynamic(() => import('@/components/AnimateInView'));
 import DepartmentCard from '@/components/DepartmentCard';
 import { getDepartments } from '@/lib/data/departments';
 import { siteConfig } from '@/config/site';

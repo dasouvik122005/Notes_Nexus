@@ -2,7 +2,8 @@
 
 import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
-import AnimateInView from '@/components/AnimateInView';
+import dynamic from 'next/dynamic';
+const AnimateInView = dynamic(() => import('@/components/AnimateInView'));
 import {
   Tag,
   Plus,

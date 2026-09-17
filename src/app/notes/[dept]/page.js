@@ -4,7 +4,8 @@ import { notFound } from 'next/navigation';
 import { getDepartmentBySlug } from '@/lib/data/departments';
 import { getPapersByDepartment } from '@/lib/data/papers';
 import DepartmentNotesCatalog from '@/components/DepartmentNotesCatalog';
-import AnimateInView from '@/components/AnimateInView';
+import dynamic from 'next/dynamic';
+const AnimateInView = dynamic(() => import('@/components/AnimateInView'));
 import { siteConfig } from '@/config/site';
 
 export async function generateMetadata({ params }) {

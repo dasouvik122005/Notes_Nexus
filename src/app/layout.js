@@ -92,6 +92,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <head>
         <link rel="icon" type="image/png" href="/favicon.png" />
+        <meta name="google-site-verification" content="3gR60oCIzMPREpm4ghEFO7ET4ggZv9EEadHOP0ggtG8" />
       </head>
       <body suppressHydrationWarning style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <AuthProvider>
