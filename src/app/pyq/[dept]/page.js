@@ -13,9 +13,28 @@ export async function generateMetadata({ params }) {
   const dept = await getDepartmentBySlug(resolvedParams.dept);
   if (!dept) return { title: 'Department Not Found' };
 
+  const title = `${dept.shortCode} Previous Year Questions | ${siteConfig.name}`;
+  const description = `Access Mid Sem and Final Sem previous year questions for ${dept.name} at ${siteConfig.university}.`;
+  const url = `${siteConfig.url}/pyq/${dept.id}`;
+
   return {
-    title: `${dept.shortCode} Previous Year Questions | ${siteConfig.name}`,
-    description: `Access Mid Sem and Final Sem previous year questions for ${dept.name} at ${siteConfig.university}.`,
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'website',
+      siteName: siteConfig.name,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
   };
 }
 
@@ -29,8 +48,25 @@ export default async function DepartmentPYQPage({ params }) {
 
   const pyqMaterials = await getPYQMaterialsByDepartment(department.id);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: `${department.name} Previous Year Questions`,
+    description: `Official past examination question papers for ${department.name}.`,
+    provider: {
+      '@type': 'EducationalOrganization',
+      name: siteConfig.university,
+      sameAs: siteConfig.url,
+    },
+  };
+
   return (
-    <div style={{ padding: '3rem 0 6rem 0' }}>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div style={{ padding: '3rem 0 6rem 0' }}>
       <div className="container">
         
         {/* Breadcrumb Navigation */}
@@ -109,5 +145,6 @@ export default async function DepartmentPYQPage({ params }) {
 
       </div>
     </div>
+    </>
   );
 }

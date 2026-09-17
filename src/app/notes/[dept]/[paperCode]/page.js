@@ -15,9 +15,28 @@ export async function generateMetadata({ params }) {
 
   if (!dept || !paper) return { title: 'Subject Not Found' };
 
+  const title = `${paper.paperName} (${paper.paperCode}) Notes | ${siteConfig.name}`;
+  const description = `Study materials, module guides, and lecture notes for ${paper.paperName} (${paper.paperCode}) at ${siteConfig.university}.`;
+  const url = `${siteConfig.url}/notes/${dept.id}/${paper.paperCode}`;
+
   return {
-    title: `${paper.paperName} (${paper.paperCode}) Notes | ${siteConfig.name}`,
-    description: `Study materials, module guides, and lecture notes for ${paper.paperName} (${paper.paperCode}) at ${siteConfig.university}.`,
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'article',
+      siteName: siteConfig.name,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
   };
 }
 
@@ -32,12 +51,31 @@ export default async function PaperDetailPage({ params }) {
 
   const materials = await getMaterialsByPaper(department.id, paper.paperCode, 'notes');
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Course',
+    name: paper.paperName,
+    description: `Study materials and lecture notes for ${paper.paperName} (${paper.paperCode}).`,
+    provider: {
+      '@type': 'EducationalOrganization',
+      name: siteConfig.university,
+      sameAs: siteConfig.url,
+    },
+    courseCode: paper.paperCode,
+    educationalCredentialAwarded: 'Degree',
+  };
+
   return (
-    <div style={{ padding: '3rem 0 6rem 0' }}>
-      <div className="container">
-        
-        {/* Breadcrumb Navigation */}
-        <nav style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', fontSize: '0.9rem', fontWeight: 800 }}>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div style={{ padding: '3rem 0 6rem 0' }}>
+        <div className="container">
+          
+          {/* Breadcrumb Navigation */}
+          <nav style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', fontSize: '0.9rem', fontWeight: 800 }}>
           <Link href="/notes" style={{ textDecoration: 'underline' }}>
             Departments
           </Link>
@@ -202,5 +240,6 @@ export default async function PaperDetailPage({ params }) {
 
       </div>
     </div>
+    </>
   );
 }
