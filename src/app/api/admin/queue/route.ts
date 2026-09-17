@@ -8,30 +8,41 @@ export async function GET(request: NextRequest) {
       try {
         const supabase = await createClient();
 
-        // Fetch pending materials with contributor profile
-        const { data: dbMaterials } = await supabase
+        // Fetch pending materials
+        const { data: dbMaterials, error: matErr } = await supabase
           .from('materials')
-          .select('*, users!uploaded_by(name, email)')
+          .select('*')
           .eq('status', 'pending')
           .order('created_at', { ascending: false });
 
-        const { data: dbUsers } = await supabase
+        if (matErr) console.error('[Admin Queue] Materials query error:', matErr);
+
+        const { data: dbUsers, error: usrErr } = await supabase
           .from('users')
           .select('*')
           .eq('account_status', 'pending')
           .order('created_at', { ascending: false });
 
-        const { data: dbListings } = await supabase
+        if (usrErr) console.error('[Admin Queue] Users query error:', usrErr);
+
+        const { data: dbListings, error: lstErr } = await supabase
           .from('listings')
-          .select('*, users!seller_id(name, email)')
+          .select('*')
           .eq('status', 'pending')
           .order('created_at', { ascending: false });
+        if (lstErr) console.error('[Admin Queue] Listings query error:', lstErr);
 
-        const { data: dbLogs } = await supabase
-          .from('audit_log')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(20);
+        let dbLogs: any[] = [];
+        try {
+          const { data: logData } = await supabase
+            .from('audit_log')
+            .select('*')
+            .order('created_at', { ascending: false })
+            .limit(20);
+          dbLogs = logData || [];
+        } catch {
+          // audit_log table may not exist yet
+        }
 
         return NextResponse.json({
           success: true,
@@ -46,7 +57,8 @@ export async function GET(request: NextRequest) {
             totalAuditCount: (dbLogs || []).length,
           },
         });
-      } catch {
+      } catch (dbError) {
+        console.error('[Admin Queue API] Database error:', dbError);
         // Return empty queue on DB error
       }
     }
