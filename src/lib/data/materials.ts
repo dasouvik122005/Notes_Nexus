@@ -158,3 +158,60 @@ export async function getMaterialById(id: string): Promise<Material | undefined>
   return undefined;
 }
 
+export async function getPYQMaterialsByDepartment(
+  departmentId: string,
+  semester?: number,
+  examType?: 'mid_sem' | 'final_sem'
+): Promise<Material[]> {
+  if (isSupabaseConfigured) {
+    try {
+      const supabase = await createClient();
+      let query = supabase
+        .from('materials')
+        .select('*')
+        .eq('department_id', departmentId)
+        .eq('type', 'pyq')
+        .eq('status', 'approved');
+
+      if (semester && semester > 0) {
+        query = query.eq('semester', semester);
+      }
+
+      if (examType) {
+        query = query.eq('exam_type', examType);
+      }
+
+      const { data, error } = await query.order('year', { ascending: false });
+
+      if (!error && data && data.length > 0) {
+        return data.map((m) => ({
+          id: m.id,
+          type: m.type,
+          departmentId: m.department_id,
+          paperId: m.paper_id,
+          semester: m.semester,
+          paperName: m.paper_name,
+          paperCode: m.paper_code,
+          section: m.section,
+          facultyName: m.faculty_name,
+          examType: m.exam_type,
+          year: m.year,
+          title: m.title,
+          description: m.description,
+          storageKey: m.storage_key,
+          fileSize: m.file_size,
+          pageCount: m.page_count,
+          ratingAvg: Number(m.rating_avg) || 0,
+          ratingCount: m.rating_count || 0,
+          createdAt: m.created_at,
+        }));
+      }
+    } catch {
+      // Return empty array
+    }
+  }
+
+  return [];
+}
+
+

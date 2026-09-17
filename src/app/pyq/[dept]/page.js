@@ -2,8 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getDepartmentBySlug } from '@/lib/data/departments';
-import { getPapersByDepartment } from '@/lib/data/papers';
-import DepartmentPYQCatalog from '@/components/DepartmentPYQCatalog';
+import { getPYQMaterialsByDepartment } from '@/lib/data/materials';
+import DepartmentPYQBrowser from '@/components/DepartmentPYQBrowser';
 import AnimateInView from '@/components/AnimateInView';
 import { siteConfig } from '@/config/site';
 
@@ -26,7 +26,7 @@ export default async function DepartmentPYQPage({ params }) {
     notFound();
   }
 
-  const papers = await getPapersByDepartment(department.id);
+  const pyqMaterials = await getPYQMaterialsByDepartment(department.id);
 
   return (
     <div style={{ padding: '3rem 0 6rem 0' }}>
@@ -100,10 +100,10 @@ export default async function DepartmentPYQPage({ params }) {
           </p>
         </AnimateInView>
 
-        {/* Interactive Client Catalog */}
-        <DepartmentPYQCatalog
+        {/* Interactive Semester & Exam Session PYQ Browser */}
+        <DepartmentPYQBrowser
           department={department}
-          initialPapers={papers}
+          initialMaterials={pyqMaterials}
         />
 
       </div>
