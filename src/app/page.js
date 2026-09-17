@@ -173,20 +173,6 @@ export default async function Home() {
               >
                 MARKETPLACE
               </NeoButton>
-
-              <NeoButton
-                href="/about"
-                variant="outline"
-                style={{
-                  fontSize: '1.1rem',
-                  fontWeight: 900,
-                  padding: '0.85rem 1.75rem',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                }}
-              >
-                LEARN MORE
-              </NeoButton>
             </div>
           </AnimateInView>
 

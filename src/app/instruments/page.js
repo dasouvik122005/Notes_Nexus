@@ -34,6 +34,7 @@ export default function InstrumentsPage() {
           .from('marketplace_items')
           .select('*')
           .eq('status', 'active')
+          .neq('status', 'sold')
           .order('created_at', { ascending: false });
 
         if (!error && data && data.length > 0) {
@@ -64,7 +65,7 @@ export default function InstrumentsPage() {
       if (typeof window !== 'undefined') {
         try {
           const stored = JSON.parse(localStorage.getItem('notes_nexus_user_listings') || '[]');
-          const approvedStored = stored.filter((s) => s.status === 'approved' || s.status === 'active');
+          const approvedStored = stored.filter((s) => (s.status === 'approved' || s.status === 'active') && s.status !== 'sold');
           if (isMounted) {
             setListings(approvedStored);
           }

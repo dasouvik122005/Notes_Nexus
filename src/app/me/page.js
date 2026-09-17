@@ -178,12 +178,29 @@ export default function MyDashboardPage() {
   const isVerified = profile?.account_status === 'verified';
   const isPending = profile?.account_status === 'pending';
 
-  const markAsSold = (id) => {
+  const markAsSold = async (id) => {
+    const currentItem = listings.find((i) => i.id === id);
+    const nextStatus = currentItem?.status === 'sold' ? 'active' : 'sold';
     setListings((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, status: item.status === 'sold' ? 'active' : 'sold' } : item
+        item.id === id ? { ...item, status: nextStatus } : item
       )
     );
+
+    try {
+      const supabase = createClient();
+      await supabase.from('marketplace_items').update({ status: nextStatus }).eq('id', id);
+    } catch {
+      // ignore
+    }
+
+    try {
+      const stored = JSON.parse(localStorage.getItem('notes_nexus_user_listings') || '[]');
+      const updated = stored.map((s) => (s.id === id ? { ...s, status: nextStatus } : s));
+      localStorage.setItem('notes_nexus_user_listings', JSON.stringify(updated));
+    } catch {
+      // ignore
+    }
   };
 
   const deleteMaterial = (id) => {

@@ -46,21 +46,30 @@ export default function ListingDetailPage({ params }) {
 
         if (!error && data) {
           if (isMounted) {
-            setListing({
-              id: data.id,
-              category: data.category,
-              categoryLabel: data.category === 'instrument' ? 'Engineering Drafter / Tools' : data.category === 'book' ? 'Academic Textbook' : 'Student Item',
-              title: data.title,
-              description: data.description,
-              condition: data.condition,
-              expectedPrice: data.expected_price,
-              isNegotiable: data.is_negotiable,
-              contactName: data.contact_name,
-              contactPhone: data.contact_phone,
-              department: data.department,
-              photos: data.photo_keys || [],
-              createdAt: new Date(data.created_at).toLocaleDateString(),
-            });
+            if (data.status === 'sold') {
+              setListing({
+                id: data.id,
+                title: data.title,
+                status: 'sold',
+              });
+            } else {
+              setListing({
+                id: data.id,
+                category: data.category,
+                categoryLabel: data.category === 'instrument' ? 'Engineering Drafter / Tools' : data.category === 'book' ? 'Academic Textbook' : 'Student Item',
+                title: data.title,
+                description: data.description,
+                condition: data.condition,
+                expectedPrice: data.expected_price,
+                isNegotiable: data.is_negotiable,
+                contactName: data.contact_name,
+                contactPhone: data.contact_phone,
+                department: data.department,
+                photos: data.photo_keys || [],
+                status: data.status,
+                createdAt: new Date(data.created_at).toLocaleDateString(),
+              });
+            }
             setIsLoading(false);
           }
           return;
@@ -74,11 +83,19 @@ export default function ListingDetailPage({ params }) {
           const stored = JSON.parse(localStorage.getItem('notes_nexus_user_listings') || '[]');
           const storedItem = stored.find((i) => i.id === id);
           if (storedItem && isMounted) {
-            setListing({
-              ...storedItem,
-              categoryLabel: storedItem.category === 'instrument' ? 'Engineering Drafter / Tools' : 'Academic Textbook',
-              photos: storedItem.photos || [],
-            });
+            if (storedItem.status === 'sold') {
+              setListing({
+                id: storedItem.id,
+                title: storedItem.title,
+                status: 'sold',
+              });
+            } else {
+              setListing({
+                ...storedItem,
+                categoryLabel: storedItem.category === 'instrument' ? 'Engineering Drafter / Tools' : 'Academic Textbook',
+                photos: storedItem.photos || [],
+              });
+            }
             setIsLoading(false);
             return;
           }
@@ -113,6 +130,51 @@ export default function ListingDetailPage({ params }) {
 
   if (!listing) {
     notFound();
+  }
+
+  if (listing.status === 'sold') {
+    return (
+      <div style={{ padding: '5rem 0 8rem 0' }}>
+        <div className="container" style={{ maxWidth: '640px', textAlign: 'center' }}>
+          <div
+            className="neo-card"
+            style={{
+              padding: '3rem 2rem',
+              backgroundColor: 'var(--white)',
+            }}
+          >
+            <div
+              style={{
+                display: 'inline-block',
+                backgroundColor: 'var(--black)',
+                color: 'var(--white)',
+                fontWeight: 900,
+                fontSize: '0.85rem',
+                padding: '0.3rem 0.8rem',
+                textTransform: 'uppercase',
+                marginBottom: '1rem',
+              }}
+            >
+              ITEM SOLD
+            </div>
+
+            <h1 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: '0.75rem' }}>
+              This Item Has Been Sold
+            </h1>
+
+            <p style={{ color: '#4B5563', fontWeight: 600, lineHeight: 1.6, marginBottom: '2rem' }}>
+              &quot;<strong>{listing.title}</strong>&quot; has already been marked as sold by its owner and is no longer available.
+            </p>
+
+            <Link href="/instruments">
+              <NeoButton variant="primary" style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }}>
+                BROWSE AVAILABLE ITEMS →
+              </NeoButton>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const cleanPhone = (listing.contactPhone || '').replace(/[^0-9]/g, '');

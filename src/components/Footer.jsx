@@ -139,19 +139,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Disclaimer Note */}
-        <div
-          style={{
-            padding: '1rem 0',
-            borderBottom: '1px solid #E5E7EB',
-            fontSize: '0.8rem',
-            fontWeight: 700,
-            color: '#6B7280',
-            textAlign: 'center',
-          }}
-        >
-          A student initiative. Not affiliated with or endorsed by JIS University or its administration.
-        </div>
 
         {/* Bottom Bar */}
         <div
