@@ -4,8 +4,8 @@ import { notFound } from 'next/navigation';
 import { getDepartmentBySlug } from '@/lib/data/departments';
 import { getPapersByDepartment } from '@/lib/data/papers';
 import DepartmentNotesCatalog from '@/components/DepartmentNotesCatalog';
-import dynamic from 'next/dynamic';
-const AnimateInView = dynamic(() => import('@/components/AnimateInView'));
+import nextDynamic from 'next/dynamic';
+const AnimateInView = nextDynamic(() => import('@/components/AnimateInView'));
 import { siteConfig } from '@/config/site';
 
 export const dynamic = 'force-dynamic';
