@@ -23,12 +23,11 @@ export async function uploadToGoogleDrive(
   }
 
   try {
-    const auth = new google.auth.JWT(
-      GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      null,
-      GOOGLE_PRIVATE_KEY,
-      ['https://www.googleapis.com/auth/drive.file']
-    );
+    const auth = new google.auth.JWT({
+      email: GOOGLE_SERVICE_ACCOUNT_EMAIL,
+      key: GOOGLE_PRIVATE_KEY,
+      scopes: ['https://www.googleapis.com/auth/drive.file'],
+    });
 
     const drive = google.drive({ version: 'v3', auth });
 

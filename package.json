@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1134.0",
+    "@aws-sdk/s3-request-presigner": "^3.1134.0",
     "@next/bundle-analyzer": "^16.3.5",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.116.0",
