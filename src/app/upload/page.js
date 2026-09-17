@@ -151,35 +151,104 @@ export default function UploadPage() {
     setIsSubmitting(true);
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', materialType);
-      formData.append('departmentId', selectedDeptId);
-      formData.append('semester', selectedSemester.toString());
-      formData.append('paperName', paperName);
-      formData.append('paperCode', paperCode);
-      formData.append('title', title.trim());
-      formData.append('description', description.trim());
-      if (materialType === 'notes') {
-        formData.append('facultyName', facultyName.trim());
-        formData.append('section', section.trim());
-      } else {
-        formData.append('examType', examType);
+      // Step 1: Client-side PDF watermarking with pdf-lib
+      let uploadBuffer;
+      try {
+        const { PDFDocument, rgb, degrees } = await import('pdf-lib');
+        const arrayBuffer = await file.arrayBuffer();
+        const pdfDoc = await PDFDocument.load(arrayBuffer);
+        const pages = pdfDoc.getPages();
+
+        for (const page of pages) {
+          const { width, height } = page.getSize();
+          page.drawText('Notes Nexus • JIS University', {
+            x: 50,
+            y: height / 2,
+            size: 50,
+            color: rgb(0.9, 0.9, 0.9),
+            rotate: degrees(45),
+            opacity: 0.3,
+          });
+        }
+
+        const pdfBytes = await pdfDoc.save();
+        uploadBuffer = new Blob([pdfBytes], { type: 'application/pdf' });
+      } catch (wmErr) {
+        console.warn('[Upload] Watermarking failed, uploading original:', wmErr);
+        uploadBuffer = file;
       }
-      formData.append('year', year.toString());
+
+      // Step 2: Get signed upload credentials from our backend
+      const signRes = await fetch('/api/cloudinary/sign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folder: `notes-nexus/${materialType}` }),
+      });
+
+      if (!signRes.ok) {
+        const signErr = await signRes.json();
+        throw new Error(signErr.error || 'Failed to get upload credentials.');
+      }
+
+      const { signature, timestamp, folder, apiKey, cloudName } = await signRes.json();
+
+      // Step 3: Upload directly to Cloudinary (bypasses Vercel 4.5MB limit!)
+      const cloudFormData = new FormData();
+      cloudFormData.append('file', uploadBuffer, file.name);
+      cloudFormData.append('api_key', apiKey);
+      cloudFormData.append('timestamp', timestamp);
+      cloudFormData.append('signature', signature);
+      cloudFormData.append('folder', folder);
+      cloudFormData.append('resource_type', 'raw');
+
+      const cloudRes = await fetch(
+        `https://api.cloudinary.com/v1_1/${cloudName}/raw/upload`,
+        { method: 'POST', body: cloudFormData }
+      );
+
+      if (!cloudRes.ok) {
+        const cloudErr = await cloudRes.json();
+        throw new Error(cloudErr.error?.message || 'Cloudinary upload failed.');
+      }
+
+      const cloudData = await cloudRes.json();
+      const cloudinaryUrl = cloudData.secure_url;
+
+      // Step 4: Save metadata + Cloudinary URL to our database
+      const metadataPayload = {
+        cloudinaryUrl,
+        cloudinaryPublicId: cloudData.public_id,
+        fileSize: uploadBuffer.size || file.size,
+        type: materialType,
+        departmentId: selectedDeptId,
+        semester: selectedSemester.toString(),
+        paperName,
+        paperCode,
+        title: title.trim(),
+        description: description.trim(),
+        year: year.toString(),
+      };
+
+      if (materialType === 'notes') {
+        metadataPayload.facultyName = facultyName.trim();
+        metadataPayload.section = section.trim();
+      } else {
+        metadataPayload.examType = examType;
+      }
 
       const res = await fetch('/api/upload', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(metadataPayload),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Failed to upload material.');
+        throw new Error(data.error || 'Failed to save material metadata.');
       }
 
-      // Persist to local / session storage for dashboard /me immediate sync
+      // Persist to local storage for dashboard /me immediate sync
       const newRecord = {
         id: data.material?.id || 'mat-new',
         title: title.trim(),

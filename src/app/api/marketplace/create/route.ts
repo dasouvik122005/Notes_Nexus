@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
-import { uploadToGoogleDrive, isDriveConfigured } from '@/lib/storage/drive';
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB per photo
 
@@ -92,23 +91,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 4. Upload photos to Google Drive
-    if (photoFiles.length > 0 && isDriveConfigured) {
-      for (let i = 0; i < photoFiles.length; i++) {
-        const photo = photoFiles[i];
-        const safeName = photo.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-        const driveFileName = `[Marketplace] ${Date.now()}-${safeName}`;
-
-        try {
-          const buffer = Buffer.from(await photo.arrayBuffer());
-          const link = await uploadToGoogleDrive(buffer, driveFileName, photo.type || 'image/jpeg');
-          if (link) {
-            photoLinks.push(link);
-          }
-        } catch (driveErr) {
-          console.error('[Marketplace API] Photo upload failed:', driveErr);
-        }
-      }
+    // 4. Photo uploads (handled client-side via Cloudinary in the future)
+    // For now, photos are stored as placeholder keys
+    for (let i = 0; i < photoFiles.length; i++) {
+      photoLinks.push(`placeholder-photo-${Date.now()}-${i}`);
     }
 
     // 5. Construct listing object

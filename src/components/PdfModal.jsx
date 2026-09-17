@@ -141,10 +141,10 @@ export default function PdfModal({
           </button>
         </div>
 
-        {/* Embedded Google Drive Viewer */}
+        {/* Embedded PDF Viewer */}
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex' }}>
           <iframe
-            src={pdfUrl.replace('/view', '/preview')}
+            src={`https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true`}
             style={{ width: '100%', height: '100%', border: 'none' }}
             title={title}
             allow="autoplay"
