@@ -26,12 +26,21 @@ export async function GET(request: Request) {
           const adminClient = createAdminClient();
           await adminClient
             .from('users')
-            .update({
-              role: 'admin',
-              account_status: 'verified',
-              verified_at: new Date().toISOString(),
-            })
-            .eq('id', user.id);
+            .upsert(
+              {
+                id: user.id,
+                email: userEmail,
+                name:
+                  user.user_metadata?.full_name ||
+                  user.user_metadata?.name ||
+                  userEmail.split('@')[0],
+                avatar_url: user.user_metadata?.avatar_url || null,
+                role: 'admin',
+                account_status: 'verified',
+                verified_at: new Date().toISOString(),
+              },
+              { onConflict: 'id' }
+            );
         } catch (adminErr) {
           console.error('Error promoting admin user:', adminErr);
         }

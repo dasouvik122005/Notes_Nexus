@@ -80,7 +80,17 @@ export function AuthProvider({ children }) {
         .eq('id', sessionUser.id)
         .single();
 
+      const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || 'kumaresh2106@gmail.com,dasouvik122005@gmail.com')
+        .split(',')
+        .map((e) => e.trim().toLowerCase())
+        .filter(Boolean);
+      const isAdmin = adminEmails.includes(sessionUser.email?.toLowerCase());
+
       if (!error && data) {
+        if (isAdmin && (data.role !== 'admin' || data.account_status !== 'verified')) {
+          data.role = 'admin';
+          data.account_status = 'verified';
+        }
         setProfile(data);
       } else {
         // Fallback profile if DB row doesn't exist yet
@@ -89,17 +99,23 @@ export function AuthProvider({ children }) {
           email: sessionUser.email || 'student@jisuniversity.ac.in',
           name: sessionUser.user_metadata?.full_name || sessionUser.email?.split('@')[0] || 'Student Contributor',
           avatar_url: sessionUser.user_metadata?.avatar_url || null,
-          role: 'contributor',
+          role: isAdmin ? 'admin' : 'contributor',
           account_status: 'verified',
         });
       }
     } catch {
+      const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || 'kumaresh2106@gmail.com,dasouvik122005@gmail.com')
+        .split(',')
+        .map((e) => e.trim().toLowerCase())
+        .filter(Boolean);
+      const isAdmin = adminEmails.includes(sessionUser.email?.toLowerCase());
+
       setProfile({
         id: sessionUser.id,
         email: sessionUser.email || 'student@jisuniversity.ac.in',
         name: sessionUser.user_metadata?.full_name || 'Student Contributor',
         avatar_url: sessionUser.user_metadata?.avatar_url || null,
-        role: 'contributor',
+        role: isAdmin ? 'admin' : 'contributor',
         account_status: 'verified',
       });
     }
@@ -114,6 +130,21 @@ export function AuthProvider({ children }) {
 
     async function initAuth() {
       try {
+        if (typeof window !== 'undefined' && window.location.search.includes('code=')) {
+          const params = new URLSearchParams(window.location.search);
+          const code = params.get('code');
+          if (code) {
+            const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+            if (!error && data?.session) {
+              setUser(data.session.user);
+              await loadProfile(data.session.user);
+              const cleanUrl = window.location.pathname;
+              window.history.replaceState({}, document.title, cleanUrl);
+              return;
+            }
+          }
+        }
+
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
           setUser(session.user);

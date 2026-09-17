@@ -18,6 +18,13 @@ export async function updateSession(request: NextRequest) {
     return response;
   }
 
+  // If request has an OAuth authorization code and is not on /auth/callback, forward it for session exchange
+  if (request.nextUrl.searchParams.has('code') && !pathname.startsWith('/auth/callback')) {
+    const callbackUrl = request.nextUrl.clone();
+    callbackUrl.pathname = '/auth/callback';
+    return NextResponse.redirect(callbackUrl);
+  }
+
   const isAdminRoute = pathname.startsWith('/admin');
 
   // Check if cookies contain any active Supabase auth tokens
