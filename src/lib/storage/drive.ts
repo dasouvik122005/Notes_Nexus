@@ -66,8 +66,8 @@ export async function uploadToGoogleDrive(
 
     // Return the link (e.g., https://drive.google.com/file/d/XYZ/view?usp=drivesdk)
     return res.data.webViewLink || null;
-  } catch (err) {
+  } catch (err: any) {
     console.error('[Drive] Failed to upload file to Google Drive:', err);
-    return null;
+    throw new Error(err.message || 'Unknown Google Drive API error');
   }
 }

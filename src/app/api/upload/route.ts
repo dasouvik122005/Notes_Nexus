@@ -158,10 +158,10 @@ export async function POST(request: NextRequest) {
         } else {
           throw new Error('Google Drive returned null link');
         }
-      } catch (driveErr) {
+      } catch (driveErr: any) {
         console.error('[Upload API] Google Drive Upload failed:', driveErr);
         return NextResponse.json(
-          { error: 'Failed to upload to Google Drive. Please contact administrators.' },
+          { error: `Google Drive Error: ${driveErr.message}` },
           { status: 500 }
         );
       }
