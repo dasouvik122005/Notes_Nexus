@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     const { data: dbMaterials, error: matErr } = await supabase
       .from('materials')
       .select('*, users!uploaded_by(name, email)')
-      .in('status', ['pending', 'approved', 'hidden'])
+      .in('status', ['pending', 'approved', 'rejected'])
       .order('created_at', { ascending: false });
 
     if (matErr) console.error('[Admin Queue] Materials query error:', matErr);
@@ -46,9 +46,9 @@ export async function GET(request: NextRequest) {
       fileSize: m.file_size,
       facultyName: m.faculty_name,
       storageKey: m.storage_key,
-      status: m.status,
+      status: m.status === 'rejected' && m.reject_reason === 'HIDDEN_BY_ADMIN' ? 'hidden' : m.status,
       createdAt: m.created_at,
-    }));
+    })).filter(m => m.status !== 'rejected'); // Filter out actual rejected materials from this view
 
         if (matErr) console.error('[Admin Queue] Materials query error:', matErr);
 

@@ -61,7 +61,8 @@ export async function POST(request: NextRequest) {
           const { error: hideErr } = await supabase
             .from('materials')
             .update({
-              status: 'hidden',
+              status: 'rejected',
+              reject_reason: 'HIDDEN_BY_ADMIN',
               reviewed_by: user.id,
               reviewed_at: new Date().toISOString(),
             })
@@ -76,6 +77,7 @@ export async function POST(request: NextRequest) {
             .from('materials')
             .update({
               status: 'approved',
+              reject_reason: null,
               reviewed_by: user.id,
               reviewed_at: new Date().toISOString(),
             })
