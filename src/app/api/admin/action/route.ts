@@ -128,6 +128,13 @@ export async function POST(request: NextRequest) {
               reject_reason: reason.trim(),
             })
             .eq('id', id);
+        } else if (action === 'mark_sold_listing') {
+          await supabase
+            .from('listings')
+            .update({
+              status: 'sold',
+            })
+            .eq('id', id);
         }
 
         // Insert audit log

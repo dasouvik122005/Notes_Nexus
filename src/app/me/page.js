@@ -159,7 +159,7 @@ export default function MyDashboardPage() {
 
   const markAsSold = async (id) => {
     const currentItem = listings.find((i) => i.id === id);
-    const nextStatus = currentItem?.status === 'sold' ? 'active' : 'sold';
+    const nextStatus = currentItem?.status === 'sold' ? 'approved' : 'sold';
     setListings((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, status: nextStatus } : item
@@ -168,7 +168,7 @@ export default function MyDashboardPage() {
 
     try {
       const supabase = createClient();
-      await supabase.from('marketplace_items').update({ status: nextStatus }).eq('id', id);
+      await supabase.from('listings').update({ status: nextStatus }).eq('id', id);
     } catch {
       // ignore
     }
@@ -582,7 +582,7 @@ export default function MyDashboardPage() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                     <span
                       style={{
-                        backgroundColor: item.status === 'active' ? 'var(--primary-yellow)' : '#E5E7EB',
+                        backgroundColor: item.status === 'approved' ? 'var(--primary-yellow)' : '#E5E7EB',
                         border: '2px solid var(--black)',
                         fontWeight: 900,
                         fontSize: '0.75rem',
@@ -590,7 +590,7 @@ export default function MyDashboardPage() {
                         textTransform: 'uppercase',
                       }}
                     >
-                      {item.status === 'active' ? '● Active' : '✓ Sold'}
+                      {item.status === 'approved' ? '● Active' : '✓ Sold'}
                     </span>
 
                     <span
