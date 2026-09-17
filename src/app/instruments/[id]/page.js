@@ -184,10 +184,10 @@ export default function ListingDetailPage({ params }) {
   )}`;
 
   return (
-    <div style={{ padding: '3.5rem 0 7rem 0' }}>
-      <div className="container" style={{ maxWidth: '1000px' }}>
+    <div className="listing-detail-wrapper">
+      <div className="container" style={{ maxWidth: '1020px' }}>
         {/* Back Link */}
-        <div style={{ marginBottom: '1.5rem' }}>
+        <div style={{ marginBottom: '1.25rem' }}>
           <Link
             href="/instruments"
             style={{
@@ -195,38 +195,20 @@ export default function ListingDetailPage({ params }) {
               alignItems: 'center',
               gap: '0.4rem',
               fontWeight: 800,
-              fontSize: '0.9rem',
+              fontSize: '0.85rem',
               textTransform: 'uppercase',
               color: 'var(--black)',
             }}
           >
-            <ArrowLeft size={16} /> Back to Marketplace
+            <ArrowLeft size={15} /> Back to Marketplace
           </Link>
         </div>
 
-        {/* Main Grid */}
-        <div className="listing-detail-layout">
-          {/* Main Photo Card */}
-          <div
-            className="neo-card listing-photos-card"
-            style={{
-              backgroundColor: 'var(--white)',
-              padding: '1rem',
-            }}
-          >
-            <div
-              style={{
-                width: '100%',
-                height: '380px',
-                backgroundColor: '#F3F4F6',
-                border: '2px solid var(--black)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden',
-                position: 'relative',
-              }}
-            >
+        {/* Main 2-Column Desktop / Unified Mobile Grid */}
+        <div className="listing-detail-grid">
+          {/* 1. Gallery Card */}
+          <div className="listing-gallery-card">
+            <div className="listing-photo-container">
               {listing.photos && listing.photos.length > 0 ? (
                 <Image
                   unoptimized
@@ -237,8 +219,8 @@ export default function ListingDetailPage({ params }) {
                 />
               ) : (
                 <div style={{ textAlign: 'center', color: '#9CA3AF' }}>
-                  <Tag size={48} style={{ margin: '0 auto 0.5rem auto' }} />
-                  <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem' }}>
+                  <Tag size={44} style={{ margin: '0 auto 0.5rem auto' }} />
+                  <p style={{ margin: 0, fontWeight: 700, fontSize: '0.85rem' }}>
                     No photos uploaded for this listing
                   </p>
                 </div>
@@ -247,29 +229,20 @@ export default function ListingDetailPage({ params }) {
 
             {/* Thumbnails */}
             {listing.photos && listing.photos.length > 1 && (
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
                 {listing.photos.map((photo, idx) => (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => setActivePhotoIdx(idx)}
-                    style={{
-                      width: '70px',
-                      height: '70px',
-                      border: `3px solid ${activePhotoIdx === idx ? 'var(--black)' : '#D1D5DB'}`,
-                      boxShadow:
-                        activePhotoIdx === idx ? '2px 2px 0px 0px var(--black)' : 'none',
-                      cursor: 'pointer',
-                      padding: 0,
-                      overflow: 'hidden',
-                      position: 'relative',
-                    }}
+                    className={`listing-thumbnail-btn ${activePhotoIdx === idx ? 'active' : ''}`}
+                    aria-label={`View photo ${idx + 1}`}
                   >
                     <Image
                       unoptimized
                       fill
                       src={photo}
-                      alt="Thumbnail"
+                      alt={`Thumbnail ${idx + 1}`}
                       style={{ objectFit: 'cover' }}
                     />
                   </button>
@@ -278,341 +251,333 @@ export default function ListingDetailPage({ params }) {
             )}
           </div>
 
-          {/* Description Card */}
-          <div
-            className="neo-card listing-desc-card"
-            style={{
-              backgroundColor: 'var(--white)',
-              padding: '2rem',
-            }}
-          >
-            <h2
-              style={{
-                fontSize: '1.25rem',
-                fontWeight: 900,
-                textTransform: 'uppercase',
-                marginBottom: '1rem',
-              }}
-            >
-              Item Description
-            </h2>
-
-            <p
-              style={{
-                color: '#374151',
-                fontWeight: 600,
-                fontSize: '1rem',
-                lineHeight: 1.6,
-                whiteSpace: 'pre-line',
-                margin: 0,
-              }}
-            >
-              {listing.description}
-            </p>
-          </div>
-
-          {/* Safety Tips Card */}
-          <div
-            className="listing-safety-card"
-            style={{
-              backgroundColor: '#EFF6FF',
-              border: '3px solid var(--black)',
-              boxShadow: '3px 3px 0px 0px var(--black)',
-              padding: '1.25rem 1.5rem',
-            }}
-          >
+          {/* 2. Safety Guidelines Banner */}
+          <div className="listing-safety-banner">
             <div
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem',
+                gap: '0.45rem',
                 fontWeight: 900,
-                fontSize: '0.9rem',
+                fontSize: '0.82rem',
                 color: '#1E40AF',
-                marginBottom: '0.5rem',
+                marginBottom: '0.4rem',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
               }}
             >
-              <ShieldCheck size={18} />
-              <span>CAMPUS EXCHANGE SAFETY GUIDELINES</span>
+              <ShieldCheck size={16} />
+              <span>Campus Safety Guidelines</span>
             </div>
             <ul
               style={{
                 margin: 0,
-                paddingLeft: '1.25rem',
-                fontSize: '0.85rem',
+                paddingLeft: '1.15rem',
+                fontSize: '0.8rem',
                 color: '#1E3A8A',
                 fontWeight: 700,
                 lineHeight: 1.5,
               }}
             >
-              <li>Always meet in well-lit public campus locations (e.g. Central Library, Canteen).</li>
-              <li>Inspect all tightening knobs, screws, and page integrity before paying.</li>
-              <li>Notes Nexus is a free noticeboard and never asks for upfront online payments.</li>
+              <li>Always meet in public campus areas (Central Library, Canteen, Cafeteria).</li>
+              <li>Inspect item condition, knobs, and completeness before paying.</li>
+              <li>Notes Nexus is a student board and never asks for upfront online payments.</li>
             </ul>
           </div>
 
-          {/* Pricing & Contact Action Card */}
-          <div
-            className="neo-card listing-info-card"
-            style={{
-              backgroundColor: 'var(--white)',
-              padding: '2rem',
-            }}
-          >
-              {/* Category & Condition Badges */}
-              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+          {/* 3. Main Product Details, Description & Contact Card (Unified) */}
+          <div className="listing-main-card">
+            {/* Category & Condition Badges */}
+            <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.65rem' }}>
+              <span
+                style={{
+                  backgroundColor: '#A5F3FC',
+                  border: '2px solid var(--black)',
+                  padding: '0.2rem 0.55rem',
+                  fontWeight: 900,
+                  fontSize: '0.72rem',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {listing.categoryLabel || listing.category}
+              </span>
+
+              <span
+                style={{
+                  backgroundColor: '#DCFCE7',
+                  border: '2px solid var(--black)',
+                  padding: '0.2rem 0.55rem',
+                  fontWeight: 900,
+                  fontSize: '0.72rem',
+                  color: '#166534',
+                }}
+              >
+                Condition: {listing.condition}
+              </span>
+
+              {listing.department && (
                 <span
                   style={{
-                    backgroundColor: 'var(--primary-cyan)',
+                    backgroundColor: '#FEF3C7',
                     border: '2px solid var(--black)',
-                    padding: '0.2rem 0.6rem',
-                    fontWeight: 900,
-                    fontSize: '0.75rem',
-                    textTransform: 'uppercase',
+                    padding: '0.2rem 0.55rem',
+                    fontWeight: 800,
+                    fontSize: '0.72rem',
                   }}
                 >
-                  {listing.categoryLabel || listing.category}
+                  {listing.department}
                 </span>
+              )}
+            </div>
 
-                <span
-                  style={{
-                    backgroundColor: '#DCFCE7',
-                    border: '2px solid var(--black)',
-                    padding: '0.2rem 0.6rem',
-                    fontWeight: 900,
-                    fontSize: '0.75rem',
-                    color: '#166534',
-                  }}
-                >
-                  Condition: {listing.condition}
+            {/* Title */}
+            <h1
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: 900,
+                lineHeight: 1.25,
+                margin: '0 0 0.85rem 0',
+                color: 'var(--black)',
+              }}
+            >
+              {listing.title}
+            </h1>
+
+            {/* Price Box */}
+            <div
+              style={{
+                backgroundColor: '#F0FDF4',
+                border: '2px solid var(--black)',
+                boxShadow: '2.5px 2.5px 0px 0px var(--black)',
+                padding: '0.65rem 1rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '1rem',
+              }}
+            >
+              <div>
+                <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#166534', textTransform: 'uppercase', display: 'block' }}>
+                  Expected Price
                 </span>
-
-                {listing.department && (
-                  <span
-                    style={{
-                      backgroundColor: '#FEF3C7',
-                      border: '2px solid var(--black)',
-                      padding: '0.2rem 0.6rem',
-                      fontWeight: 800,
-                      fontSize: '0.75rem',
-                    }}
-                  >
-                    {listing.department}
-                  </span>
-                )}
+                <span style={{ fontSize: '1.85rem', fontWeight: 900, color: '#15803D', lineHeight: 1 }}>
+                  ₹{listing.expectedPrice}
+                </span>
               </div>
 
-              {/* Title */}
-              <h1
+              {listing.isNegotiable && (
+                <span
+                  style={{
+                    backgroundColor: 'var(--primary-yellow)',
+                    border: '1.5px solid var(--black)',
+                    padding: '0.2rem 0.55rem',
+                    fontWeight: 900,
+                    fontSize: '0.72rem',
+                    textTransform: 'uppercase',
+                    boxShadow: '1.5px 1.5px 0px 0px var(--black)',
+                  }}
+                >
+                  Negotiable
+                </span>
+              )}
+            </div>
+
+            {/* Seller & Date Bar */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '0.5rem',
+                padding: '0.5rem 0',
+                borderTop: '1.5px solid #E5E7EB',
+                borderBottom: '1.5px solid #E5E7EB',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                color: '#4B5563',
+                marginBottom: '1rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <User size={14} color="#6B7280" />
+                <span>Seller: <strong>{listing.contactName}</strong></span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Calendar size={14} color="#6B7280" />
+                <span>Posted: <strong>{listing.createdAt}</strong></span>
+              </div>
+            </div>
+
+            {/* Description Section */}
+            <div style={{ marginBottom: '1.25rem' }}>
+              <h3
                 style={{
-                  fontSize: '1.75rem',
+                  fontSize: '0.82rem',
                   fontWeight: 900,
-                  lineHeight: 1.2,
-                  marginBottom: '1rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                  color: '#374151',
+                  margin: '0 0 0.35rem 0',
                 }}
               >
-                {listing.title}
-              </h1>
-
-              {/* Price Block */}
-              <div
+                Item Description
+              </h3>
+              <p
                 style={{
+                  color: '#1F2937',
+                  fontWeight: 600,
+                  fontSize: '0.9rem',
+                  lineHeight: 1.55,
+                  whiteSpace: 'pre-line',
+                  margin: 0,
                   backgroundColor: '#F9FAFB',
-                  border: '3px solid var(--black)',
-                  boxShadow: '3px 3px 0px 0px var(--black)',
-                  padding: '1rem 1.25rem',
-                  display: 'flex',
-                  alignItems: 'baseline',
-                  justifyContent: 'space-between',
-                  marginBottom: '1.75rem',
+                  padding: '0.75rem',
+                  border: '1.5px solid #E5E7EB',
                 }}
               >
-                <div>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 800, color: '#6B7280' }}>
-                    Expected Price
-                  </span>
-                  <div style={{ fontSize: '2.2rem', fontWeight: 900, color: '#166534' }}>
-                    ₹{listing.expectedPrice}
-                  </div>
-                </div>
+                {listing.description}
+              </p>
+            </div>
 
-                {listing.isNegotiable && (
-                  <span
+            {/* Contact Action Section */}
+            <div
+              style={{
+                backgroundColor: isPhoneRevealed ? '#FEF9C3' : '#F9FAFB',
+                border: '2px solid var(--black)',
+                boxShadow: '2.5px 2.5px 0px 0px var(--black)',
+                padding: '1rem',
+                textAlign: 'center',
+                marginBottom: '0.85rem',
+              }}
+            >
+              <div style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', color: '#4B5563', marginBottom: '0.35rem' }}>
+                Contact Seller (Phone / WhatsApp)
+              </div>
+
+              {!isPhoneRevealed ? (
+                <div>
+                  <div
+                    style={{
+                      fontSize: '1.25rem',
+                      fontWeight: 900,
+                      letterSpacing: '1px',
+                      color: '#4B5563',
+                      marginBottom: '0.65rem',
+                      fontFamily: 'monospace',
+                    }}
+                  >
+                    +91 98XXX XXXXX
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsPhoneRevealed(true)}
                     style={{
                       backgroundColor: 'var(--primary-yellow)',
                       border: '2px solid var(--black)',
-                      padding: '0.2rem 0.6rem',
+                      boxShadow: '2px 2px 0px 0px var(--black)',
+                      padding: '0.55rem 1.15rem',
                       fontWeight: 900,
-                      fontSize: '0.75rem',
+                      fontSize: '0.85rem',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
                       textTransform: 'uppercase',
                     }}
                   >
-                    Negotiable
-                  </span>
-                )}
-              </div>
+                    <Phone size={15} /> Click to Reveal Contact
+                  </button>
 
-              {/* Seller Metadata */}
-              <div
-                style={{
-                  borderTop: '2px dashed #E5E7EB',
-                  paddingTop: '1rem',
-                  marginBottom: '1.5rem',
-                  fontSize: '0.85rem',
-                  fontWeight: 700,
-                  color: '#4B5563',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.4rem',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <User size={16} />
-                  <span>Seller: <strong>{listing.contactName}</strong></span>
+                  <div style={{ fontSize: '0.72rem', fontWeight: 700, color: '#6B7280', marginTop: '0.45rem' }}>
+                    Protected against automated scrapers
+                  </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <Calendar size={16} />
-                  <span>Posted: <strong>{listing.createdAt}</strong></span>
-                </div>
-              </div>
-
-              {/* Anti-Scraping Phone Reveal */}
-              <div style={{ marginBottom: '1.5rem' }}>
-                <div
-                  style={{
-                    border: '3px solid var(--black)',
-                    backgroundColor: isPhoneRevealed ? '#FEF9C3' : '#F3F4F6',
-                    boxShadow: '3px 3px 0px 0px var(--black)',
-                    padding: '1.25rem',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div style={{ fontSize: '0.8rem', fontWeight: 900, textTransform: 'uppercase', color: '#4B5563', marginBottom: '0.4rem' }}>
-                    Contact Seller Phone / WhatsApp
+              ) : (
+                <div>
+                  <div
+                    style={{
+                      fontSize: '1.35rem',
+                      fontWeight: 900,
+                      color: 'var(--black)',
+                      marginBottom: '0.75rem',
+                      fontFamily: 'monospace',
+                    }}
+                  >
+                    {listing.contactPhone}
                   </div>
 
-                  {!isPhoneRevealed ? (
-                    <div>
-                      <div
-                        style={{
-                          fontSize: '1.35rem',
-                          fontWeight: 900,
-                          letterSpacing: '1px',
-                          color: '#4B5563',
-                          marginBottom: '0.85rem',
-                          fontFamily: 'monospace',
-                        }}
-                      >
-                        +91 98XXX XXXXX
-                      </div>
+                  <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                    <a
+                      href={`tel:${cleanPhone}`}
+                      style={{
+                        backgroundColor: 'var(--white)',
+                        border: '2px solid var(--black)',
+                        boxShadow: '2px 2px 0px 0px var(--black)',
+                        padding: '0.5rem 0.9rem',
+                        fontWeight: 900,
+                        fontSize: '0.82rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        color: 'var(--black)',
+                        textTransform: 'uppercase',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      <Phone size={14} /> Call Now
+                    </a>
 
-                      <button
-                        type="button"
-                        onClick={() => setIsPhoneRevealed(true)}
-                        style={{
-                          backgroundColor: 'var(--primary-yellow)',
-                          border: '2px solid var(--black)',
-                          boxShadow: '2px 2px 0px 0px var(--black)',
-                          padding: '0.65rem 1.25rem',
-                          fontWeight: 900,
-                          fontSize: '0.9rem',
-                          cursor: 'pointer',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.4rem',
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        <Phone size={16} /> Click to Reveal Contact
-                      </button>
-
-                      <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#6B7280', marginTop: '0.6rem' }}>
-                        Protected against automated scrapers
-                      </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <div
-                        style={{
-                          fontSize: '1.4rem',
-                          fontWeight: 900,
-                          color: 'var(--black)',
-                          marginBottom: '1rem',
-                          fontFamily: 'monospace',
-                        }}
-                      >
-                        {listing.contactPhone}
-                      </div>
-
-                      <div style={{ display: 'flex', gap: '0.6rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                        <a
-                          href={`tel:${cleanPhone}`}
-                          style={{
-                            backgroundColor: 'var(--white)',
-                            border: '2px solid var(--black)',
-                            boxShadow: '2px 2px 0px 0px var(--black)',
-                            padding: '0.6rem 1rem',
-                            fontWeight: 900,
-                            fontSize: '0.85rem',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.4rem',
-                            color: 'var(--black)',
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          <Phone size={16} /> Call Now
-                        </a>
-
-                        <a
-                          href={whatsAppUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            backgroundColor: '#22C55E',
-                            color: 'var(--white)',
-                            border: '2px solid var(--black)',
-                            boxShadow: '2px 2px 0px 0px var(--black)',
-                            padding: '0.6rem 1.1rem',
-                            fontWeight: 900,
-                            fontSize: '0.85rem',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.4rem',
-                            textTransform: 'uppercase',
-                          }}
-                        >
-                          <MessageSquare size={16} /> Open WhatsApp
-                        </a>
-                      </div>
-                    </div>
-                  )}
+                    <a
+                      href={whatsAppUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        backgroundColor: '#22C55E',
+                        color: 'var(--white)',
+                        border: '2px solid var(--black)',
+                        boxShadow: '2px 2px 0px 0px var(--black)',
+                        padding: '0.5rem 0.95rem',
+                        fontWeight: 900,
+                        fontSize: '0.82rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        textTransform: 'uppercase',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      <MessageSquare size={14} /> Open WhatsApp
+                    </a>
+                  </div>
                 </div>
-              </div>
-
-              {/* Report Listing */}
-              <div style={{ textAlign: 'center' }}>
-                <button
-                  type="button"
-                  onClick={() => setHasReported(true)}
-                  disabled={hasReported}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: hasReported ? '#166534' : '#6B7280',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    cursor: hasReported ? 'default' : 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '0.3rem',
-                  }}
-                >
-                  <Flag size={13} />
-                  {hasReported ? '✓ Listing reported to admins' : 'Report this listing'}
-                </button>
-              </div>
+              )}
             </div>
+
+            {/* Report Listing Link */}
+            <div style={{ textAlign: 'center' }}>
+              <button
+                type="button"
+                onClick={() => setHasReported(true)}
+                disabled={hasReported}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: hasReported ? '#166534' : '#6B7280',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: hasReported ? 'default' : 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.3rem',
+                }}
+              >
+                <Flag size={12} />
+                {hasReported ? '✓ Listing reported to admins' : 'Report this listing'}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
