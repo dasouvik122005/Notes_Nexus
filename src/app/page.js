@@ -440,7 +440,7 @@ export default async function Home() {
         {/* ========================================================================= */}
         {/* LIVE LATEST UPLOADS FEED                                                  */}
         {/* ========================================================================= */}
-        <div style={{ marginBottom: '4rem' }}>
+        <div className="latest-uploads-section hidden md:block" style={{ marginBottom: '4rem' }}>
           <div
             style={{
               display: 'flex',

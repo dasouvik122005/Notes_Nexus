@@ -108,14 +108,7 @@ a:visited {
   box-shadow: 10px 10px 0px 0px var(--black);
 }
 
-.nav-link {
-  transition: color 0.2s, border-color 0.2s;
-}
 
-.nav-link:hover {
-  color: var(--primary-pink);
-  border-bottom-color: var(--black) !important;
-}
 
 .team-card {
   background-color: var(--white);
@@ -142,6 +135,76 @@ a:visited {
   padding: 0 5%;
 }
 
+/* Navigation Header & Spacer */
+.nav-spacer {
+  height: 56px;
+}
+
+.main-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: var(--white);
+  border-bottom: 2.5px solid var(--black);
+  box-shadow: 0 3px 0 0 rgba(0, 0, 0, 1);
+  padding: 0.35rem 0;
+  transition: all 0.15s ease;
+}
+
+.navbar-logo {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.25rem;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.mobile-menu-btn {
+  display: none;
+}
+
+.mobile-menu {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 56px);
+  background-color: var(--white);
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 2rem;
+  gap: 1.5rem;
+  border-top: 3px solid var(--black);
+  overflow-y: auto;
+}
+
+@media (min-width: 769px) {
+  .nav-spacer {
+    height: 85px;
+  }
+
+  .main-navbar {
+    border-bottom: 3px solid var(--black);
+    box-shadow: 0 6px 0 0 rgba(0, 0, 0, 1);
+    padding: 0.75rem 0;
+  }
+
+  .navbar-logo {
+    height: 56px;
+  }
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   .hero-container {
@@ -161,6 +224,7 @@ a:visited {
   .nav-container {
     flex-direction: row;
     justify-content: space-between;
+    padding: 0 1rem;
   }
   
   .nav-links {
@@ -172,32 +236,16 @@ a:visited {
     align-items: center;
     justify-content: center;
     background: var(--primary-yellow);
-    border: 3px solid var(--black);
+    border: 2.5px solid var(--black);
     box-shadow: 2px 2px 0px 0px var(--black);
-    padding: 0.5rem;
+    padding: 0.35rem;
     cursor: pointer;
     border-radius: 4px;
   }
-}
 
-.mobile-menu-btn {
-  display: none;
-}
-
-.mobile-menu {
-  position: fixed;
-  top: 76px;
-  left: 0;
-  width: 100vw;
-  height: calc(100vh - 76px);
-  background-color: var(--white);
-  z-index: 999;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 2rem;
-  gap: 2rem;
-  border-top: 4px solid var(--black);
+  .latest-uploads-section {
+    display: none !important;
+  }
 }
 
 /* Navigation Links */

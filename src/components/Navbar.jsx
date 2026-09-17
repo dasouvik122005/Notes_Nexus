@@ -26,18 +26,8 @@ export default function Navbar() {
 
   return (
     <>
-      <div style={{ height: '100px' }} /> {/* Spacer to offset fixed header */}
-      <header style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        zIndex: 1000,
-        backgroundColor: 'var(--white)',
-        borderBottom: '3px solid var(--black)',
-        boxShadow: '0 6px 0 0 rgba(0,0,0,1)',
-        padding: '0.75rem 0'
-      }}>
+      <div className="nav-spacer" /> {/* Responsive spacer to offset fixed header */}
+      <header className="main-navbar">
         <div className="container nav-container" style={{
           display: 'flex',
           alignItems: 'center',
@@ -50,21 +40,15 @@ export default function Navbar() {
             <Image
               src={logoImg}
               alt={`${siteConfig.name} - Official Logo and Home Link`}
-              width={250}
-              height={60}
+              width={220}
+              height={54}
               priority
               placeholder="blur"
-              style={{ width: 'auto', height: '60px', objectFit: 'contain' }}
+              className="navbar-logo"
             />
           </Link>
 
-          <nav className="nav-links" style={{
-            display: 'flex',
-            gap: '1.25rem',
-            alignItems: 'center',
-            fontWeight: 700,
-            fontSize: '1rem'
-          }}>
+          <nav className="nav-links">
             {siteConfig.nav.map((item) => {
               const isActive = item.href === '/' ? pathname === '/' : pathname?.startsWith(item.href);
               return (
@@ -96,7 +80,7 @@ export default function Navbar() {
             aria-label="Toggle menu"
             aria-expanded={isOpen}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="square">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="square">
               {isOpen ? (
                 <path d="M18 6L6 18M6 6l12 12" />
               ) : (
