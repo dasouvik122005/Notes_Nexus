@@ -5,8 +5,9 @@ const GOOGLE_SERVICE_ACCOUNT_EMAIL = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ||
 const GOOGLE_PRIVATE_KEY = process.env.GOOGLE_PRIVATE_KEY 
   ? process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n').replace(/"/g, '').replace(/'/g, '')
   : '';
+const GOOGLE_DRIVE_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID || '';
 
-export const isDriveConfigured = Boolean(GOOGLE_SERVICE_ACCOUNT_EMAIL && GOOGLE_PRIVATE_KEY);
+export const isDriveConfigured = Boolean(GOOGLE_SERVICE_ACCOUNT_EMAIL && GOOGLE_PRIVATE_KEY && GOOGLE_DRIVE_FOLDER_ID);
 
 /**
  * Uploads a file buffer to Google Drive and sets it to be publicly viewable.
@@ -18,7 +19,7 @@ export async function uploadToGoogleDrive(
   mimeType: string = 'application/pdf'
 ): Promise<string | null> {
   if (!isDriveConfigured) {
-    console.warn('[Drive] Google Drive is not configured. Missing Service Account credentials.');
+    console.warn('[Drive] Google Drive is not configured. Missing Service Account credentials or Folder ID.');
     return null;
   }
 
@@ -34,10 +35,11 @@ export async function uploadToGoogleDrive(
     // Convert Buffer to Readable Stream for upload
     const stream = Readable.from(buffer);
 
-    // 1. Upload the file
+    // 1. Upload the file into the shared folder
     const fileMetadata = {
       name: fileName,
       mimeType,
+      parents: [GOOGLE_DRIVE_FOLDER_ID],
     };
     const media = {
       mimeType,
