@@ -39,9 +39,9 @@ export default function AnimateInView({
     <motion.div
       initial={initialProps}
       whileInView={animateProps}
-      viewport={{ once, margin: "0px" }}
+      viewport={{ once, margin: "-40px" }}
       className={className}
-      style={style}
+      style={{ ...style, willChange: 'transform, opacity' }}
     >
       {children}
     </motion.div>

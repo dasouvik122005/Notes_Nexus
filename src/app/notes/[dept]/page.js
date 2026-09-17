@@ -8,7 +8,7 @@ import nextDynamic from 'next/dynamic';
 const AnimateInView = nextDynamic(() => import('@/components/AnimateInView'));
 import { siteConfig } from '@/config/site';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;

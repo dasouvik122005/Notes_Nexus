@@ -8,7 +8,7 @@ import MaterialListClient from '@/components/MaterialListClient';
 import { FileText, Star, User, Upload, ExternalLink, ShieldAlert } from 'lucide-react';
 import { siteConfig } from '@/config/site';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;

@@ -14,7 +14,7 @@ export default function AnimateFloat({ children, className = '', style = {} }) {
         ease: "easeInOut"
       }}
       className={className}
-      style={style}
+      style={{ ...style, willChange: 'transform' }}
     >
       {children}
     </motion.div>
