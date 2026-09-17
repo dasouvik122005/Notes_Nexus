@@ -1,17 +1,16 @@
 import { siteConfig } from '@/config/site';
 
 export default function robots() {
+  const baseUrl = siteConfig.url || 'https://notes-nexus-jisu.vercel.app';
+
   return {
     rules: [
       {
         userAgent: '*',
         allow: '/',
-      },
-      {
-        userAgent: ['GPTBot', 'CCBot', 'anthropic-ai', 'PerplexityBot', 'Google-Extended'],
-        allow: '/',
+        disallow: ['/admin', '/api/admin', '/me'],
       },
     ],
-    sitemap: `${siteConfig.url}/sitemap.xml`,
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

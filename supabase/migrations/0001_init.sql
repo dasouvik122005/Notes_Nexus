@@ -36,7 +36,7 @@ create table if not exists public.papers (
   constraint unique_dept_sem_paper_code unique (department_id, semester, paper_code)
 );
 
-create index if index not exists idx_papers_dept_sem on public.papers (department_id, semester);
+create index if not exists idx_papers_dept_sem on public.papers (department_id, semester);
 
 -- ------------------------------------------------------------------------------
 -- 3. USERS (Profiles synced from auth.users)

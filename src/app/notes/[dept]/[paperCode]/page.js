@@ -119,9 +119,15 @@ export default async function PaperDetailPage({ params }) {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <Star size={18} fill="#F59E0B" color="#B45309" />
-              <span>{paper.ratingAvg.toFixed(1)} / 5.0</span>
-              <span style={{ color: '#777', fontWeight: 600 }}>({paper.ratingCount} student votes)</span>
+              <Star size={18} fill={paper.ratingCount > 0 ? "#F59E0B" : "none"} color={paper.ratingCount > 0 ? "#B45309" : "#888"} />
+              {paper.ratingCount > 0 ? (
+                <>
+                  <span>{paper.ratingAvg.toFixed(1)} / 5.0</span>
+                  <span style={{ color: '#777', fontWeight: 600 }}>({paper.ratingCount} student {paper.ratingCount === 1 ? 'vote' : 'votes'})</span>
+                </>
+              ) : (
+                <span style={{ color: '#777', fontWeight: 600 }}>No student ratings yet</span>
+              )}
             </div>
 
             {paper.facultyName && (

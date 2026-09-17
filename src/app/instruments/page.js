@@ -1,77 +1,122 @@
-import React from 'react';
+'use client';
+
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import AnimateInView from '@/components/AnimateInView';
-import { Tag, Plus, PhoneCall, ShieldAlert, BookOpen, Wrench } from 'lucide-react';
+import {
+  Tag,
+  Plus,
+  ArrowRight,
+  BookOpen,
+  Wrench,
+  Search,
+  Filter,
+  CheckCircle2,
+} from 'lucide-react';
 import { siteConfig } from '@/config/site';
 
-export const metadata = {
-  title: 'Instruments & Book Marketplace',
-  description: `Peer-to-peer student marketplace for second-hand textbooks, engineering drafters, and lab instruments at ${siteConfig.university}.`,
-};
-
-// Seed sample listings for initial browse experience
-const sampleListings = [
-  {
-    id: 'inst-1',
-    category: 'instrument',
-    title: 'Mini Drafter (Omega) + T-Square with Carrying Case',
-    description: 'Used for one semester in Engineering Drawing. Excellent smooth condition with all tightening screws intact.',
-    condition: 'Like New',
-    expectedPrice: 450,
-    isNegotiable: true,
-    contactName: 'Rahul M.',
-    contactPhone: '+91 98765 43210',
-    createdAt: '2 days ago',
-    department: 'B.Tech CSE / Core',
-  },
-  {
-    id: 'inst-2',
-    category: 'book',
-    title: 'Higher Engineering Mathematics by B.S. Grewal (44th Ed.)',
-    description: 'Clean textbook, no pencil markings or torn pages. Covers Engineering Math 1 and 2.',
-    condition: 'Good',
-    expectedPrice: 380,
-    isNegotiable: false,
-    contactName: 'Priya K.',
-    contactPhone: '+91 98234 56789',
-    createdAt: '3 days ago',
-    department: 'B.Tech / Mathematics',
-  },
-  {
-    id: 'inst-3',
-    category: 'instrument',
-    title: 'Clinical Stethoscope & Laboratory Apron (Size M)',
-    description: 'Pharmacy laboratory coat and standard dual-head stethoscope. Cleaned and sanitized.',
-    condition: 'Good',
-    expectedPrice: 600,
-    isNegotiable: true,
-    contactName: 'Subhajit D.',
-    contactPhone: '+91 91234 56780',
-    createdAt: '5 days ago',
-    department: 'B.Pharma',
-  },
-  {
-    id: 'inst-4',
-    category: 'book',
-    title: 'Data Structures and Algorithms in C by Reema Thareja',
-    description: 'Essential textbook for Semester 3 CSE/IT. Includes code walkthroughs and diagrams.',
-    condition: 'Like New',
-    expectedPrice: 290,
-    isNegotiable: false,
-    contactName: 'Anik B.',
-    contactPhone: '+91 97654 32109',
-    createdAt: '1 week ago',
-    department: 'B.Tech CSE / BCA',
-  },
-];
+import { createClient } from '@/lib/supabase/client';
 
 export default function InstrumentsPage() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all'); // 'all' | 'instrument' | 'book' | 'calculator' | 'lab_gear'
+  const [sortBy, setSortBy] = useState('newest'); // 'newest' | 'price_low' | 'price_high'
+  const [listings, setListings] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadListings() {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from('marketplace_items')
+          .select('*')
+          .eq('status', 'active')
+          .neq('status', 'sold')
+          .order('created_at', { ascending: false });
+
+        if (!error && data && data.length > 0) {
+          const mapped = data.map((item) => ({
+            id: item.id,
+            category: item.category,
+            title: item.title,
+            description: item.description,
+            condition: item.condition,
+            expectedPrice: item.expected_price,
+            isNegotiable: item.is_negotiable,
+            contactName: item.contact_name,
+            contactPhone: item.contact_phone,
+            department: item.department,
+            photos: item.photo_keys || [],
+            createdAt: new Date(item.created_at).toLocaleDateString(),
+          }));
+          if (isMounted) {
+            setListings(mapped);
+            setIsLoading(false);
+          }
+          return;
+        }
+      } catch {
+        // Fall back to client storage
+      }
+
+      if (typeof window !== 'undefined') {
+        try {
+          const stored = JSON.parse(localStorage.getItem('notes_nexus_user_listings') || '[]');
+          const approvedStored = stored.filter((s) => (s.status === 'approved' || s.status === 'active') && s.status !== 'sold');
+          if (isMounted) {
+            setListings(approvedStored);
+          }
+        } catch {
+          if (isMounted) setListings([]);
+        }
+      }
+
+      if (isMounted) setIsLoading(false);
+    }
+
+    loadListings();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Filter and sort listings
+  const filteredListings = useMemo(() => {
+    return listings
+      .filter((item) => {
+        // Category filter
+        if (selectedCategory !== 'all') {
+          if (selectedCategory === 'instrument' && item.category !== 'instrument') return false;
+          if (selectedCategory === 'book' && item.category !== 'book') return false;
+          if (selectedCategory === 'calculator' && item.category !== 'calculator') return false;
+          if (selectedCategory === 'lab_gear' && item.category !== 'lab_gear') return false;
+        }
+
+        // Search query
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase().trim();
+          const matchTitle = item.title?.toLowerCase().includes(q);
+          const matchDesc = item.description?.toLowerCase().includes(q);
+          const matchDept = item.department?.toLowerCase().includes(q);
+          if (!matchTitle && !matchDesc && !matchDept) return false;
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortBy === 'price_low') return a.expectedPrice - b.expectedPrice;
+        if (sortBy === 'price_high') return b.expectedPrice - a.expectedPrice;
+        return 0; // default order
+      });
+  }, [listings, selectedCategory, searchQuery, sortBy]);
+
   return (
-    <div style={{ padding: '4rem 0 6rem 0' }}>
+    <div style={{ padding: '4rem 0 7rem 0' }}>
       <div className="container">
-        
         {/* Header Banner */}
-        <AnimateInView delay={0.1} direction="up" style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+        <AnimateInView delay={0.1} direction="up" style={{ textAlign: 'center', marginBottom: '3rem' }}>
           <div
             style={{
               display: 'inline-block',
@@ -85,7 +130,7 @@ export default function InstrumentsPage() {
               marginBottom: '1rem',
             }}
           >
-            Student Marketplace
+            Student Peer Noticeboard
           </div>
 
           <h1
@@ -115,14 +160,15 @@ export default function InstrumentsPage() {
 
           <p
             style={{
-              fontSize: '1.2rem',
+              fontSize: '1.15rem',
               fontWeight: 600,
               maxWidth: '620px',
               margin: '0 auto 1.75rem auto',
               color: '#333',
+              lineHeight: 1.6,
             }}
           >
-            Buy and sell pre-loved university equipment, lab coats, mini drafters, calculators, and semester textbooks from fellow students.
+            Buy and sell pre-loved university equipment, lab coats, mini drafters, calculators, and semester textbooks from fellow JIS University students.
           </p>
 
           <Link
@@ -130,139 +176,339 @@ export default function InstrumentsPage() {
             className="neo-button primary"
             style={{
               fontSize: '1rem',
-              padding: '0.75rem 1.75rem',
+              padding: '0.85rem 2rem',
               display: 'inline-flex',
               alignItems: 'center',
               gap: '0.5rem',
             }}
           >
             <Plus size={20} />
-            <span>List an Item for Sale</span>
+            <span>POST A LISTING</span>
           </Link>
         </AnimateInView>
 
-        {/* Disclaimer Notice */}
+        {/* Search & Filter Bar */}
         <div
+          className="neo-card"
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            padding: '1rem 1.25rem',
-            backgroundColor: '#FEF3C7',
-            border: '2px solid var(--black)',
-            boxShadow: '3px 3px 0px 0px var(--black)',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            marginBottom: '3rem',
+            backgroundColor: 'var(--white)',
+            padding: '1.25rem 1.5rem',
+            marginBottom: '2.5rem',
           }}
         >
-          <ShieldAlert size={20} color="#92400E" />
-          <span style={{ color: '#92400E' }}>
-            Disclaimer: {siteConfig.name} is a student-to-student noticeboard and is not a party to any monetary transactions. Meet in safe on-campus public locations for handovers.
-          </span>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1rem',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between',
+            }}
+          >
+            {/* Search Input */}
+            <div style={{ flex: '1 1 280px', position: 'relative' }}>
+              <Search
+                size={18}
+                style={{
+                  position: 'absolute',
+                  left: '1rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#6B7280',
+                }}
+              />
+              <input
+                type="text"
+                placeholder="Search drafters, textbooks, calculators, aprons..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '0.7rem 1rem 0.7rem 2.75rem',
+                  border: '2px solid var(--black)',
+                  boxShadow: '2px 2px 0px 0px var(--black)',
+                  fontWeight: 700,
+                  fontSize: '0.9rem',
+                  backgroundColor: '#F9FAFB',
+                  outline: 'none',
+                }}
+              />
+            </div>
+
+            {/* Sort Dropdown */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Filter size={16} />
+              <span style={{ fontWeight: 800, fontSize: '0.8rem', textTransform: 'uppercase' }}>
+                Sort:
+              </span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                style={{
+                  padding: '0.65rem 1rem',
+                  border: '2px solid var(--black)',
+                  boxShadow: '2px 2px 0px 0px var(--black)',
+                  fontWeight: 800,
+                  fontSize: '0.85rem',
+                  backgroundColor: 'var(--white)',
+                  outline: 'none',
+                }}
+              >
+                <option value="newest">Newest First</option>
+                <option value="price_low">Price: Low to High</option>
+                <option value="price_high">Price: High to Low</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Category Filter Chips */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginTop: '1.25rem',
+              flexWrap: 'wrap',
+              borderTop: '2px dashed #E5E7EB',
+              paddingTop: '1rem',
+            }}
+          >
+            <span style={{ fontWeight: 900, fontSize: '0.75rem', textTransform: 'uppercase', color: '#6B7280' }}>
+              Category:
+            </span>
+            {[
+              { id: 'all', label: 'All Items' },
+              { id: 'instrument', label: 'Drafters & Tools' },
+              { id: 'book', label: 'Textbooks' },
+              { id: 'calculator', label: 'Calculators' },
+              { id: 'lab_gear', label: 'Lab Gear' },
+            ].map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => setSelectedCategory(cat.id)}
+                style={{
+                  backgroundColor:
+                    selectedCategory === cat.id ? 'var(--primary-yellow)' : 'var(--white)',
+                  border: '2px solid var(--black)',
+                  boxShadow:
+                    selectedCategory === cat.id
+                      ? '2px 2px 0px 0px var(--black)'
+                      : '1px 1px 0px 0px var(--black)',
+                  padding: '0.35rem 0.75rem',
+                  fontWeight: 800,
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Listings Grid */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '2.5rem',
-          }}
-        >
-          {sampleListings.map((item, index) => (
-            <AnimateInView
-              key={item.id}
-              delay={0.08 * (index + 1)}
-              direction="up"
-              style={{ height: '100%' }}
-            >
-              <div
-                className="neo-card"
-                style={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  backgroundColor: 'var(--white)',
-                }}
+        {isLoading ? (
+          <div
+            className="neo-card"
+            style={{
+              backgroundColor: 'var(--white)',
+              padding: '3.5rem 2rem',
+              textAlign: 'center',
+            }}
+          >
+            <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>⏳</div>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 900, marginBottom: '0.5rem' }}>
+              Loading marketplace listings...
+            </h3>
+            <p style={{ color: '#6B7280', fontWeight: 600 }}>Fetching latest student items from database</p>
+          </div>
+        ) : filteredListings.length === 0 ? (
+          <div
+            className="neo-card"
+            style={{
+              backgroundColor: 'var(--white)',
+              padding: '3rem',
+              textAlign: 'center',
+            }}
+          >
+            <Tag size={40} style={{ margin: '0 auto 1rem auto', color: '#9CA3AF' }} />
+            <h3 style={{ fontSize: '1.35rem', fontWeight: 900, marginBottom: '0.5rem' }}>
+              No Listings Found
+            </h3>
+            <p style={{ color: '#6B7280', fontWeight: 600, marginBottom: '1.5rem' }}>
+              No student items matched your search filter. Have something to sell?
+            </p>
+            <Link href="/instruments/new" className="neo-button primary">
+              <Plus size={16} style={{ marginRight: '0.3rem' }} />
+              <span>POST FIRST LISTING</span>
+            </Link>
+          </div>
+        ) : (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '2rem',
+            }}
+          >
+            {filteredListings.map((item, index) => (
+              <AnimateInView
+                key={item.id}
+                delay={0.05 * (index + 1)}
+                direction="up"
+                style={{ height: '100%' }}
               >
-                {/* Card Tag Banner */}
                 <div
+                  className="neo-card"
                   style={{
-                    backgroundColor: item.category === 'instrument' ? 'var(--primary-yellow)' : 'var(--primary-pink)',
-                    padding: '1rem 1.25rem',
-                    borderBottom: '3px solid var(--black)',
+                    height: '100%',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
+                    flexDirection: 'column',
+                    backgroundColor: 'var(--white)',
+                    transition: 'transform 0.15s ease',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    {item.category === 'instrument' ? <Wrench size={18} /> : <BookOpen size={18} />}
-                    <span style={{ fontWeight: 900, fontSize: '0.85rem', textTransform: 'uppercase' }}>
-                      {item.category}
+                  {/* Card Tag Banner */}
+                  <div
+                    style={{
+                      backgroundColor:
+                        item.category === 'instrument'
+                          ? 'var(--primary-yellow)'
+                          : item.category === 'book'
+                          ? 'var(--primary-pink)'
+                          : 'var(--primary-cyan)',
+                      padding: '0.85rem 1.15rem',
+                      borderBottom: '3px solid var(--black)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                      {item.category === 'instrument' ? (
+                        <Wrench size={16} />
+                      ) : (
+                        <BookOpen size={16} />
+                      )}
+                      <span
+                        style={{
+                          fontWeight: 900,
+                          fontSize: '0.8rem',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {item.category}
+                      </span>
+                    </div>
+
+                    <span
+                      style={{
+                        backgroundColor: 'var(--white)',
+                        border: '2px solid var(--black)',
+                        padding: '0.15rem 0.5rem',
+                        fontWeight: 800,
+                        fontSize: '0.75rem',
+                      }}
+                    >
+                      {item.condition}
                     </span>
                   </div>
 
-                  <span
+                  {/* Body */}
+                  <div
                     style={{
-                      backgroundColor: 'var(--white)',
-                      border: '2px solid var(--black)',
-                      padding: '0.15rem 0.5rem',
-                      fontWeight: 800,
-                      fontSize: '0.75rem',
+                      padding: '1.5rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      flex: 1,
                     }}
                   >
-                    {item.condition}
-                  </span>
-                </div>
-
-                {/* Body */}
-                <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.5rem', color: '#15803D' }}>
-                    ₹{item.expectedPrice}{' '}
-                    {item.isNegotiable && (
-                      <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#666' }}>(Negotiable)</span>
-                    )}
-                  </div>
-
-                  <h3 style={{ fontSize: '1.25rem', fontWeight: 900, lineHeight: 1.3, marginBottom: '0.75rem' }}>
-                    {item.title}
-                  </h3>
-
-                  <p style={{ color: '#444', fontSize: '0.9rem', fontWeight: 600, lineHeight: 1.5, marginBottom: '1.25rem' }}>
-                    {item.description}
-                  </p>
-
-                  <div style={{ marginTop: 'auto', borderTop: '2px dashed #ddd', paddingTop: '1rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: 700, color: '#666', marginBottom: '1rem' }}>
-                      <span>Seller: {item.contactName}</span>
-                      <span>{item.createdAt}</span>
-                    </div>
-
-                    <a
-                      href={`tel:${item.contactPhone}`}
-                      className="neo-button"
+                    <div
                       style={{
-                        width: '100%',
-                        backgroundColor: 'var(--white)',
-                        fontSize: '0.9rem',
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.5rem',
+                        fontSize: '1.6rem',
+                        fontWeight: 900,
+                        marginBottom: '0.5rem',
+                        color: '#15803D',
                       }}
                     >
-                      <PhoneCall size={16} />
-                      <span>Contact Seller</span>
-                    </a>
+                      ₹{item.expectedPrice}{' '}
+                      {item.isNegotiable && (
+                        <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#666' }}>
+                          (Negotiable)
+                        </span>
+                      )}
+                    </div>
+
+                    <h3
+                      style={{
+                        fontSize: '1.2rem',
+                        fontWeight: 900,
+                        lineHeight: 1.3,
+                        marginBottom: '0.65rem',
+                      }}
+                    >
+                      {item.title}
+                    </h3>
+
+                    <p
+                      style={{
+                        color: '#4B5563',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        lineHeight: 1.5,
+                        marginBottom: '1.25rem',
+                      }}
+                    >
+                      {item.description}
+                    </p>
+
+                    <div
+                      style={{
+                        marginTop: 'auto',
+                        borderTop: '2px dashed #E5E7EB',
+                        paddingTop: '1rem',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          fontSize: '0.8rem',
+                          fontWeight: 700,
+                          color: '#6B7280',
+                          marginBottom: '0.85rem',
+                        }}
+                      >
+                        <span>Seller: {item.contactName}</span>
+                        <span>{item.createdAt}</span>
+                      </div>
+
+                      <Link
+                        href={`/instruments/${item.id}`}
+                        className="neo-button"
+                        style={{
+                          width: '100%',
+                          backgroundColor: 'var(--primary-yellow)',
+                          fontSize: '0.85rem',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '0.4rem',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        <span>View Details & Contact</span>
+                        <ArrowRight size={14} />
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </AnimateInView>
-          ))}
-        </div>
-
+              </AnimateInView>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

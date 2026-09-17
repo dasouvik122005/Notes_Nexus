@@ -29,7 +29,7 @@ export const departments: Department[] = [
     name: "Bachelor of Computer Applications",
     shortCode: "BCA",
     degreeType: "BCA",
-    totalSemesters: 6,
+    totalSemesters: 8,
     icon: "Code",
     description: "Application development, web technologies, and database administration.",
     isActive: true,
