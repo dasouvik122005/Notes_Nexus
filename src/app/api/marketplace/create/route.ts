@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
-import { r2Client, isR2Configured } from '@/lib/storage/r2';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { uploadToGoogleDrive, isDriveConfigured } from '@/lib/storage/drive';
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB per photo
-const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME || 'notes-nexus-materials';
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,7 +37,7 @@ export async function POST(request: NextRequest) {
 
     // 2. Extract and validate uploaded photos (up to 3)
     const photoFiles: File[] = [];
-    const photoKeys: string[] = [];
+    const photoLinks: string[] = [];
 
     const files = formData.getAll('photos') as File[];
     for (const f of files) {
@@ -94,25 +92,21 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 4. Upload photos to Cloudflare R2
-    if (photoFiles.length > 0 && isR2Configured) {
+    // 4. Upload photos to Google Drive
+    if (photoFiles.length > 0 && isDriveConfigured) {
       for (let i = 0; i < photoFiles.length; i++) {
         const photo = photoFiles[i];
         const safeName = photo.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-        const key = `marketplace/${Date.now()}-${i}-${safeName}`;
+        const driveFileName = `[Marketplace] ${Date.now()}-${safeName}`;
 
         try {
           const buffer = Buffer.from(await photo.arrayBuffer());
-          const putCommand = new PutObjectCommand({
-            Bucket: R2_BUCKET_NAME,
-            Key: key,
-            Body: buffer,
-            ContentType: photo.type || 'image/jpeg',
-          });
-          await r2Client.send(putCommand);
-          photoKeys.push(key);
-        } catch (r2Err) {
-          console.error('[Marketplace API] Photo upload failed:', r2Err);
+          const link = await uploadToGoogleDrive(buffer, driveFileName, photo.type || 'image/jpeg');
+          if (link) {
+            photoLinks.push(link);
+          }
+        } catch (driveErr) {
+          console.error('[Marketplace API] Photo upload failed:', driveErr);
         }
       }
     }
@@ -131,7 +125,7 @@ export async function POST(request: NextRequest) {
       contact_name: contactName.trim(),
       contact_phone: contactPhone.trim(),
       contact_email: sellerEmail,
-      photo_keys: photoKeys,
+      photo_keys: photoLinks, // Now storing Drive links instead of R2 keys
       status: 'pending',
       created_at: new Date().toISOString(),
     };
