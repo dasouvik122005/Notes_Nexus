@@ -234,6 +234,7 @@ export default function ListingDetailPage({ params }) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   overflow: 'hidden',
+                  position: 'relative',
                 }}
               >
                 {listing.photos && listing.photos.length > 0 ? (
@@ -271,6 +272,7 @@ export default function ListingDetailPage({ params }) {
                         cursor: 'pointer',
                         padding: 0,
                         overflow: 'hidden',
+                        position: 'relative',
                       }}
                     >
                       <Image
