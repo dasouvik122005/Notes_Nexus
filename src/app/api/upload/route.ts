@@ -114,7 +114,6 @@ export async function POST(request: NextRequest) {
     }
 
     const newMaterial = {
-      id: `mat-${Date.now()}`,
       type,
       department_id: departmentId,
       paper_id: paperId,

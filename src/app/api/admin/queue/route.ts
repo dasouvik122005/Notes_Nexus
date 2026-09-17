@@ -1,14 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export async function GET(request: NextRequest) {
   try {
-    // Query live Supabase if credentials exist
-    if (isSupabaseConfigured) {
-      try {
-        const supabase = await createClient();
+    const supabase = await createClient();
 
-        // Fetch pending materials
+    const {
+      data: { user },
+      error: authErr,
+    } = await supabase.auth.getUser();
+
+    if (authErr || !user) {
+      return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 });
+    }
+
+    const { data: profile } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden. Admin access required.' }, { status: 403 });
+    }
+
+    // Fetch pending materials
         const { data: dbMaterials, error: matErr } = await supabase
           .from('materials')
           .select('*')
@@ -44,37 +60,17 @@ export async function GET(request: NextRequest) {
           // audit_log table may not exist yet
         }
 
-        return NextResponse.json({
-          success: true,
-          materials: dbMaterials || [],
-          accounts: dbUsers || [],
-          listings: dbListings || [],
-          auditLogs: dbLogs || [],
-          stats: {
-            pendingMaterialsCount: (dbMaterials || []).length,
-            pendingAccountsCount: (dbUsers || []).length,
-            pendingListingsCount: (dbListings || []).length,
-            totalAuditCount: (dbLogs || []).length,
-          },
-        });
-      } catch (dbError) {
-        console.error('[Admin Queue API] Database error:', dbError);
-        // Return empty queue on DB error
-      }
-    }
-
-    // Return clean empty queue if unconfigured or error
     return NextResponse.json({
       success: true,
-      materials: [],
-      accounts: [],
-      listings: [],
-      auditLogs: [],
+      materials: dbMaterials || [],
+      accounts: dbUsers || [],
+      listings: dbListings || [],
+      auditLogs: dbLogs || [],
       stats: {
-        pendingMaterialsCount: 0,
-        pendingAccountsCount: 0,
-        pendingListingsCount: 0,
-        totalAuditCount: 0,
+        pendingMaterialsCount: (dbMaterials || []).length,
+        pendingAccountsCount: (dbUsers || []).length,
+        pendingListingsCount: (dbListings || []).length,
+        totalAuditCount: (dbLogs || []).length,
       },
     });
   } catch (err) {

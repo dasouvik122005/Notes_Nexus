@@ -92,7 +92,6 @@ export async function POST(request: NextRequest) {
 
     // 5. Construct listing object
     const newListing = {
-      id: `list-${Date.now()}`,
       seller_id: sellerId,
       category,
       title: title.trim(),
