@@ -32,9 +32,7 @@ export default function DepartmentPYQBrowser({ department, initialMaterials = []
   // Open in-app secure viewer
   const handleOpenViewer = (material) => {
     setActiveModal({
-      pdfUrl: `/api/pdf/stream?id=${material.id}${
-        material.storageKey ? `&key=${encodeURIComponent(material.storageKey)}` : ''
-      }`,
+      pdfUrl: material.storageKey || '',
       title: material.title,
       contributorName: material.uploadedByName,
     });
@@ -451,21 +449,22 @@ export default function DepartmentPYQBrowser({ department, initialMaterials = []
 
                 {/* Right CTA */}
                 <div>
-                  <button
-                    onClick={() => handleOpenViewer(material)}
-                    className="neo-button primary"
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      fontSize: '0.95rem',
-                      padding: '0.75rem 1.4rem',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <Eye size={18} />
-                    <span>Open in PDF Viewer →</span>
-                  </button>
+                        <button
+                          onClick={() => handleOpenViewer(material)}
+                          className="neo-button primary"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                            padding: '0.65rem 1.25rem',
+                            fontSize: '0.95rem',
+                            fontWeight: 900,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          <Eye size={16} />
+                          <span>Read →</span>
+                        </button>
                 </div>
               </div>
             ))}
