@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 
 // Next.js App Router config
 export const maxDuration = 30;
@@ -80,11 +81,17 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Create an admin client to bypass RLS for inserts (since we already auth checked above)
+    const adminClient = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
     // 3. Check/Insert dynamic paper row & insert material into database
     let paperId: string | null = null;
 
     if (type === 'notes') {
-      const { data: existingPaper } = await supabase
+      const { data: existingPaper } = await adminClient
         .from('papers')
         .select('id, is_active')
         .eq('department_id', departmentId)
@@ -95,7 +102,7 @@ export async function POST(request: NextRequest) {
       if (existingPaper) {
         paperId = existingPaper.id;
       } else {
-        const { data: insertedPaper } = await supabase
+        const { data: insertedPaper, error: paperInsertError } = await adminClient
           .from('papers')
           .insert({
             department_id: departmentId,
@@ -106,6 +113,10 @@ export async function POST(request: NextRequest) {
           })
           .select('id')
           .single();
+
+        if (paperInsertError) {
+          console.error('[Upload API] Paper Insert Error:', paperInsertError);
+        }
 
         if (insertedPaper) {
           paperId = insertedPaper.id;
@@ -134,7 +145,7 @@ export async function POST(request: NextRequest) {
       created_at: new Date().toISOString(),
     };
 
-    const { data, error } = await supabase.from('materials').insert(newMaterial).select().single();
+    const { data, error } = await adminClient.from('materials').insert(newMaterial).select().single();
     if (!error && data) {
       return NextResponse.json(
         {
