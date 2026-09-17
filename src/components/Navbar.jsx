@@ -125,12 +125,12 @@ export default function Navbar() {
                 fontSize: '0.85rem',
                 marginTop: '0.25rem',
                 fontWeight: 900,
-                alignSelf: 'flex-end',
+                alignSelf: 'center',
               }}
             >
               FEEDBACK
             </NeoButton>
-            <div style={{ marginTop: '0.25rem', display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+            <div style={{ marginTop: '0.25rem', display: 'flex', justifyContent: 'center', width: '100%' }}>
               <UserMenu />
             </div>
           </div>

@@ -194,8 +194,8 @@ a:visited {
   z-index: 999;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  padding: 0.75rem 0.9rem;
+  align-items: center;
+  padding: 0.85rem 1rem;
   gap: 0.35rem;
   animation: mobileMenuFadeSlide 0.15s ease-out;
 }
@@ -328,10 +328,10 @@ a:visited {
 .mobile-menu .nav-link {
   font-size: 0.95rem;
   font-weight: 900;
-  padding: 0.25rem 0.6rem;
-  text-align: right;
-  justify-content: flex-end;
-  align-self: flex-end;
+  padding: 0.25rem 0.75rem;
+  text-align: center;
+  justify-content: center;
+  align-self: center;
 }
 
 @media (max-width: 480px) {
