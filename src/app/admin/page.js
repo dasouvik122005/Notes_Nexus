@@ -1000,31 +1000,7 @@ export default function AdminModerationPage() {
                         paddingTop: '1rem',
                       }}
                     >
-                      {/* Preview PDF */}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setPreviewPdf({
-                            url: item.storageKey,
-                            title: item.title,
-                          })
-                        }
-                        style={{
-                          backgroundColor: 'var(--white)',
-                          border: '2px solid var(--black)',
-                          boxShadow: '2px 2px 0px 0px var(--black)',
-                          padding: '0.5rem 1rem',
-                          fontWeight: 800,
-                          fontSize: '0.85rem',
-                          cursor: 'pointer',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: '0.4rem',
-                          textTransform: 'uppercase',
-                        }}
-                      >
-                        <Eye size={16} /> Preview In Viewer
-                      </button>
+
 
                       <div style={{ display: 'flex', gap: '0.75rem' }}>
                         {/* Reject */}
