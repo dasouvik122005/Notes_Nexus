@@ -205,174 +205,160 @@ export default function ListingDetailPage({ params }) {
         </div>
 
         {/* Main Grid */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '2.5rem',
-            alignItems: 'flex-start',
-          }}
-        >
-          {/* Left Column: Photos & Details */}
-          <div>
-            {/* Main Photo Card */}
+        <div className="listing-detail-layout">
+          {/* Main Photo Card */}
+          <div
+            className="neo-card listing-photos-card"
+            style={{
+              backgroundColor: 'var(--white)',
+              padding: '1rem',
+            }}
+          >
             <div
-              className="neo-card"
               style={{
-                backgroundColor: 'var(--white)',
-                padding: '1rem',
-                marginBottom: '1.5rem',
+                width: '100%',
+                height: '380px',
+                backgroundColor: '#F3F4F6',
+                border: '2px solid var(--black)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                position: 'relative',
               }}
             >
-              <div
-                style={{
-                  width: '100%',
-                  height: '380px',
-                  backgroundColor: '#F3F4F6',
-                  border: '2px solid var(--black)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  overflow: 'hidden',
-                  position: 'relative',
-                }}
-              >
-                {listing.photos && listing.photos.length > 0 ? (
-                  <Image
-                    unoptimized
-                    fill
-                    src={listing.photos[activePhotoIdx] || listing.photos[0]}
-                    alt={listing.title}
-                    style={{ objectFit: 'cover' }}
-                  />
-                ) : (
-                  <div style={{ textAlign: 'center', color: '#9CA3AF' }}>
-                    <Tag size={48} style={{ margin: '0 auto 0.5rem auto' }} />
-                    <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem' }}>
-                      No photos uploaded for this listing
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Thumbnails */}
-              {listing.photos && listing.photos.length > 1 && (
-                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
-                  {listing.photos.map((photo, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setActivePhotoIdx(idx)}
-                      style={{
-                        width: '70px',
-                        height: '70px',
-                        border: `3px solid ${activePhotoIdx === idx ? 'var(--black)' : '#D1D5DB'}`,
-                        boxShadow:
-                          activePhotoIdx === idx ? '2px 2px 0px 0px var(--black)' : 'none',
-                        cursor: 'pointer',
-                        padding: 0,
-                        overflow: 'hidden',
-                        position: 'relative',
-                      }}
-                    >
-                      <Image
-                        unoptimized
-                        fill
-                        src={photo}
-                        alt="Thumbnail"
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </button>
-                  ))}
+              {listing.photos && listing.photos.length > 0 ? (
+                <Image
+                  unoptimized
+                  fill
+                  src={listing.photos[activePhotoIdx] || listing.photos[0]}
+                  alt={listing.title}
+                  style={{ objectFit: 'cover' }}
+                />
+              ) : (
+                <div style={{ textAlign: 'center', color: '#9CA3AF' }}>
+                  <Tag size={48} style={{ margin: '0 auto 0.5rem auto' }} />
+                  <p style={{ margin: 0, fontWeight: 700, fontSize: '0.9rem' }}>
+                    No photos uploaded for this listing
+                  </p>
                 </div>
               )}
             </div>
 
-            {/* Description Card */}
-            <div
-              className="neo-card"
-              style={{
-                backgroundColor: 'var(--white)',
-                padding: '2rem',
-                marginBottom: '1.5rem',
-              }}
-            >
-              <h2
-                style={{
-                  fontSize: '1.25rem',
-                  fontWeight: 900,
-                  textTransform: 'uppercase',
-                  marginBottom: '1rem',
-                }}
-              >
-                Item Description
-              </h2>
-
-              <p
-                style={{
-                  color: '#374151',
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                  lineHeight: 1.6,
-                  whiteSpace: 'pre-line',
-                  margin: 0,
-                }}
-              >
-                {listing.description}
-              </p>
-            </div>
-
-            {/* Safety Tips Card */}
-            <div
-              style={{
-                backgroundColor: '#EFF6FF',
-                border: '3px solid var(--black)',
-                boxShadow: '3px 3px 0px 0px var(--black)',
-                padding: '1.25rem 1.5rem',
-              }}
-            >
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  fontWeight: 900,
-                  fontSize: '0.9rem',
-                  color: '#1E40AF',
-                  marginBottom: '0.5rem',
-                }}
-              >
-                <ShieldCheck size={18} />
-                <span>CAMPUS EXCHANGE SAFETY GUIDELINES</span>
+            {/* Thumbnails */}
+            {listing.photos && listing.photos.length > 1 && (
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1rem' }}>
+                {listing.photos.map((photo, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setActivePhotoIdx(idx)}
+                    style={{
+                      width: '70px',
+                      height: '70px',
+                      border: `3px solid ${activePhotoIdx === idx ? 'var(--black)' : '#D1D5DB'}`,
+                      boxShadow:
+                        activePhotoIdx === idx ? '2px 2px 0px 0px var(--black)' : 'none',
+                      cursor: 'pointer',
+                      padding: 0,
+                      overflow: 'hidden',
+                      position: 'relative',
+                    }}
+                  >
+                    <Image
+                      unoptimized
+                      fill
+                      src={photo}
+                      alt="Thumbnail"
+                      style={{ objectFit: 'cover' }}
+                    />
+                  </button>
+                ))}
               </div>
-              <ul
-                style={{
-                  margin: 0,
-                  paddingLeft: '1.25rem',
-                  fontSize: '0.85rem',
-                  color: '#1E3A8A',
-                  fontWeight: 700,
-                  lineHeight: 1.5,
-                }}
-              >
-                <li>Always meet in well-lit public campus locations (e.g. Central Library, Canteen).</li>
-                <li>Inspect all tightening knobs, screws, and page integrity before paying.</li>
-                <li>Notes Nexus is a free noticeboard and never asks for upfront online payments.</li>
-              </ul>
-            </div>
+            )}
           </div>
 
-          {/* Right Column: Pricing & Contact Action Card */}
-          <div>
-            <div
-              className="neo-card"
+          {/* Description Card */}
+          <div
+            className="neo-card listing-desc-card"
+            style={{
+              backgroundColor: 'var(--white)',
+              padding: '2rem',
+            }}
+          >
+            <h2
               style={{
-                backgroundColor: 'var(--white)',
-                padding: '2rem',
-                position: 'sticky',
-                top: '6rem',
+                fontSize: '1.25rem',
+                fontWeight: 900,
+                textTransform: 'uppercase',
+                marginBottom: '1rem',
               }}
             >
+              Item Description
+            </h2>
+
+            <p
+              style={{
+                color: '#374151',
+                fontWeight: 600,
+                fontSize: '1rem',
+                lineHeight: 1.6,
+                whiteSpace: 'pre-line',
+                margin: 0,
+              }}
+            >
+              {listing.description}
+            </p>
+          </div>
+
+          {/* Safety Tips Card */}
+          <div
+            className="listing-safety-card"
+            style={{
+              backgroundColor: '#EFF6FF',
+              border: '3px solid var(--black)',
+              boxShadow: '3px 3px 0px 0px var(--black)',
+              padding: '1.25rem 1.5rem',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                fontWeight: 900,
+                fontSize: '0.9rem',
+                color: '#1E40AF',
+                marginBottom: '0.5rem',
+              }}
+            >
+              <ShieldCheck size={18} />
+              <span>CAMPUS EXCHANGE SAFETY GUIDELINES</span>
+            </div>
+            <ul
+              style={{
+                margin: 0,
+                paddingLeft: '1.25rem',
+                fontSize: '0.85rem',
+                color: '#1E3A8A',
+                fontWeight: 700,
+                lineHeight: 1.5,
+              }}
+            >
+              <li>Always meet in well-lit public campus locations (e.g. Central Library, Canteen).</li>
+              <li>Inspect all tightening knobs, screws, and page integrity before paying.</li>
+              <li>Notes Nexus is a free noticeboard and never asks for upfront online payments.</li>
+            </ul>
+          </div>
+
+          {/* Pricing & Contact Action Card */}
+          <div
+            className="neo-card listing-info-card"
+            style={{
+              backgroundColor: 'var(--white)',
+              padding: '2rem',
+            }}
+          >
               {/* Category & Condition Badges */}
               <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
                 <span
@@ -627,7 +613,6 @@ export default function ListingDetailPage({ params }) {
                 </button>
               </div>
             </div>
-          </div>
         </div>
       </div>
     </div>
