@@ -1055,4 +1055,165 @@ a:visited {
   }
 }
 
+/* ========================================================================= */
+/* PYQ Department & Semester Browser Responsiveness                          */
+/* ========================================================================= */
+.pyq-exam-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.pyq-exam-card {
+  padding: 1.15rem 1.15rem;
+  border: 3px solid var(--black);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.1s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.35rem;
+  background-color: var(--white);
+  box-shadow: 4px 4px 0px 0px var(--black);
+  border-radius: 2px;
+}
+
+.pyq-exam-card.selected {
+  background-color: var(--primary-pink);
+  box-shadow: 2px 2px 0px 0px var(--black);
+  transform: translate(2px, 2px);
+}
+
+.pyq-exam-card:hover:not(.selected) {
+  box-shadow: 6px 6px 0px 0px var(--black);
+  transform: translate(-1px, -1px);
+}
+
+.pyq-exam-icon-box {
+  width: 40px;
+  height: 40px;
+  background-color: var(--white);
+  border: 2px solid var(--black);
+  box-shadow: 2px 2px 0px 0px var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.35rem;
+  flex-shrink: 0;
+}
+
+.pyq-exam-title {
+  font-size: 1rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1.25;
+  color: var(--black);
+  margin-bottom: 0.1rem;
+}
+
+.pyq-exam-desc {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #374151;
+  line-height: 1.35;
+}
+
+.pyq-papers-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  border-bottom: 3px solid var(--black);
+  padding-bottom: 0.85rem;
+  gap: 1rem;
+}
+
+.pyq-papers-heading {
+  font-size: 1.2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--black);
+  line-height: 1.25;
+}
+
+.pyq-papers-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-shrink: 0;
+}
+
+.pyq-contributed-badge {
+  background-color: var(--primary-yellow);
+  border: 2px solid var(--black);
+  box-shadow: 2px 2px 0px 0px var(--black);
+  padding: 0.2rem 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .pyq-exam-grid {
+    gap: 0.75rem;
+  }
+
+  .pyq-exam-card {
+    padding: 0.95rem 0.8rem;
+  }
+
+  .pyq-exam-icon-box {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 0.25rem;
+  }
+
+  .pyq-exam-title {
+    font-size: 0.85rem;
+  }
+
+  .pyq-exam-desc {
+    font-size: 0.72rem;
+    line-height: 1.3;
+  }
+
+  .pyq-papers-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding-bottom: 0.85rem;
+  }
+
+  .pyq-papers-heading {
+    font-size: 1.05rem;
+  }
+
+  .pyq-papers-actions-row {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 400px) {
+  .pyq-papers-actions-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.65rem;
+  }
+
+  .pyq-upload-link {
+    width: 100%;
+  }
+
+  .pyq-upload-link > .neo-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 

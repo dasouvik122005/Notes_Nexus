@@ -79,46 +79,7 @@ export default async function DepartmentPYQPage({ params }) {
         </nav>
 
         {/* Department Title Banner */}
-        <AnimateInView delay={0.1} direction="up" style={{ marginBottom: '3rem' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '1rem', marginBottom: '0.75rem' }}>
-            <span
-              style={{
-                backgroundColor: 'var(--primary-pink)',
-                border: '2px solid var(--black)',
-                boxShadow: '3px 3px 0px 0px var(--black)',
-                padding: '0.3rem 0.8rem',
-                fontWeight: 900,
-                fontSize: '0.9rem',
-                textTransform: 'uppercase',
-              }}
-            >
-              {department.shortCode} Exam Papers
-            </span>
-            <span
-              style={{
-                backgroundColor: 'var(--primary-yellow)',
-                border: '2px solid var(--black)',
-                padding: '0.3rem 0.8rem',
-                fontWeight: 800,
-                fontSize: '0.85rem',
-                textTransform: 'uppercase',
-              }}
-            >
-              {department.degreeType}
-            </span>
-            <span
-              style={{
-                backgroundColor: 'var(--white)',
-                border: '2px solid var(--black)',
-                padding: '0.3rem 0.8rem',
-                fontWeight: 800,
-                fontSize: '0.85rem',
-              }}
-            >
-              {department.totalSemesters} Semesters
-            </span>
-          </div>
-
+        <AnimateInView delay={0.1} direction="up" style={{ marginBottom: '2.5rem' }}>
           <h1
             className="hero-title"
             style={{

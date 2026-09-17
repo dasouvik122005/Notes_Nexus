@@ -166,108 +166,36 @@ export default function DepartmentPYQBrowser({ department, initialMaterials = []
           Step 2: Choose Exam Session for Semester {selectedSemester}
         </label>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+        <div className="pyq-exam-grid">
           <button
             type="button"
             onClick={() => setSelectedExamType('mid_sem')}
-            style={{
-              padding: '1.25rem 1.5rem',
-              border: '3px solid var(--black)',
-              backgroundColor:
-                selectedExamType === 'mid_sem' ? 'var(--primary-pink)' : 'var(--white)',
-              boxShadow:
-                selectedExamType === 'mid_sem'
-                  ? '2px 2px 0px 0px var(--black)'
-                  : '4px 4px 0px 0px var(--black)',
-              transform: selectedExamType === 'mid_sem' ? 'translate(2px, 2px)' : 'none',
-              cursor: 'pointer',
-              textAlign: 'left',
-              transition: 'all 0.1s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1rem',
-            }}
+            className={`pyq-exam-card ${selectedExamType === 'mid_sem' ? 'selected' : ''}`}
           >
-            <div
-              style={{
-                width: '44px',
-                height: '44px',
-                backgroundColor: 'var(--white)',
-                border: '2px solid var(--black)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <FileText size={22} />
+            <div className="pyq-exam-icon-box">
+              <FileText size={20} />
             </div>
-            <div>
-              <div
-                style={{
-                  fontSize: '1.1rem',
-                  fontWeight: 900,
-                  textTransform: 'uppercase',
-                  marginBottom: '0.2rem',
-                }}
-              >
-                Mid Semester Exam
-              </div>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#374151' }}>
-                Internal & mid-term evaluation papers
-              </div>
+            <div className="pyq-exam-title">
+              Mid Semester Exam
+            </div>
+            <div className="pyq-exam-desc">
+              Internal & mid-term evaluation papers
             </div>
           </button>
 
           <button
             type="button"
             onClick={() => setSelectedExamType('final_sem')}
-            style={{
-              padding: '1.25rem 1.5rem',
-              border: '3px solid var(--black)',
-              backgroundColor:
-                selectedExamType === 'final_sem' ? 'var(--primary-pink)' : 'var(--white)',
-              boxShadow:
-                selectedExamType === 'final_sem'
-                  ? '2px 2px 0px 0px var(--black)'
-                  : '4px 4px 0px 0px var(--black)',
-              transform: selectedExamType === 'final_sem' ? 'translate(2px, 2px)' : 'none',
-              cursor: 'pointer',
-              textAlign: 'left',
-              transition: 'all 0.1s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '1rem',
-            }}
+            className={`pyq-exam-card ${selectedExamType === 'final_sem' ? 'selected' : ''}`}
           >
-            <div
-              style={{
-                width: '44px',
-                height: '44px',
-                backgroundColor: 'var(--white)',
-                border: '2px solid var(--black)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexShrink: 0,
-              }}
-            >
-              <GraduationCap size={24} />
+            <div className="pyq-exam-icon-box">
+              <GraduationCap size={22} />
             </div>
-            <div>
-              <div
-                style={{
-                  fontSize: '1.1rem',
-                  fontWeight: 900,
-                  textTransform: 'uppercase',
-                  marginBottom: '0.2rem',
-                }}
-              >
-                Final / End Semester Exam
-              </div>
-              <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#374151' }}>
-                Official University End-Semester papers
-              </div>
+            <div className="pyq-exam-title">
+              Final / End Semester Exam
+            </div>
+            <div className="pyq-exam-desc">
+              Official University End-Semester papers
             </div>
           </button>
         </div>
@@ -275,54 +203,33 @@ export default function DepartmentPYQBrowser({ department, initialMaterials = []
 
       {/* 3. Contributed Papers List by Year */}
       <div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-            borderBottom: '3px solid var(--black)',
-            paddingBottom: '0.75rem',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span
-              style={{
-                fontWeight: 900,
-                fontSize: '1.1rem',
-                textTransform: 'uppercase',
-              }}
-            >
-              Semester {selectedSemester} •{' '}
-              {selectedExamType === 'mid_sem' ? 'Mid Semester' : 'Final Semester'} Papers
-            </span>
-            <span
-              style={{
-                backgroundColor: 'var(--primary-yellow)',
-                border: '2px solid var(--black)',
-                padding: '0.15rem 0.5rem',
-                fontSize: '0.75rem',
-                fontWeight: 900,
-              }}
-            >
+        <div className="pyq-papers-header">
+          <h2 className="pyq-papers-heading">
+            Semester {selectedSemester} •{' '}
+            {selectedExamType === 'mid_sem' ? 'Mid Semester' : 'Final Semester'} Papers
+          </h2>
+
+          <div className="pyq-papers-actions-row">
+            <span className="pyq-contributed-badge">
               {availableMaterials.length} Contributed
             </span>
-          </div>
 
-          <Link href="/upload">
-            <NeoButton
-              variant="default"
-              style={{
-                fontSize: '0.8rem',
-                padding: '0.4rem 0.8rem',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-              }}
-            >
-              <Upload size={14} /> Upload PYQ
-            </NeoButton>
-          </Link>
+            <Link href="/upload" className="pyq-upload-link">
+              <NeoButton
+                variant="default"
+                style={{
+                  fontSize: '0.82rem',
+                  padding: '0.45rem 0.9rem',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <Upload size={14} /> Upload Semester {selectedSemester} PYQ
+              </NeoButton>
+            </Link>
+          </div>
         </div>
 
         {availableMaterials.length > 0 ? (
