@@ -154,20 +154,47 @@ export default function UploadPage() {
       // Step 1: Client-side PDF watermarking with pdf-lib
       let uploadBuffer;
       try {
-        const { PDFDocument, rgb, degrees } = await import('pdf-lib');
+        const { PDFDocument, rgb, degrees, StandardFonts } = await import('pdf-lib');
         const arrayBuffer = await file.arrayBuffer();
         const pdfDoc = await PDFDocument.load(arrayBuffer);
         const pages = pdfDoc.getPages();
 
+        const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+        const footerFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+
+        const watermarkText = 'Notes Nexus • JIS University';
+        const fontSize = 54;
+        const textWidth = font.widthOfTextAtSize(watermarkText, fontSize);
+
+        const footerText = 'Downloaded from Notes Nexus - notes-nexus.vercel.app';
+        const footerSize = 11;
+        const footerWidth = footerFont.widthOfTextAtSize(footerText, footerSize);
+
         for (const page of pages) {
           const { width, height } = page.getSize();
-          page.drawText('Notes Nexus • JIS University', {
-            x: 50,
-            y: height / 2,
-            size: 50,
-            color: rgb(0.9, 0.9, 0.9),
+          
+          // Perfectly center the 45-degree diagonal watermark
+          const x = (width / 2) - (textWidth / 2) * 0.707;
+          const y = (height / 2) - (textWidth / 2) * 0.707;
+
+          page.drawText(watermarkText, {
+            x: x,
+            y: y,
+            size: fontSize,
+            font: font,
+            color: rgb(0.65, 0.65, 0.65), // Premium gray
             rotate: degrees(45),
-            opacity: 0.3,
+            opacity: 0.22, // Subtle opacity
+          });
+
+          // Draw professional footer
+          page.drawText(footerText, {
+            x: (width / 2) - (footerWidth / 2),
+            y: 25,
+            size: footerSize,
+            font: footerFont,
+            color: rgb(0.5, 0.5, 0.5),
+            opacity: 0.6,
           });
         }
 
