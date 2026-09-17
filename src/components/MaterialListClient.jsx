@@ -186,7 +186,7 @@ export default function MaterialListClient({
                   }}
                 >
                   <Eye size={16} />
-                  <span>Read In-App →</span>
+                  <span>Read →</span>
                 </button>
               </div>
             </div>
