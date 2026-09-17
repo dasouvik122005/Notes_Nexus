@@ -9,7 +9,7 @@
 insert into public.departments (id, name, short_code, degree_type, total_semesters, icon, description, sort_order, is_active)
 values
   ('btech-cse', 'B.Tech Computer Science & Engineering', 'CSE', 'B.Tech', 8, 'Laptop', 'Core computing, data structures, artificial intelligence, software engineering.', 1, true),
-  ('bca', 'Bachelor of Computer Applications', 'BCA', 'BCA', 6, 'Code', 'Application development, web technologies, and database administration.', 2, true),
+  ('bca', 'Bachelor of Computer Applications', 'BCA', 'BCA', 8, 'Code', 'Application development, web technologies, and database administration.', 2, true),
   ('bpharma', 'Bachelor of Pharmacy', 'B.Pharma', 'B.Pharma', 8, 'FlaskConical', 'Pharmaceutical sciences, pharmacology, medicinal chemistry, and clinical research.', 3, true),
   ('mpharma', 'Master of Pharmacy', 'M.Pharma', 'M.Pharma', 4, 'Atom', 'Advanced pharmaceutics, pharmacology research, and regulatory affairs.', 4, true),
   ('bba-llb', 'BBA LL.B (Hons.)', 'BBA LLB', 'Law', 10, 'Scale', 'Corporate law, constitutional law, business administration, and criminal jurisprudence.', 5, true),
