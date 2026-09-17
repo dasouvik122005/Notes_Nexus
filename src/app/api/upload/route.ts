@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { r2Client, isR2Configured } from '@/lib/storage/r2';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 
-const MAX_FILE_SIZE_BYTES = 20 * 1024 * 1024; // 20 MB
+const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB
 const PDF_MAGIC_BYTES = [0x25, 0x50, 0x44, 0x46, 0x2d]; // %PDF-
 const R2_BUCKET_NAME = process.env.R2_BUCKET_NAME || 'notes-nexus-materials';
 
@@ -38,10 +38,10 @@ export async function POST(request: NextRequest) {
     const semester = parseInt(semesterStr, 10);
     const year = yearStr ? parseInt(yearStr, 10) : new Date().getFullYear();
 
-    // 2. File size validation (20 MB)
+    // 2. File size validation (10 MB)
     if (file.size > MAX_FILE_SIZE_BYTES) {
       return NextResponse.json(
-        { error: 'File exceeds 20 MB limit. Please split the notes before uploading.' },
+        { error: 'File exceeds 10 MB limit. Please compress it at ilovepdf.com/compress before uploading.' },
         { status: 400 }
       );
     }
