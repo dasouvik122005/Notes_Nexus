@@ -31,9 +31,9 @@ export default function InstrumentsPage() {
       try {
         const supabase = createClient();
         const { data, error } = await supabase
-          .from('marketplace_items')
+          .from('listings')
           .select('*')
-          .eq('status', 'active')
+          .eq('status', 'approved')
           .neq('status', 'sold')
           .order('created_at', { ascending: false });
 
