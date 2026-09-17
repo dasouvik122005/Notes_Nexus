@@ -69,27 +69,37 @@ export async function POST(request: NextRequest) {
     // 4. Photo uploads (handled client-side via Cloudinary)
     // The client now uploads directly to Cloudinary and passes the URLs in photoLinks array.
 
-    // 5. Construct listing object
+    // 5. Map values to satisfy database CHECK constraints
+    let dbCategory = category;
+    if (!['book', 'instrument', 'other'].includes(dbCategory)) {
+      dbCategory = 'other';
+    }
+
+    let dbCondition = 'good';
+    if (condition === 'Like New') dbCondition = 'like_new';
+    else if (condition === 'Fair') dbCondition = 'fair';
+    else if (condition === 'Good') dbCondition = 'good';
+
+    // 6. Construct listing object (removed non-existent 'department' column)
     const newListing = {
       seller_id: sellerId,
-      category,
+      category: dbCategory,
       title: title.trim(),
       description: description.trim(),
-      condition,
+      condition: dbCondition,
       expected_price: price,
       is_negotiable: isNegotiable,
-      department: department.trim() || null,
       contact_name: contactName.trim(),
       contact_phone: contactPhone.trim(),
       contact_email: sellerEmail,
-      photo_keys: photoLinks, // Now storing Drive links instead of R2 keys
+      photo_keys: photoLinks, 
       status: 'pending',
       created_at: new Date().toISOString(),
     };
 
-    // 6. Insert into Supabase
+    // 7. Insert into Supabase 'listings' table (NOT marketplace_items)
     const { data, error } = await supabase
-      .from('marketplace_items')
+      .from('listings')
       .insert(newListing)
       .select()
       .single();
