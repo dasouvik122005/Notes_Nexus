@@ -54,6 +54,7 @@ export default function UserMenu() {
       {/* User Trigger Pill */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        className="user-menu-trigger"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -65,6 +66,7 @@ export default function UserMenu() {
           cursor: 'pointer',
           fontWeight: 800,
           fontSize: '0.85rem',
+          transition: 'all 0.15s ease',
         }}
       >
         {/* Initials Avatar */}
@@ -170,17 +172,7 @@ export default function UserMenu() {
           <Link
             href="/me"
             onClick={() => setIsOpen(false)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.5rem',
-              fontWeight: 800,
-              fontSize: '0.85rem',
-              textDecoration: 'none',
-              color: 'var(--black)',
-            }}
-            className="hover:bg-gray-100"
+            className="user-menu-item"
           >
             <FileText size={16} />
             <span>My Submissions & Listings</span>
@@ -189,17 +181,7 @@ export default function UserMenu() {
           <Link
             href="/upload"
             onClick={() => setIsOpen(false)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.5rem',
-              fontWeight: 800,
-              fontSize: '0.85rem',
-              textDecoration: 'none',
-              color: 'var(--black)',
-            }}
-            className="hover:bg-gray-100"
+            className="user-menu-item"
           >
             <Upload size={16} />
             <span>Upload Notes / PYQ</span>
@@ -209,18 +191,7 @@ export default function UserMenu() {
             <Link
               href="/admin"
               onClick={() => setIsOpen(false)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.5rem',
-                fontWeight: 800,
-                fontSize: '0.85rem',
-                textDecoration: 'none',
-                color: 'var(--black)',
-                backgroundColor: '#FEF3C7',
-                border: '1px solid var(--black)',
-              }}
+              className="user-menu-item admin-item"
             >
               <ShieldCheck size={16} />
               <span>Admin Queue</span>
@@ -232,22 +203,7 @@ export default function UserMenu() {
               setIsOpen(false);
               signOut();
             }}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.5rem',
-              fontWeight: 800,
-              fontSize: '0.85rem',
-              border: 'none',
-              background: 'none',
-              cursor: 'pointer',
-              color: '#DC2626',
-              borderTop: '1px solid #E5E7EB',
-              marginTop: '0.25rem',
-              textAlign: 'left',
-              width: '100%',
-            }}
+            className="user-menu-item danger-item"
           >
             <LogOut size={16} />
             <span>Sign Out</span>
