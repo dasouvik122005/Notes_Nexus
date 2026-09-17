@@ -91,11 +91,17 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Dropdown & Backdrop */}
       {isOpen && (
-        <div className="mobile-menu">
-          {siteConfig.nav.map((item) => {
-            const isActive = item.href === '/' ? pathname === '/' : pathname?.startsWith(item.href);
+        <>
+          <div
+            className="mobile-backdrop"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="mobile-menu">
+            {siteConfig.nav.map((item) => {
+              const isActive = item.href === '/' ? pathname === '/' : pathname?.startsWith(item.href);
               return (
                 <Link
                   key={item.href}
@@ -107,21 +113,28 @@ export default function Navbar() {
                   {item.label}
                 </Link>
               );
-          })}
-          <NeoButton
-            href={siteConfig.links.feedback}
-            target="_blank"
-            rel="noopener noreferrer"
-            variant="secondary"
-            onClick={() => setIsOpen(false)}
-            style={{ padding: '0.75rem 2rem', fontSize: '1.25rem', marginTop: '1rem' }}
-          >
-            FEEDBACK
-          </NeoButton>
-          <div style={{ marginTop: '1.5rem', display: 'flex', justifyContent: 'center' }}>
-            <UserMenu />
+            })}
+            <NeoButton
+              href={siteConfig.links.feedback}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="secondary"
+              onClick={() => setIsOpen(false)}
+              style={{
+                padding: '0.35rem 0.85rem',
+                fontSize: '0.85rem',
+                marginTop: '0.25rem',
+                fontWeight: 900,
+                alignSelf: 'flex-end',
+              }}
+            >
+              FEEDBACK
+            </NeoButton>
+            <div style={{ marginTop: '0.25rem', display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+              <UserMenu />
+            </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );
