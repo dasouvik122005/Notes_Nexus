@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,21 +20,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let actorEmail = 'admin@jisuniversity.ac.in';
-    let actorId = 'admin-dev-id';
+    const supabase = await createClient();
+    const {
+      data: { user },
+      error: authErr,
+    } = await supabase.auth.getUser();
 
-    if (isSupabaseConfigured) {
-      try {
-        const supabase = await createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+    if (authErr || !user) {
+      return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 });
+    }
 
-      if (user) {
-        actorEmail = user.email || actorEmail;
-        actorId = user.id;
-
-        // Perform live DB update based on action
+    // Perform live DB update based on action
         if (action === 'approve_material') {
           const { data: updatedMaterial } = await supabase
             .from('materials')
@@ -120,26 +116,11 @@ export async function POST(request: NextRequest) {
           created_at: new Date().toISOString(),
         });
 
-          return NextResponse.json({
-            success: true,
-            action,
-            id,
-            message: `Action ${action} executed successfully in database.`,
-          });
-        }
-      } catch {
-        // Local dev / demo mode fallback
-      }
-    }
-
-    // Return success response in demo/dev mode
     return NextResponse.json({
       success: true,
       action,
       id,
-      reason: reason || null,
-      message: `Moderation action "${action}" applied successfully (demo mode).`,
-      timestamp: new Date().toISOString(),
+      message: `Action ${action} executed successfully.`,
     });
   } catch (err) {
     console.error('[Admin Action API] Error:', err);

@@ -154,13 +154,7 @@ export default function CreateListingPage() {
         createdAt: new Date().toISOString().split('T')[0],
       };
 
-      try {
-        const stored = JSON.parse(localStorage.getItem('notes_nexus_user_listings') || '[]');
-        stored.unshift(newListingRecord);
-        localStorage.setItem('notes_nexus_user_listings', JSON.stringify(stored));
-      } catch {
-        // Storage unavailable
-      }
+      // Removed localStorage fallback
 
       setSubmittedListing(newListingRecord);
     } catch (err) {

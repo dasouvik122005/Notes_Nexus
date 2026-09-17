@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 
 const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB per photo
 
@@ -52,43 +52,36 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. User verification check
-    let sellerId = 'demo-seller-id';
-    let sellerEmail = contactEmail || 'student@jisuniversity.ac.in';
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-    if (isSupabaseConfigured) {
-      try {
-        const supabase = await createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized. Please sign in to create a listing.' }, { status: 401 });
+    }
 
-        if (user) {
-          sellerId = user.id;
-          sellerEmail = user.email || sellerEmail;
+    const sellerId = user.id;
+    const sellerEmail = user.email || contactEmail || 'student@jisuniversity.ac.in';
 
-          // Check account status
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('account_status, role')
-            .eq('id', user.id)
-            .single();
+    // Check account status
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('account_status, role')
+      .eq('id', user.id)
+      .single();
 
-          if (profile?.account_status === 'blocked') {
-            return NextResponse.json(
-              { error: 'Your account has been blocked from creating marketplace listings.' },
-              { status: 403 }
-            );
-          }
-          if (profile?.account_status === 'pending' && profile?.role !== 'admin') {
-            return NextResponse.json(
-              { error: 'Your account must be verified by an administrator before listing items.' },
-              { status: 403 }
-            );
-          }
-        }
-      } catch {
-        // Fall back to demo mode
-      }
+    if (profile?.account_status === 'blocked') {
+      return NextResponse.json(
+        { error: 'Your account has been blocked from creating marketplace listings.' },
+        { status: 403 }
+      );
+    }
+    if (profile?.account_status === 'pending' && profile?.role !== 'admin') {
+      return NextResponse.json(
+        { error: 'Your account must be verified by an administrator before listing items.' },
+        { status: 403 }
+      );
     }
 
     // 4. Photo uploads (handled client-side via Cloudinary in the future)
@@ -116,39 +109,26 @@ export async function POST(request: NextRequest) {
       created_at: new Date().toISOString(),
     };
 
-    // 6. Insert into Supabase if configured
-    if (isSupabaseConfigured) {
-      try {
-        const supabase = await createClient();
-        const { data, error } = await supabase
-          .from('marketplace_items')
-          .insert(newListing)
-          .select()
-          .single();
+    // 6. Insert into Supabase
+    const { data, error } = await supabase
+      .from('marketplace_items')
+      .insert(newListing)
+      .select()
+      .single();
 
-        if (!error && data) {
-          return NextResponse.json(
-            {
-              success: true,
-              listing: data,
-              message: 'Marketplace listing submitted for moderation review.',
-            },
-            { status: 201 }
-          );
-        }
-      } catch {
-        // Demo fallback
-      }
+    if (!error && data) {
+      return NextResponse.json(
+        {
+          success: true,
+          listing: data,
+          message: 'Marketplace listing submitted for moderation review.',
+        },
+        { status: 201 }
+      );
+    } else {
+      console.error('[Marketplace API] Database insertion error:', error);
+      return NextResponse.json({ error: 'Failed to save listing to database.' }, { status: 500 });
     }
-
-    return NextResponse.json(
-      {
-        success: true,
-        listing: newListing,
-        message: 'Marketplace listing submitted for moderation review (pending queue).',
-      },
-      { status: 201 }
-    );
   } catch (err) {
     console.error('[Marketplace Create API] Error:', err);
     return NextResponse.json(

@@ -81,28 +81,7 @@ export default function MyDashboardPage() {
         // Fall back
       }
 
-      // Check localStorage for offline demo submissions
-      if (typeof window !== 'undefined') {
-        try {
-          const localMats = JSON.parse(localStorage.getItem('notes_nexus_user_materials') || '[]');
-          if (Array.isArray(localMats) && localMats.length > 0) {
-            const existingIds = new Set(userMats.map((m) => m.id));
-            localMats.forEach((lm) => {
-              if (!existingIds.has(lm.id)) userMats.push(lm);
-            });
-          }
-
-          const localLists = JSON.parse(localStorage.getItem('notes_nexus_user_listings') || '[]');
-          if (Array.isArray(localLists) && localLists.length > 0) {
-            const existingIds = new Set(userLists.map((l) => l.id));
-            localLists.forEach((ll) => {
-              if (!existingIds.has(ll.id)) userLists.push(ll);
-            });
-          }
-        } catch {
-          // ignore
-        }
-      }
+      // Removed offline demo fallback logic
 
       if (isMounted) {
         setMaterials(userMats);

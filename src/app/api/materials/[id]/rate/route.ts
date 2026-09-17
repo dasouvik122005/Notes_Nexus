@@ -28,41 +28,36 @@ export async function POST(
       );
     }
 
-    // Try Supabase auth session
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
+    // Verify Supabase auth session
+    const supabase = await createClient();
+    const { data: { user }, error: authErr } = await supabase.auth.getUser();
 
-      if (user) {
-        // Upsert rating in ratings table
-        await supabase
-          .from('ratings')
-          .upsert(
-            {
-              material_id: materialId,
-              user_id: user.id,
-              stars,
-            },
-            { onConflict: 'material_id,user_id' }
-          );
-
-        return NextResponse.json({
-          success: true,
-          materialId,
-          stars,
-          message: 'Rating successfully recorded in database.',
-        });
-      }
-    } catch {
-      // Supabase not reachable or offline dev mode
+    if (authErr || !user) {
+      return NextResponse.json({ error: 'Unauthorized. Please sign in to rate materials.' }, { status: 401 });
     }
 
-    // Acknowledge rating in local / demo mode
+    // Upsert rating in ratings table
+    const { error: upsertErr } = await supabase
+      .from('ratings')
+      .upsert(
+        {
+          material_id: materialId,
+          user_id: user.id,
+          stars,
+        },
+        { onConflict: 'material_id,user_id' }
+      );
+
+    if (upsertErr) {
+      console.error('[Rate API] Database error:', upsertErr);
+      return NextResponse.json({ error: 'Failed to save rating to database.' }, { status: 500 });
+    }
+
     return NextResponse.json({
       success: true,
       materialId,
       stars,
-      message: 'Rating recorded (local demo mode).',
+      message: 'Rating successfully recorded.',
     });
   } catch (err) {
     console.error('[Rate API] Error:', err);

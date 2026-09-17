@@ -13,44 +13,13 @@ const AuthContext = createContext({
   closeAuthModal: () => {},
   signInWithGoogle: async () => {},
   signOut: async () => {},
-  setDemoUser: () => {},
 });
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const savedDemo = sessionStorage.getItem('notes_nexus_demo_user');
-      if (savedDemo) {
-        try {
-          return JSON.parse(savedDemo).user;
-        } catch {
-          sessionStorage.removeItem('notes_nexus_demo_user');
-        }
-      }
-    }
-    return null;
-  });
-
-  const [profile, setProfile] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const savedDemo = sessionStorage.getItem('notes_nexus_demo_user');
-      if (savedDemo) {
-        try {
-          return JSON.parse(savedDemo).profile;
-        } catch {
-          // ignore
-        }
-      }
-    }
-    return null;
-  });
-
-  const [isLoading, setIsLoading] = useState(() => {
-    if (typeof window !== 'undefined' && sessionStorage.getItem('notes_nexus_demo_user')) {
-      return false;
-    }
-    return true;
-  });
+  const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authPromptMessage, setAuthPromptMessage] = useState('');
 
@@ -123,11 +92,6 @@ export function AuthProvider({ children }) {
 
   // Check initial session & subscribe to auth state changes
   useEffect(() => {
-    // If demo user is already active, skip initial fetch
-    if (typeof window !== 'undefined' && sessionStorage.getItem('notes_nexus_demo_user')) {
-      return;
-    }
-
     async function initAuth() {
       try {
         if (typeof window !== 'undefined' && window.location.search.includes('code=')) {
@@ -165,11 +129,8 @@ export function AuthProvider({ children }) {
           setUser(session.user);
           await loadProfile(session.user);
         } else {
-          // Only clear if not demo user
-          if (typeof window !== 'undefined' && !sessionStorage.getItem('notes_nexus_demo_user')) {
-            setUser(null);
-            setProfile(null);
-          }
+          setUser(null);
+          setProfile(null);
         }
         setIsLoading(false);
       }
@@ -198,9 +159,6 @@ export function AuthProvider({ children }) {
 
   // Sign out
   const signOut = async () => {
-    if (typeof window !== 'undefined') {
-      sessionStorage.removeItem('notes_nexus_demo_user');
-    }
     setUser(null);
     setProfile(null);
     try {
@@ -208,52 +166,6 @@ export function AuthProvider({ children }) {
     } catch {
       // Ignore
     }
-  };
-
-  // Set demo user for offline / local testing
-  const setDemoUser = (type) => {
-    let mockUser;
-    let mockProfile;
-
-    if (type === 'admin') {
-      mockUser = { id: 'demo-admin-id', email: 'kumaresh2106@gmail.com' };
-      mockProfile = {
-        id: 'demo-admin-id',
-        email: 'kumaresh2106@gmail.com',
-        name: 'Kumaresh Jana (Admin)',
-        avatar_url: null,
-        role: 'admin',
-        account_status: 'verified',
-      };
-    } else if (type === 'pending') {
-      mockUser = { id: 'demo-pending-id', email: 'newstudent@gmail.com' };
-      mockProfile = {
-        id: 'demo-pending-id',
-        email: 'newstudent@gmail.com',
-        name: 'Alex Rivera (New Student)',
-        avatar_url: null,
-        role: 'contributor',
-        account_status: 'pending',
-      };
-    } else {
-      // Verified Contributor
-      mockUser = { id: 'demo-contributor-id', email: 'souvik.das@gmail.com' };
-      mockProfile = {
-        id: 'demo-contributor-id',
-        email: 'souvik.das@gmail.com',
-        name: 'Souvik Das',
-        avatar_url: null,
-        role: 'contributor',
-        account_status: 'verified',
-      };
-    }
-
-    setUser(mockUser);
-    setProfile(mockProfile);
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('notes_nexus_demo_user', JSON.stringify({ user: mockUser, profile: mockProfile }));
-    }
-    closeAuthModal();
   };
 
   return (
@@ -268,7 +180,6 @@ export function AuthProvider({ children }) {
         closeAuthModal,
         signInWithGoogle,
         signOut,
-        setDemoUser,
       }}
     >
       {children}

@@ -247,8 +247,8 @@ export default function UploadPage() {
       if (!res.ok) {
         throw new Error(data.error || 'Failed to save material metadata.');
       }
-
-      // Persist to local storage for dashboard /me immediate sync
+      
+      // Set state for UI
       const newRecord = {
         id: data.material?.id || 'mat-new',
         title: title.trim(),
@@ -261,14 +261,6 @@ export default function UploadPage() {
         viewCount: 0,
         ratingAvg: 0,
       };
-
-      try {
-        const stored = JSON.parse(localStorage.getItem('notes_nexus_user_materials') || '[]');
-        stored.unshift(newRecord);
-        localStorage.setItem('notes_nexus_user_materials', JSON.stringify(stored));
-      } catch {
-        // Storage unavailable
-      }
 
       setSubmittedMaterial(newRecord);
     } catch (err) {
