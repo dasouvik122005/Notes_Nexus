@@ -1005,9 +1005,7 @@ export default function AdminModerationPage() {
                         type="button"
                         onClick={() =>
                           setPreviewPdf({
-                            url: `/api/pdf/stream?key=${encodeURIComponent(
-                              item.storageKey || 'sample'
-                            )}&title=${encodeURIComponent(item.title)}`,
+                            url: item.storageKey,
                             title: item.title,
                           })
                         }

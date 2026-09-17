@@ -45,6 +45,7 @@ export async function GET(request: NextRequest) {
       uploaderEmail: m.users?.email || 'N/A',
       fileSize: m.file_size,
       facultyName: m.faculty_name,
+      storageKey: m.storage_key,
       status: m.status,
       createdAt: m.created_at,
     }));
