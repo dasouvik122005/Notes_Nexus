@@ -168,11 +168,15 @@ export default function PdfModal({
         {/* Embedded PDF Viewer */}
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
           <iframe
-            src={`https://docs.google.com/gview?url=${encodeURIComponent(pdfUrl)}&embedded=true`}
+            src={pdfUrl}
             style={{ width: '100%', height: '100%', border: 'none' }}
             title={title}
             allow="autoplay"
-          ></iframe>
+          >
+            <div style={{ padding: '2rem', textAlign: 'center', margin: 'auto' }}>
+              <p style={{ fontWeight: 600 }}>Your browser does not support native PDF viewing.</p>
+            </div>
+          </iframe>
         </div>
       </div>
     </div>
