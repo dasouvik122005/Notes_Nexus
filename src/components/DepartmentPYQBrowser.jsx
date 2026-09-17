@@ -35,6 +35,7 @@ export default function DepartmentPYQBrowser({ department, initialMaterials = []
       pdfUrl: material.storageKey || '',
       title: material.title,
       contributorName: material.uploadedByName,
+      pageCount: material.pageCount || 0,
     });
   };
 
@@ -544,6 +545,7 @@ export default function DepartmentPYQBrowser({ department, initialMaterials = []
           pdfUrl={activeModal.pdfUrl}
           title={activeModal.title}
           contributorName={activeModal.contributorName}
+          initialPageCount={activeModal.pageCount || 0}
         />
       )}
     </div>

@@ -17,6 +17,7 @@ export default function MaterialListClient({
       pdfUrl: material.storageKey || '',
       title: material.title,
       contributorName: material.uploadedByName,
+      pageCount: material.pageCount || 0,
     });
   };
 
@@ -219,6 +220,7 @@ export default function MaterialListClient({
           pdfUrl={activeModal.pdfUrl}
           title={activeModal.title}
           contributorName={activeModal.contributorName}
+          initialPageCount={activeModal.pageCount || 0}
         />
       )}
     </div>

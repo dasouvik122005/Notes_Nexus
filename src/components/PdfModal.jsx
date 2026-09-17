@@ -1,7 +1,37 @@
 'use client';
 
-import React, { useEffect } from 'react';
-import { X } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  X,
+  Download,
+  ExternalLink,
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  FileText,
+  Layers,
+  Monitor,
+} from 'lucide-react';
+
+/**
+ * Builds high-resolution page image URLs for Cloudinary-hosted PDFs.
+ * Cloudinary natively renders individual PDF pages with crisp typography
+ * and zero horizontal clipping across mobile screens.
+ */
+function getCloudinaryPageUrl(pdfUrl, pageNum, zoom = 100) {
+  if (!pdfUrl || typeof pdfUrl !== 'string') return null;
+  if (!pdfUrl.includes('cloudinary.com') || !pdfUrl.includes('/upload/')) return null;
+
+  const [base, rest] = pdfUrl.split('/upload/');
+  if (!base || !rest) return null;
+
+  const cleanRest = rest.replace(/\.pdf$/i, '.jpg');
+  // High-DPI width: 1400px ensures crisp handwriting even on zoom/retina displays
+  const widthParam = zoom > 100 ? `w_${Math.min(2200, Math.round(1400 * (zoom / 100)))}` : 'w_1400';
+  return `${base}/upload/pg_${pageNum},f_auto,q_auto,${widthParam}/${cleanRest}`;
+}
 
 export default function PdfModal({
   isOpen,
@@ -10,12 +40,73 @@ export default function PdfModal({
   title,
   contributorName = null,
   viewerEmail = null,
+  initialPageCount = 0,
 }) {
-  // Close modal on Escape key press
+  const isCloudinary = Boolean(
+    pdfUrl && typeof pdfUrl === 'string' && pdfUrl.includes('cloudinary.com') && pdfUrl.includes('/upload/')
+  );
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(initialPageCount > 0 ? initialPageCount : null);
+  const [zoomLevel, setZoomLevel] = useState(100);
+  const [viewMode, setViewMode] = useState('scroll'); // 'scroll' (continuous) | 'single'
+  const [isNativeEmbed, setIsNativeEmbed] = useState(!isCloudinary);
+  const [isDetectingPages, setIsDetectingPages] = useState(false);
+  const [pageErrors, setPageErrors] = useState({});
+
+  // Reset & detect total pages when modal opens
+  useEffect(() => {
+    let isMounted = true;
+
+    if (isOpen && pdfUrl) {
+      setCurrentPage(1);
+      setZoomLevel(100);
+      setPageErrors({});
+      setIsNativeEmbed(!isCloudinary);
+
+      if (initialPageCount && initialPageCount > 0) {
+        setTotalPages(initialPageCount);
+      } else {
+        // Detect page count using pdf-lib in background
+        async function detectPageCount() {
+          try {
+            setIsDetectingPages(true);
+            const { PDFDocument } = await import('pdf-lib');
+            const res = await fetch(pdfUrl);
+            if (!res.ok) throw new Error('Fetch failed');
+            const buffer = await res.arrayBuffer();
+            const doc = await PDFDocument.load(buffer, { ignoreEncryption: true });
+            if (isMounted) {
+              const count = doc.getPageCount();
+              setTotalPages(count);
+              setIsDetectingPages(false);
+            }
+          } catch {
+            if (isMounted) {
+              setIsDetectingPages(false);
+            }
+          }
+        }
+        detectPageCount();
+      }
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isOpen, pdfUrl, initialPageCount, isCloudinary]);
+
+  // Keyboard navigation & lock body scroll
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isOpen) {
+      if (!isOpen) return;
+
+      if (e.key === 'Escape') {
         onClose();
+      } else if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        setCurrentPage((prev) => (totalPages ? Math.min(totalPages, prev + 1) : prev + 1));
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        setCurrentPage((prev) => Math.max(1, prev - 1));
       }
     };
 
@@ -30,153 +121,395 @@ export default function PdfModal({
       document.body.style.overflow = 'unset';
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, totalPages]);
+
+  const handlePageError = useCallback((page) => {
+    setPageErrors((prev) => ({ ...prev, [page]: true }));
+    if (!totalPages || totalPages >= page) {
+      setTotalPages(Math.max(1, page - 1));
+    }
+  }, [totalPages]);
+
+  const zoomIn = () => setZoomLevel((z) => Math.min(200, z + 25));
+  const zoomOut = () => setZoomLevel((z) => Math.max(100, z - 25));
+  const zoomReset = () => setZoomLevel(100);
 
   if (!isOpen || !pdfUrl) return null;
 
+  // Pages to render in scroll view: either known totalPages or default to first 3 then discovered
+  const pagesToRender = totalPages
+    ? Array.from({ length: totalPages }, (_, i) => i + 1)
+    : [1, 2, 3];
+
   return (
     <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.75)',
-        backdropFilter: 'blur(4px)',
-        zIndex: 9999,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1.5rem',
-      }}
+      className="pdf-modal-backdrop"
       onClick={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
         }
       }}
     >
-      <div
-        className="neo-card"
-        style={{
-          width: '100%',
-          maxWidth: '1000px',
-          height: '92vh',
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: 'var(--white)',
-          padding: 0,
-          overflow: 'hidden',
-          animation: 'fadeIn 0.2s ease-in-out',
-        }}
-      >
+      <div className="pdf-modal-container">
         {/* Modal Header Bar */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '0.85rem 1.25rem',
-            backgroundColor: 'var(--primary-pink)',
-            borderBottom: '3px solid var(--black)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span
-              style={{
-                backgroundColor: 'var(--white)',
-                border: '2px solid var(--black)',
-                boxShadow: '2px 2px 0px 0px var(--black)',
-                padding: '0.15rem 0.5rem',
-                fontSize: '0.8rem',
-                fontWeight: 900,
-              }}
-            >
-              PDF VIEWER
-            </span>
-            <h3
-              style={{
-                fontSize: '1.1rem',
-                fontWeight: 900,
-                margin: 0,
-                color: 'var(--black)',
-                maxWidth: contributorName ? '450px' : '650px',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
+        <div className="pdf-modal-header">
+          {/* Left Side: Document Details */}
+          <div className="pdf-header-left">
+            <span className="pdf-viewer-badge">PDF</span>
+            <h3 className="pdf-title" title={title}>
               {title}
             </h3>
             {contributorName && (
-              <span
-                style={{
-                  backgroundColor: 'var(--primary-yellow)',
-                  border: '2px solid var(--black)',
-                  boxShadow: '2px 2px 0px 0px var(--black)',
-                  padding: '0.15rem 0.5rem',
-                  fontSize: '0.75rem',
-                  fontWeight: 900,
-                  whiteSpace: 'nowrap',
-                }}
-              >
+              <span className="pdf-contributor-badge">
                 BY {contributorName.toUpperCase()}
               </span>
             )}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          {/* Right Side: Action Buttons (Guaranteed flex-shrink: 0, NEVER pushed off screen) */}
+          <div className="pdf-header-actions">
             <a
               href={pdfUrl}
               download
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                backgroundColor: 'var(--primary-yellow)',
-                border: '2px solid var(--black)',
-                boxShadow: '2px 2px 0px 0px var(--black)',
-                padding: '0.4rem 0.8rem',
-                fontWeight: 800,
-                fontSize: '0.85rem',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                textDecoration: 'none',
-                color: 'var(--black)',
-                textTransform: 'uppercase',
-                marginRight: '0.5rem',
-              }}
+              className="pdf-action-btn pdf-download-btn"
+              title="Download PDF"
             >
-              Download
+              <Download size={14} />
+              <span className="pdf-btn-label">Download</span>
             </a>
+
+            <a
+              href={pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="pdf-action-btn"
+              title="Open raw PDF in new browser tab"
+            >
+              <ExternalLink size={14} />
+            </a>
+
             <button
               onClick={onClose}
-              style={{
-                backgroundColor: 'var(--white)',
-                border: '2px solid var(--black)',
-                boxShadow: '2px 2px 0px 0px var(--black)',
-                padding: '0.4rem',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-              title="Close viewer"
+              className="pdf-action-btn pdf-close-btn"
+              title="Close PDF viewer (Esc)"
+              aria-label="Close PDF viewer"
             >
-              <X size={20} />
+              <X size={17} />
             </button>
           </div>
         </div>
 
-        {/* Embedded PDF Viewer */}
-        <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          <iframe
-            src={pdfUrl}
-            style={{ width: '100%', height: '100%', border: 'none' }}
-            title={title}
-            allow="autoplay"
-          >
-            <div style={{ padding: '2rem', textAlign: 'center', margin: 'auto' }}>
-              <p style={{ fontWeight: 600 }}>Your browser does not support native PDF viewing.</p>
+        {/* Secondary Toolbar (Controls & Zoom) */}
+        <div className="pdf-modal-toolbar">
+          {/* Page Navigation Group */}
+          <div className="pdf-toolbar-group">
+            {isCloudinary && !isNativeEmbed && viewMode === 'single' && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage <= 1}
+                  className="pdf-tool-btn"
+                  title="Previous Page"
+                >
+                  <ChevronLeft size={15} />
+                </button>
+                <span>
+                  Page <strong>{currentPage}</strong> of{' '}
+                  <strong>{totalPages || (isDetectingPages ? '...' : '?')}</strong>
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCurrentPage((p) => (totalPages ? Math.min(totalPages, p + 1) : p + 1))
+                  }
+                  disabled={totalPages ? currentPage >= totalPages : false}
+                  className="pdf-tool-btn"
+                  title="Next Page"
+                >
+                  <ChevronRight size={15} />
+                </button>
+              </>
+            )}
+
+            {isCloudinary && !isNativeEmbed && viewMode === 'scroll' && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Layers size={14} />
+                <span>
+                  All Pages ({totalPages ? `${totalPages} pages` : isDetectingPages ? 'Detecting...' : 'Document'})
+                </span>
+              </span>
+            )}
+
+            {(!isCloudinary || isNativeEmbed) && (
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#4B5563' }}>
+                <Monitor size={14} />
+                <span>Native Browser PDF Embed</span>
+              </span>
+            )}
+          </div>
+
+          {/* View Mode & Zoom Controls */}
+          <div className="pdf-toolbar-group">
+            {isCloudinary && !isNativeEmbed && (
+              <>
+                {/* View Mode Toggle */}
+                <button
+                  type="button"
+                  onClick={() => setViewMode((m) => (m === 'scroll' ? 'single' : 'scroll'))}
+                  className="pdf-tool-btn"
+                  title={viewMode === 'scroll' ? 'Switch to Single Page view' : 'Switch to Continuous Scroll'}
+                >
+                  {viewMode === 'scroll' ? (
+                    <>
+                      <FileText size={13} />
+                      <span>Single</span>
+                    </>
+                  ) : (
+                    <>
+                      <Layers size={13} />
+                      <span>Scroll</span>
+                    </>
+                  )}
+                </button>
+
+                {/* Zoom Controls */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+                  <button
+                    type="button"
+                    onClick={zoomOut}
+                    disabled={zoomLevel <= 100}
+                    className="pdf-tool-btn"
+                    title="Zoom out"
+                  >
+                    <ZoomOut size={13} />
+                  </button>
+
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, minWidth: '36px', textAlign: 'center' }}>
+                    {zoomLevel}%
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={zoomIn}
+                    disabled={zoomLevel >= 200}
+                    className="pdf-tool-btn"
+                    title="Zoom in"
+                  >
+                    <ZoomIn size={13} />
+                  </button>
+
+                  {zoomLevel !== 100 && (
+                    <button
+                      type="button"
+                      onClick={zoomReset}
+                      className="pdf-tool-btn"
+                      title="Reset to Fit Width"
+                    >
+                      <RotateCcw size={13} />
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+
+            {/* Toggle between High-Res Images and Raw Browser Embed */}
+            {isCloudinary && (
+              <button
+                type="button"
+                onClick={() => setIsNativeEmbed((prev) => !prev)}
+                className={`pdf-tool-btn ${isNativeEmbed ? 'active' : ''}`}
+                title="Toggle between mobile-optimized image viewer and native browser embed"
+              >
+                <Monitor size={13} />
+                <span>{isNativeEmbed ? 'Fit View' : 'Embed'}</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Viewer Body Area */}
+        <div className="pdf-viewer-body">
+          {/* Mode 1: Cloudinary High-Res Mobile-Optimized Rendering */}
+          {isCloudinary && !isNativeEmbed ? (
+            <div
+              style={{
+                width: zoomLevel === 100 ? '100%' : `${zoomLevel}%`,
+                maxWidth: zoomLevel === 100 ? '900px' : 'none',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                transition: 'width 0.15s ease',
+              }}
+            >
+              {viewMode === 'scroll' ? (
+                /* Continuous Scroll Mode */
+                pagesToRender.map((page) => {
+                  if (pageErrors[page]) return null;
+                  const pageUrl = getCloudinaryPageUrl(pdfUrl, page, zoomLevel);
+
+                  return (
+                    <div key={page} className="pdf-page-card" style={{ width: '100%' }}>
+                      <div className="pdf-page-indicator">
+                        Page {page} {totalPages ? `/ ${totalPages}` : ''}
+                      </div>
+
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={pageUrl}
+                        alt={`Page ${page}`}
+                        loading={page <= 2 ? 'eager' : 'lazy'}
+                        onError={() => handlePageError(page)}
+                        style={{
+                          width: '100%',
+                          height: 'auto',
+                          display: 'block',
+                          objectFit: 'contain',
+                        }}
+                      />
+
+                      {/* Watermark Overlay if authenticated */}
+                      {viewerEmail && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            bottom: '0.5rem',
+                            left: '0.75rem',
+                            fontSize: '0.68rem',
+                            fontWeight: 700,
+                            color: 'rgba(0, 0, 0, 0.25)',
+                            pointerEvents: 'none',
+                            userSelect: 'none',
+                          }}
+                        >
+                          {viewerEmail} • Notes Nexus Verified
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              ) : (
+                /* Single Page Mode */
+                <div className="pdf-page-card" style={{ width: '100%' }}>
+                  <div className="pdf-page-indicator">
+                    Page {currentPage} {totalPages ? `/ ${totalPages}` : ''}
+                  </div>
+
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={getCloudinaryPageUrl(pdfUrl, currentPage, zoomLevel)}
+                    alt={`Page ${currentPage}`}
+                    onError={() => handlePageError(currentPage)}
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      display: 'block',
+                      objectFit: 'contain',
+                    }}
+                  />
+
+                  {viewerEmail && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: '0.5rem',
+                        left: '0.75rem',
+                        fontSize: '0.68rem',
+                        fontWeight: 700,
+                        color: 'rgba(0, 0, 0, 0.25)',
+                        pointerEvents: 'none',
+                        userSelect: 'none',
+                      }}
+                    >
+                      {viewerEmail} • Notes Nexus Verified
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Bottom Navigation for Single Page Mode */}
+              {viewMode === 'single' && (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    marginTop: '0.75rem',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage <= 1}
+                    className="pdf-action-btn"
+                    style={{ backgroundColor: 'var(--white)' }}
+                  >
+                    <ChevronLeft size={16} /> Previous
+                  </button>
+
+                  <span style={{ color: '#FFFFFF', fontWeight: 800, fontSize: '0.85rem' }}>
+                    Page {currentPage} of {totalPages || '?'}
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCurrentPage((p) => (totalPages ? Math.min(totalPages, p + 1) : p + 1))
+                    }
+                    disabled={totalPages ? currentPage >= totalPages : false}
+                    className="pdf-action-btn"
+                    style={{ backgroundColor: 'var(--primary-yellow)' }}
+                  >
+                    Next <ChevronRight size={16} />
+                  </button>
+                </div>
+              )}
             </div>
-          </iframe>
+          ) : (
+            /* Mode 2: Native Browser PDF Embed Fallback */
+            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <div
+                style={{
+                  backgroundColor: '#EFF6FF',
+                  border: '1.5px solid #3B82F6',
+                  padding: '0.5rem 0.75rem',
+                  marginBottom: '0.5rem',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  color: '#1E40AF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.35rem',
+                }}
+              >
+                <span>Viewing via native browser PDF plugin. If clipped on mobile, open directly:</span>
+                <a
+                  href={pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    color: '#1D4ED8',
+                    textDecoration: 'underline',
+                    fontWeight: 900,
+                  }}
+                >
+                  Open in New Tab →
+                </a>
+              </div>
+
+              <iframe
+                src={pdfUrl}
+                style={{ width: '100%', flex: 1, minHeight: '400px', border: 'none', backgroundColor: '#FFFFFF' }}
+                title={title}
+                allow="autoplay"
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
