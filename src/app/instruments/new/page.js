@@ -20,11 +20,11 @@ import {
 } from 'lucide-react';
 
 const CATEGORIES = [
-  { id: 'instrument', label: 'Engineering Drafter / Tools', icon: '📐' },
-  { id: 'book', label: 'Academic Textbook', icon: '📚' },
-  { id: 'calculator', label: 'Scientific Calculator', icon: '🧮' },
-  { id: 'lab_gear', label: 'Lab Apron / Medical Gear', icon: '🥼' },
-  { id: 'other', label: 'Other Academic Item', icon: '🎒' },
+  { id: 'instrument', label: 'Engineering Drafter / Tools' },
+  { id: 'book', label: 'Academic Textbook' },
+  { id: 'calculator', label: 'Scientific Calculator' },
+  { id: 'lab_gear', label: 'Lab Apron / Medical Gear' },
+  { id: 'other', label: 'Other Academic Item' },
 ];
 
 const CONDITIONS = [
@@ -469,12 +469,10 @@ export default function CreateListingPage() {
                       textAlign: 'center',
                       cursor: 'pointer',
                       display: 'flex',
-                      flexDirection: 'column',
                       alignItems: 'center',
-                      gap: '0.35rem',
+                      justifyContent: 'center',
                     }}
                   >
-                    <span style={{ fontSize: '1.4rem' }}>{c.icon}</span>
                     <span>{c.label}</span>
                   </button>
                 ))}

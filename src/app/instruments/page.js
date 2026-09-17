@@ -7,7 +7,6 @@ import {
   Tag,
   Plus,
   ArrowRight,
-  ShieldAlert,
   BookOpen,
   Wrench,
   Search,
@@ -188,27 +187,6 @@ export default function InstrumentsPage() {
           </Link>
         </AnimateInView>
 
-        {/* Disclaimer Notice */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-            padding: '1rem 1.25rem',
-            backgroundColor: '#FEF3C7',
-            border: '3px solid var(--black)',
-            boxShadow: '3px 3px 0px 0px var(--black)',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            marginBottom: '2.5rem',
-          }}
-        >
-          <ShieldAlert size={20} color="#92400E" style={{ flexShrink: 0 }} />
-          <span style={{ color: '#92400E' }}>
-            Disclaimer: {siteConfig.name} is a student-to-student noticeboard and is not a party to any monetary transactions. Meet in safe on-campus public locations for handovers.
-          </span>
-        </div>
-
         {/* Search & Filter Bar */}
         <div
           className="neo-card"
@@ -300,10 +278,10 @@ export default function InstrumentsPage() {
             </span>
             {[
               { id: 'all', label: 'All Items' },
-              { id: 'instrument', label: '📐 Drafters & Tools' },
-              { id: 'book', label: '📚 Textbooks' },
-              { id: 'calculator', label: '🧮 Calculators' },
-              { id: 'lab_gear', label: '🥼 Lab Gear' },
+              { id: 'instrument', label: 'Drafters & Tools' },
+              { id: 'book', label: 'Textbooks' },
+              { id: 'calculator', label: 'Calculators' },
+              { id: 'lab_gear', label: 'Lab Gear' },
             ].map((cat) => (
               <button
                 key={cat.id}
