@@ -30,13 +30,13 @@ export async function getLatestMaterials(limit = 4): Promise<Material[]> {
       const supabase = await createClient();
       const { data, error } = await supabase
         .from('materials')
-        .select('*')
+        .select('*, users!uploaded_by(name, email)')
         .eq('status', 'approved')
         .order('created_at', { ascending: false })
         .limit(limit);
 
       if (!error && data && data.length > 0) {
-        return data.map((m) => ({
+        return data.map((m: any) => ({
           id: m.id,
           type: m.type,
           departmentId: m.department_id,
@@ -55,6 +55,7 @@ export async function getLatestMaterials(limit = 4): Promise<Material[]> {
           pageCount: m.page_count,
           ratingAvg: Number(m.rating_avg) || 0,
           ratingCount: m.rating_count || 0,
+          uploadedByName: m.users?.name || (m.uploaded_by ? 'Verified Student' : undefined),
           createdAt: m.created_at,
         }));
       }
@@ -76,7 +77,7 @@ export async function getMaterialsByPaper(
       const supabase = await createClient();
       let query = supabase
         .from('materials')
-        .select('*')
+        .select('*, users!uploaded_by(name, email)')
         .eq('department_id', departmentId)
         .eq('paper_code', paperCode)
         .eq('status', 'approved');
@@ -88,7 +89,7 @@ export async function getMaterialsByPaper(
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        return data.map((m) => ({
+        return data.map((m: any) => ({
           id: m.id,
           type: m.type,
           departmentId: m.department_id,
@@ -107,6 +108,7 @@ export async function getMaterialsByPaper(
           pageCount: m.page_count,
           ratingAvg: Number(m.rating_avg) || 0,
           ratingCount: m.rating_count || 0,
+          uploadedByName: m.users?.name || (m.uploaded_by ? 'Verified Student' : undefined),
           createdAt: m.created_at,
         }));
       }
@@ -124,31 +126,33 @@ export async function getMaterialById(id: string): Promise<Material | undefined>
       const supabase = await createClient();
       const { data, error } = await supabase
         .from('materials')
-        .select('*')
+        .select('*, users!uploaded_by(name, email)')
         .eq('id', id)
         .single();
 
       if (!error && data) {
+        const d = data as any;
         return {
-          id: data.id,
-          type: data.type,
-          departmentId: data.department_id,
-          paperId: data.paper_id,
-          semester: data.semester,
-          paperName: data.paper_name,
-          paperCode: data.paper_code,
-          section: data.section,
-          facultyName: data.faculty_name,
-          examType: data.exam_type,
-          year: data.year,
-          title: data.title,
-          description: data.description,
-          storageKey: data.storage_key,
-          fileSize: data.file_size,
-          pageCount: data.page_count,
-          ratingAvg: Number(data.rating_avg) || 0,
-          ratingCount: data.rating_count || 0,
-          createdAt: data.created_at,
+          id: d.id,
+          type: d.type,
+          departmentId: d.department_id,
+          paperId: d.paper_id,
+          semester: d.semester,
+          paperName: d.paper_name,
+          paperCode: d.paper_code,
+          section: d.section,
+          facultyName: d.faculty_name,
+          examType: d.exam_type,
+          year: d.year,
+          title: d.title,
+          description: d.description,
+          storageKey: d.storage_key,
+          fileSize: d.file_size,
+          pageCount: d.page_count,
+          ratingAvg: Number(d.rating_avg) || 0,
+          ratingCount: d.rating_count || 0,
+          uploadedByName: d.users?.name || (d.uploaded_by ? 'Verified Student' : undefined),
+          createdAt: d.created_at,
         };
       }
     } catch {
@@ -168,7 +172,7 @@ export async function getPYQMaterialsByDepartment(
       const supabase = await createClient();
       let query = supabase
         .from('materials')
-        .select('*')
+        .select('*, users!uploaded_by(name, email)')
         .eq('department_id', departmentId)
         .eq('type', 'pyq')
         .eq('status', 'approved');
@@ -184,7 +188,7 @@ export async function getPYQMaterialsByDepartment(
       const { data, error } = await query.order('year', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        return data.map((m) => ({
+        return data.map((m: any) => ({
           id: m.id,
           type: m.type,
           departmentId: m.department_id,
@@ -203,6 +207,7 @@ export async function getPYQMaterialsByDepartment(
           pageCount: m.page_count,
           ratingAvg: Number(m.rating_avg) || 0,
           ratingCount: m.rating_count || 0,
+          uploadedByName: m.users?.name || (m.uploaded_by ? 'Verified Student' : undefined),
           createdAt: m.created_at,
         }));
       }

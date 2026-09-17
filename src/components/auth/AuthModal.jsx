@@ -11,7 +11,6 @@ export default function AuthModal() {
     closeAuthModal,
     authPromptMessage,
     signInWithGoogle,
-    setDemoUser,
   } = useAuth();
 
   if (!isAuthModalOpen) return null;
@@ -212,7 +211,7 @@ export default function AuthModal() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '0.75rem',
-            marginBottom: '1.5rem',
+            marginBottom: '0',
             transition: 'transform 0.1s ease',
           }}
         >
@@ -236,65 +235,6 @@ export default function AuthModal() {
           </svg>
           <span>Continue with Google</span>
         </button>
-
-        {/* Development / Offline Role Toggles */}
-        <div
-          style={{
-            borderTop: '2px dashed #D1D5DB',
-            paddingTop: '1.25rem',
-            textAlign: 'center',
-          }}
-        >
-          <p style={{ fontSize: '0.8rem', fontWeight: 800, color: '#6B7280', marginBottom: '0.75rem' }}>
-            LOCAL DEV / TESTING ROLES:
-          </p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
-            <button
-              onClick={() => setDemoUser('verified')}
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 900,
-                padding: '0.35rem 0.65rem',
-                backgroundColor: 'var(--primary-green)',
-                border: '2px solid var(--black)',
-                boxShadow: '2px 2px 0px 0px var(--black)',
-                cursor: 'pointer',
-              }}
-            >
-              ✓ Contributor (Verified)
-            </button>
-
-            <button
-              onClick={() => setDemoUser('pending')}
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 900,
-                padding: '0.35rem 0.65rem',
-                backgroundColor: 'var(--primary-yellow)',
-                border: '2px solid var(--black)',
-                boxShadow: '2px 2px 0px 0px var(--black)',
-                cursor: 'pointer',
-              }}
-            >
-              ⏳ Contributor (Pending)
-            </button>
-
-            <button
-              onClick={() => setDemoUser('admin')}
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 900,
-                padding: '0.35rem 0.65rem',
-                backgroundColor: 'var(--primary-pink)',
-                border: '2px solid var(--black)',
-                boxShadow: '2px 2px 0px 0px var(--black)',
-                cursor: 'pointer',
-              }}
-            >
-              ★ Admin (Kumaresh)
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

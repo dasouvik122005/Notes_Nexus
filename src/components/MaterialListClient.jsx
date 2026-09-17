@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FileText, Star, Eye, ExternalLink, Calendar } from 'lucide-react';
+import { FileText, Star, Eye, ExternalLink, Calendar, User } from 'lucide-react';
 import PdfModal from '@/components/PdfModal';
 import StarRating from '@/components/StarRating';
 
@@ -16,6 +16,7 @@ export default function MaterialListClient({
     setActiveModal({
       pdfUrl: `/api/pdf/stream?id=${material.id}${material.storageKey ? `&key=${encodeURIComponent(material.storageKey)}` : ''}`,
       title: material.title,
+      contributorName: material.uploadedByName,
     });
   };
 
@@ -134,13 +135,28 @@ export default function MaterialListClient({
                     display: 'flex',
                     flexWrap: 'wrap',
                     alignItems: 'center',
-                    gap: '1rem',
+                    gap: '0.75rem',
                     fontSize: '0.85rem',
                     fontWeight: 700,
                     color: '#666',
                   }}
                 >
-                  {mat.uploadedByName && <span>Uploaded by: {mat.uploadedByName}</span>}
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      backgroundColor: '#FEF9C3',
+                      border: '1.5px solid var(--black)',
+                      padding: '0.2rem 0.6rem',
+                      fontWeight: 800,
+                      fontSize: '0.8rem',
+                      color: 'var(--black)',
+                    }}
+                  >
+                    <User size={13} />
+                    <span>Contributor: <strong>{mat.uploadedByName || 'Verified Student'}</strong></span>
+                  </span>
                   {mat.pageCount > 0 && <span>• {mat.pageCount} Pages</span>}
                   {mat.fileSize > 0 && (
                     <span>• {(mat.fileSize / (1024 * 1024)).toFixed(1)} MB</span>
@@ -202,6 +218,7 @@ export default function MaterialListClient({
           onClose={() => setActiveModal(null)}
           pdfUrl={activeModal.pdfUrl}
           title={activeModal.title}
+          contributorName={activeModal.contributorName}
         />
       )}
     </div>

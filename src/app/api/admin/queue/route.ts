@@ -8,22 +8,22 @@ export async function GET(request: NextRequest) {
       try {
         const supabase = await createClient();
 
-        // Fetch pending materials
+        // Fetch pending materials with contributor profile
         const { data: dbMaterials } = await supabase
           .from('materials')
-          .select('*')
+          .select('*, users!uploaded_by(name, email)')
           .eq('status', 'pending')
           .order('created_at', { ascending: false });
 
         const { data: dbUsers } = await supabase
-          .from('profiles')
+          .from('users')
           .select('*')
           .eq('account_status', 'pending')
           .order('created_at', { ascending: false });
 
         const { data: dbListings } = await supabase
-          .from('marketplace_items')
-          .select('*')
+          .from('listings')
+          .select('*, users!seller_id(name, email)')
           .eq('status', 'pending')
           .order('created_at', { ascending: false });
 

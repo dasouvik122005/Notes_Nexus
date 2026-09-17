@@ -949,7 +949,7 @@ export default function UploadPage() {
                   color: '#1E40AF',
                 }}
               >
-                ℹ️ <strong>Semester-Level PYQ:</strong> Previous Year Questions are grouped per semester as full exam papers. You do not need to enter a paper code.
+                ℹ️ <strong>Semester Examination Paper:</strong> Upload past Mid-Sem or Final-Sem question papers grouped per semester. You do not need to enter an individual paper code.
               </div>
             )}
 
@@ -1188,11 +1188,17 @@ export default function UploadPage() {
                     textTransform: 'uppercase',
                   }}
                 >
-                  Description / Topic Summary (Optional)
+                  {materialType === 'notes'
+                    ? 'Description / Topic Summary (Optional)'
+                    : 'Description / Exam Paper Details (Optional)'}
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="e.g. Covers modules 1 and 2, including solved university question examples and diagrams."
+                  placeholder={
+                    materialType === 'notes'
+                      ? 'e.g. Covers modules 1 and 2, including solved university question examples and diagrams.'
+                      : 'e.g. Complete question paper including all sections, compulsory questions, and marks distribution.'
+                  }
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   style={{

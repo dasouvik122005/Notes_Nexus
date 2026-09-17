@@ -92,9 +92,9 @@ export async function POST(request: NextRequest) {
         userId = user.id;
         userEmail = user.email || userEmail;
 
-        // Check account status in profiles
+        // Check account status in users
         const { data: profile } = await supabase
-          .from('profiles')
+          .from('users')
           .select('account_status, role')
           .eq('id', user.id)
           .single();

@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
             .eq('id', id);
         } else if (action === 'approve_user' || action === 'verify_user') {
           await supabase
-            .from('profiles')
+            .from('users')
             .update({
               account_status: 'verified',
               verified_by: user.id,
@@ -81,21 +81,21 @@ export async function POST(request: NextRequest) {
             .eq('id', id);
         } else if (action === 'block_user') {
           await supabase
-            .from('profiles')
+            .from('users')
             .update({
               account_status: 'blocked',
             })
             .eq('id', id);
         } else if (action === 'approve_listing') {
           await supabase
-            .from('marketplace_items')
+            .from('listings')
             .update({
-              status: 'active',
+              status: 'approved',
             })
             .eq('id', id);
         } else if (action === 'reject_listing') {
           await supabase
-            .from('marketplace_items')
+            .from('listings')
             .update({
               status: 'rejected',
               reject_reason: reason.trim(),

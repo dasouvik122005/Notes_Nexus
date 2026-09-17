@@ -9,6 +9,7 @@ export default function PdfModal({
   onClose,
   pdfUrl,
   title,
+  contributorName = null,
   viewerEmail = null,
 }) {
   // Close modal on Escape key press
@@ -97,7 +98,7 @@ export default function PdfModal({
                 fontWeight: 900,
                 margin: 0,
                 color: 'var(--black)',
-                maxWidth: '650px',
+                maxWidth: contributorName ? '450px' : '650px',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -105,6 +106,21 @@ export default function PdfModal({
             >
               {title}
             </h3>
+            {contributorName && (
+              <span
+                style={{
+                  backgroundColor: 'var(--primary-yellow)',
+                  border: '2px solid var(--black)',
+                  boxShadow: '2px 2px 0px 0px var(--black)',
+                  padding: '0.15rem 0.5rem',
+                  fontSize: '0.75rem',
+                  fontWeight: 900,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                BY {contributorName.toUpperCase()}
+              </span>
+            )}
           </div>
 
           <button

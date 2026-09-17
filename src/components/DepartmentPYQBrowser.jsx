@@ -12,6 +12,7 @@ import {
   Eye,
   Upload,
   GraduationCap,
+  User,
 } from 'lucide-react';
 
 export default function DepartmentPYQBrowser({ department, initialMaterials = [] }) {
@@ -35,6 +36,7 @@ export default function DepartmentPYQBrowser({ department, initialMaterials = []
         material.storageKey ? `&key=${encodeURIComponent(material.storageKey)}` : ''
       }`,
       title: material.title,
+      contributorName: material.uploadedByName,
     });
   };
 
@@ -416,6 +418,22 @@ export default function DepartmentPYQBrowser({ department, initialMaterials = []
                       alignItems: 'center',
                     }}
                   >
+                    <span
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        backgroundColor: '#FEF9C3',
+                        border: '1.5px solid var(--black)',
+                        padding: '0.2rem 0.6rem',
+                        fontWeight: 800,
+                        fontSize: '0.8rem',
+                        color: 'var(--black)',
+                      }}
+                    >
+                      <User size={13} />
+                      <span>Contributor: <strong>{material.uploadedByName || 'Verified Student'}</strong></span>
+                    </span>
                     {material.pageCount > 0 && <span>{material.pageCount} Pages</span>}
                     {material.fileSize > 0 && (
                       <span>{(material.fileSize / (1024 * 1024)).toFixed(1)} MB</span>
@@ -526,6 +544,7 @@ export default function DepartmentPYQBrowser({ department, initialMaterials = []
           onClose={() => setActiveModal(null)}
           pdfUrl={activeModal.pdfUrl}
           title={activeModal.title}
+          contributorName={activeModal.contributorName}
         />
       )}
     </div>
