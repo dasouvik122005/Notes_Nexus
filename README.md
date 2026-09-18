@@ -43,21 +43,10 @@ cd Notes_Nexus
 npm install
 ```
 
-### 3. Setup Environment Variables
-Create a `.env.local` file in the root directory based on the provided `.env.example`:
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-
-# Optional: Fixed Admin Emails (comma separated)
-ADMIN_EMAILS=admin1@gmail.com,admin2@gmail.com
-```
-
-### 4. Database Setup
+### 3. Database Setup
 Run the SQL migration found in `supabase/migrations/0001_init.sql` inside your Supabase SQL Editor to generate the necessary tables (departments, papers, users, materials, ratings, listings, audit_log).
 
-### 5. Run the development server
+### 4. Run the development server
 ```bash
 npm run dev
 ```
