@@ -34,7 +34,7 @@ export default async function DepartmentNotesPage({ params }) {
   return (
     <div style={{ padding: '3rem 0 6rem 0' }}>
       <div className="container">
-        
+
         {/* Breadcrumb Navigation */}
         <nav style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '2rem', fontSize: '0.9rem', fontWeight: 800 }}>
           <Link href="/notes" style={{ textDecoration: 'underline' }}>
