@@ -65,8 +65,7 @@
 | **Language** | TypeScript + JavaScript |
 | **Styling** | [Tailwind CSS 4](https://tailwindcss.com/) |
 | **Database & Auth** | [Supabase](https://supabase.com/) — PostgreSQL, Google OAuth, Row Level Security |
-| **File Storage** | [Cloudflare R2](https://www.cloudflare.com/developer-platform/r2/) (S3-compatible, zero egress fees) |
-| **Image Hosting** | [Cloudinary](https://cloudinary.com/) (marketplace listing photos) |
+| **File & Image Storage** | [Cloudinary](https://cloudinary.com/) (PDFs, marketplace photos, optimized delivery) |
 | **Animations** | [Framer Motion](https://www.framer.com/motion/) (lazy-loaded via `LazyMotion`) |
 | **Analytics** | [Vercel Analytics](https://vercel.com/analytics) + [Speed Insights](https://vercel.com/docs/speed-insights) |
 | **Deployment** | [Vercel](https://vercel.com/) |
@@ -115,7 +114,7 @@ Notes_Nexus/
 
 - **Node.js** 18 or higher
 - A **Supabase** project (free tier works)
-- A **Cloudflare R2** bucket for file storage
+- A **Cloudinary** account for file and image storage
 
 ### Installation
 
