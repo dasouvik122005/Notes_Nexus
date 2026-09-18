@@ -31,6 +31,7 @@ export default function UploadPage() {
   const [selectedDeptId, setSelectedDeptId] = useState('');
   const [selectedSemester, setSelectedSemester] = useState('');
   const [paperNameInput, setPaperNameInput] = useState('');
+  const [paperCodeInput, setPaperCodeInput] = useState('');
 
   // Content Metadata
   const [title, setTitle] = useState('');
@@ -107,9 +108,14 @@ export default function UploadPage() {
         return;
       }
       paperName = paperNameInput.trim();
-      let generatedCode = paperNameInput.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      if (!generatedCode) generatedCode = `paper-${Date.now()}`;
-      paperCode = generatedCode.toUpperCase();
+      
+      if (paperCodeInput.trim()) {
+        paperCode = paperCodeInput.trim().toUpperCase();
+      } else {
+        let generatedCode = paperNameInput.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        if (!generatedCode) generatedCode = `paper-${Date.now()}`;
+        paperCode = generatedCode.toUpperCase();
+      }
     } else {
       paperName = `${selectedDept.name} Semester ${selectedSemester} ${examType === 'mid_sem' ? 'Mid Sem' : 'Final Sem'} Combined PYQ`;
       paperCode = `${selectedDept.shortCode.toUpperCase()}-S${selectedSemester}-PYQ`;
@@ -264,6 +270,7 @@ export default function UploadPage() {
     setFacultyName('');
     setSection('');
     setPaperNameInput('');
+    setPaperCodeInput('');
     setDropzoneError(null);
     setSubmitError(null);
   };
@@ -798,34 +805,70 @@ export default function UploadPage() {
             {/* 3. Paper / Subject Selector */}
             {materialType === 'notes' ? (
               <div style={{ marginBottom: '2rem' }}>
-                <label
-                  style={{
-                    display: 'block',
-                    fontWeight: 900,
-                    fontSize: '0.95rem',
-                    textTransform: 'uppercase',
-                    marginBottom: '0.75rem',
-                  }}
-                >
-                  3. Subject / Paper Name *
-                </label>
+                <div style={{ display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
+                  <div style={{ flex: '1 1 250px' }}>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontWeight: 900,
+                        fontSize: '0.95rem',
+                        textTransform: 'uppercase',
+                        marginBottom: '0.75rem',
+                      }}
+                    >
+                      3. Subject / Paper Name *
+                    </label>
 
-                <input
-                  type="text"
-                  placeholder="e.g. Distributed Operating Systems"
-                  value={paperNameInput}
-                  onChange={(e) => setPaperNameInput(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '0.75rem 1rem',
-                    border: '3px solid var(--black)',
-                    boxShadow: '3px 3px 0px 0px var(--black)',
-                    fontWeight: 800,
-                    fontSize: '0.95rem',
-                    backgroundColor: 'var(--white)',
-                    outline: 'none',
-                  }}
-                />
+                    <input
+                      type="text"
+                      placeholder="e.g. Distributed Operating Systems"
+                      value={paperNameInput}
+                      onChange={(e) => setPaperNameInput(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 1rem',
+                        border: '3px solid var(--black)',
+                        boxShadow: '3px 3px 0px 0px var(--black)',
+                        fontWeight: 800,
+                        fontSize: '0.95rem',
+                        backgroundColor: 'var(--white)',
+                        outline: 'none',
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ flex: '1 1 180px' }}>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontWeight: 900,
+                        fontSize: '0.95rem',
+                        textTransform: 'uppercase',
+                        marginBottom: '0.75rem',
+                      }}
+                    >
+                      Subject Code (Optional)
+                    </label>
+
+                    <input
+                      type="text"
+                      placeholder="e.g. CS601"
+                      value={paperCodeInput}
+                      onChange={(e) => setPaperCodeInput(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '0.75rem 1rem',
+                        border: '3px solid var(--black)',
+                        boxShadow: '3px 3px 0px 0px var(--black)',
+                        fontWeight: 800,
+                        fontSize: '0.95rem',
+                        backgroundColor: 'var(--white)',
+                        outline: 'none',
+                        textTransform: 'uppercase',
+                      }}
+                    />
+                  </div>
+                </div>
               </div>
             ) : (
               <div
