@@ -92,7 +92,7 @@ export async function GET(request: NextRequest) {
             id: `material_${mat.id}`,
             type: mat.type,
             title: mat.title,
-            subtitle: `Material • Sem ${mat.semester} • ${mat.departments?.short_code || mat.department_id}`,
+            subtitle: `Material • Sem ${mat.semester} • ${(mat.departments as any)?.short_code || (mat.departments as any)?.[0]?.short_code || mat.department_id}`,
             code: mat.paper_code,
             url: `/${mat.type}/${mat.department_id}/${mat.paper_code}`,
             departmentId: mat.department_id
