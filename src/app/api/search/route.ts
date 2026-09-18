@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = await createClient();
-    const results = [];
+    const results: any[] = [];
     const lowerQuery = query.toLowerCase().trim();
 
     // 1. Search Subjects (Papers) for Notes/PYQs
