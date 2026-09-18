@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { cloudinary, isCloudinaryConfigured } from '@/lib/storage/cloudinary';
 
 export async function POST(request: NextRequest) {
   try {
@@ -97,6 +98,60 @@ export async function POST(request: NextRequest) {
               reviewed_at: new Date().toISOString(),
             })
             .eq('id', id);
+        } else if (action === 'delete_material') {
+          // 1. Fetch material to get storage_key
+          const { data: material, error: fetchErr } = await supabase
+            .from('materials')
+            .select('storage_key')
+            .eq('id', id)
+            .single();
+
+          if (fetchErr || !material) {
+            console.error('[Admin Action] Error fetching material for deletion:', fetchErr);
+            return NextResponse.json({ error: 'Material not found.' }, { status: 404 });
+          }
+
+          // 2. Extract Cloudinary Public ID from URL
+          // Example: https://res.cloudinary.com/cloudname/image/upload/v12345/folder/filename.pdf
+          const storageKey = material.storage_key;
+          let publicId = '';
+          
+          try {
+            const urlParts = storageKey.split('/');
+            const uploadIndex = urlParts.findIndex(part => part === 'upload');
+            if (uploadIndex !== -1) {
+              // The public ID is everything after the version number (e.g. v12345)
+              const partsAfterUpload = urlParts.slice(uploadIndex + 2);
+              // Remove file extension for raw/image files
+              const fullPath = partsAfterUpload.join('/');
+              publicId = fullPath.substring(0, fullPath.lastIndexOf('.')) || fullPath;
+            }
+          } catch (e) {
+            console.error('Failed to parse Cloudinary URL for public ID:', e);
+          }
+
+          // 3. Delete from Cloudinary
+          if (publicId && isCloudinaryConfigured) {
+            try {
+              // We try deleting as both 'image' and 'raw' since PDFs can sometimes be classified as either
+              await cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
+              await cloudinary.uploader.destroy(publicId, { resource_type: 'raw' });
+            } catch (cloudErr) {
+              console.error('[Admin Action] Cloudinary deletion error:', cloudErr);
+              // We don't block the DB deletion if Cloudinary fails, but we log it.
+            }
+          }
+
+          // 4. Delete from Supabase Database
+          const { error: delErr } = await supabase
+            .from('materials')
+            .delete()
+            .eq('id', id);
+
+          if (delErr) {
+            console.error('[Admin Action] Error deleting material from DB:', delErr);
+            return NextResponse.json({ error: `Database error: ${delErr.message}` }, { status: 500 });
+          }
         } else if (action === 'approve_user' || action === 'verify_user') {
           await supabase
             .from('users')

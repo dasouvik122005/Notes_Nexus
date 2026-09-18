@@ -24,6 +24,7 @@ import {
   Filter,
   AlertTriangle,
   RefreshCw,
+  Trash2,
 } from 'lucide-react';
 
 function formatBytes(bytes) {
@@ -246,6 +247,52 @@ export default function AdminModerationPage() {
       }
     } catch (err) {
       console.error('Failed to restore material:', err);
+    } finally {
+      setIsProcessingAction(false);
+    }
+  };
+
+  // Handle Delete Material
+  const handleDeleteMaterial = async (item) => {
+    if (!window.confirm(`Are you sure you want to PERMANENTLY delete "${item.title}"? This will remove the file from Cloudinary and the database and cannot be undone.`)) {
+      return;
+    }
+    
+    setIsProcessingAction(true);
+    try {
+      const res = await fetch('/api/admin/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'delete_material',
+          id: item.id,
+          targetSummary: `${item.title} (${item.paperCode})`,
+        }),
+      });
+
+      if (res.ok) {
+        setMaterials((prev) => prev.filter((m) => m.id !== item.id));
+        setAuditLogs((prev) => [
+          {
+            id: `log-${Date.now()}`,
+            actorName: user?.name || 'Admin',
+            actorEmail: user?.email || 'admin@jisuniversity.ac.in',
+            action: 'delete_material',
+            entityType: 'material',
+            entityId: item.id,
+            entitySummary: `${item.title} (${item.paperCode})`,
+            timestamp: new Date().toISOString(),
+          },
+          ...prev,
+        ]);
+        setStatusNotification(`Permanently deleted "${item.title}".`);
+      } else {
+        const data = await res.json();
+        alert(`Deletion failed: ${data.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Failed to delete material:', err);
+      alert('An error occurred while deleting the material.');
     } finally {
       setIsProcessingAction(false);
     }
@@ -1183,6 +1230,31 @@ export default function AdminModerationPage() {
                             }}
                           >
                             <RefreshCw size={16} /> Restore to Public
+                          </button>
+                        )}
+                        
+                        {/* Always show delete for hidden/rejected materials */}
+                        {(item.status === 'hidden' || item.status === 'rejected') && (
+                          <button
+                            type="button"
+                            disabled={isProcessingAction}
+                            onClick={() => handleDeleteMaterial(item)}
+                            style={{
+                              backgroundColor: '#DC2626', // Red
+                              color: 'var(--white)',
+                              border: '2px solid var(--black)',
+                              boxShadow: '3px 3px 0px 0px var(--black)',
+                              padding: '0.5rem 1.3rem',
+                              fontWeight: 900,
+                              fontSize: '0.85rem',
+                              cursor: isProcessingAction ? 'not-allowed' : 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.35rem',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            <Trash2 size={16} /> Delete Permanently
                           </button>
                         )}
                       </div>
