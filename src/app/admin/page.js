@@ -52,6 +52,8 @@ export default function AdminModerationPage() {
     pendingListingsCount: 0,
     totalAuditCount: 0,
     totalAccountsCount: 0,
+    totalMaterialsCount: 0,
+    totalListingsCount: 0,
   });
 
   const [isLoadingQueue, setIsLoadingQueue] = useState(true);
@@ -121,6 +123,8 @@ export default function AdminModerationPage() {
             pendingListingsCount: data.stats?.pendingListingsCount || 0,
             totalAuditCount: data.stats?.totalAuditCount || 0,
             totalAccountsCount: data.stats?.totalAccountsCount || 0,
+            totalMaterialsCount: data.stats?.totalMaterialsCount || 0,
+            totalListingsCount: data.stats?.totalListingsCount || 0,
           }
         );
       }
@@ -749,10 +753,10 @@ export default function AdminModerationPage() {
               <BookOpen size={20} />
             </div>
             <div style={{ fontSize: '2.4rem', fontWeight: 900, marginTop: '0.5rem' }}>
-              {pendingMaterialsOnly.length}
+              {stats.totalMaterialsCount}
             </div>
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#374151' }}>
-              Pending verification
+              Published • <span style={{ color: pendingMaterialsOnly.length > 0 ? '#DC2626' : 'inherit' }}>{pendingMaterialsOnly.length} Pending</span>
             </div>
           </div>
 
@@ -795,10 +799,10 @@ export default function AdminModerationPage() {
               <Store size={20} />
             </div>
             <div style={{ fontSize: '2.4rem', fontWeight: 900, marginTop: '0.5rem' }}>
-              {stats.pendingListingsCount}
+              {stats.totalListingsCount}
             </div>
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#374151' }}>
-              Pending item listings
+              Listed • <span style={{ color: stats.pendingListingsCount > 0 ? '#DC2626' : 'inherit' }}>{stats.pendingListingsCount} Pending</span>
             </div>
           </div>
 

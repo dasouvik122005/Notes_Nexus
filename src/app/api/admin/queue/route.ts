@@ -101,6 +101,15 @@ export async function GET(request: NextRequest) {
           .from('users')
           .select('*', { count: 'exact', head: true });
 
+        const { count: totalMaterialsCount } = await supabase
+          .from('materials')
+          .select('*', { count: 'exact', head: true })
+          .neq('status', 'rejected'); // optionally filter rejected or keep it all? Usually all is fine, let's just do all. Wait, let's keep it simple.
+
+        const { count: totalListingsCount } = await supabase
+          .from('listings')
+          .select('*', { count: 'exact', head: true });
+
     return NextResponse.json({
       success: true,
       materials: formattedMaterials,
@@ -113,6 +122,8 @@ export async function GET(request: NextRequest) {
         pendingListingsCount: formattedListings.length,
         totalAuditCount: totalAuditLogs,
         totalAccountsCount: totalAccountsCount || 0,
+        totalMaterialsCount: totalMaterialsCount || 0,
+        totalListingsCount: totalListingsCount || 0,
       },
     });
   } catch (err) {
