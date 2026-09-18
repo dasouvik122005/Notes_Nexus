@@ -1,5 +1,6 @@
 import { departments } from '@/config/departments';
 import { siteConfig } from '@/config/site';
+import { getPapersByDepartment } from '@/lib/data/papers';
 
 export default async function sitemap() {
   const baseUrl = siteConfig.url || 'https://notes-nexus-jisu.vercel.app';
@@ -61,5 +62,28 @@ export default async function sitemap() {
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...deptNotesRoutes, ...deptPyqRoutes];
+  // Deep Paper Routes (The actual content pages)
+  const paperRoutes = [];
+  try {
+    for (const dept of departments) {
+      if (dept.isActive) {
+        const papers = await getPapersByDepartment(dept.id);
+        for (const paper of papers) {
+          if (paper.isActive && paper.fileCount > 0) {
+            // Add to notes
+            paperRoutes.push({
+              url: `${baseUrl}/notes/${dept.id}/${paper.paperCode}`,
+              lastModified: currentDate,
+              changeFrequency: 'weekly',
+              priority: 0.7,
+            });
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error generating deep paper routes for sitemap:', error);
+  }
+
+  return [...staticRoutes, ...deptNotesRoutes, ...deptPyqRoutes, ...paperRoutes];
 }
