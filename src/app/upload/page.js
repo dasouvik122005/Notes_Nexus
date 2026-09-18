@@ -129,44 +129,8 @@ export default function UploadPage() {
     setIsSubmitting(true);
 
     try {
-      // Step 1: Client-side PDF watermarking with pdf-lib
-      let uploadBuffer;
-      try {
-        const { PDFDocument, rgb, degrees, StandardFonts } = await import('pdf-lib');
-        const arrayBuffer = await file.arrayBuffer();
-        const pdfDoc = await PDFDocument.load(arrayBuffer);
-        const pages = pdfDoc.getPages();
-
-        const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-        const watermarkText = 'Notes Nexus • JIS University';
-        const fontSize = 54;
-        const textWidth = font.widthOfTextAtSize(watermarkText, fontSize);
-
-        for (const page of pages) {
-          const { width, height } = page.getSize();
-          
-          // Perfectly center the 45-degree diagonal watermark
-          const x = (width / 2) - (textWidth / 2) * 0.707;
-          const y = (height / 2) - (textWidth / 2) * 0.707;
-
-          page.drawText(watermarkText, {
-            x: x,
-            y: y,
-            size: fontSize,
-            font: font,
-            color: rgb(0.65, 0.65, 0.65), // Premium gray
-            rotate: degrees(45),
-            opacity: 0.22, // Subtle opacity
-          });
-        }
-
-        const pdfBytes = await pdfDoc.save();
-        uploadBuffer = new Blob([pdfBytes], { type: 'application/pdf' });
-      } catch (wmErr) {
-        console.warn('[Upload] Watermarking failed, uploading original:', wmErr);
-        uploadBuffer = file;
-      }
+      // Step 1: Use the original file without baking a watermark into the PDF
+      const uploadBuffer = file;
 
       // Step 2: Get signed upload credentials from our backend
       const signRes = await fetch('/api/cloudinary/sign', {
