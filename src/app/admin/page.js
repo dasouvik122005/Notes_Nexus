@@ -51,6 +51,7 @@ export default function AdminModerationPage() {
     pendingAccountsCount: 0,
     pendingListingsCount: 0,
     totalAuditCount: 0,
+    totalAccountsCount: 0,
   });
 
   const [isLoadingQueue, setIsLoadingQueue] = useState(true);
@@ -117,8 +118,9 @@ export default function AdminModerationPage() {
           data.stats || {
             pendingMaterialsCount: (data.materials || []).length,
             pendingAccountsCount: (data.accounts || []).length,
-            pendingListingsCount: (data.listings || []).length,
-            totalAuditCount: (data.auditLogs || []).length,
+            pendingListingsCount: data.stats?.pendingListingsCount || 0,
+            totalAuditCount: data.stats?.totalAuditCount || 0,
+            totalAccountsCount: data.stats?.totalAccountsCount || 0,
           }
         );
       }
@@ -770,10 +772,10 @@ export default function AdminModerationPage() {
               <UserCheck size={20} />
             </div>
             <div style={{ fontSize: '2.4rem', fontWeight: 900, marginTop: '0.5rem' }}>
-              {stats.pendingAccountsCount}
+              {stats.totalAccountsCount}
             </div>
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#374151' }}>
-              Awaiting first approval
+              Registered • <span style={{ color: stats.pendingAccountsCount > 0 ? '#DC2626' : 'inherit' }}>{stats.pendingAccountsCount} Pending</span>
             </div>
           </div>
 

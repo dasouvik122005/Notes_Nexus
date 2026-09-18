@@ -97,6 +97,10 @@ export async function GET(request: NextRequest) {
           // audit_log table may not exist yet
         }
 
+        const { count: totalAccountsCount } = await supabase
+          .from('users')
+          .select('*', { count: 'exact', head: true });
+
     return NextResponse.json({
       success: true,
       materials: formattedMaterials,
@@ -108,6 +112,7 @@ export async function GET(request: NextRequest) {
         pendingAccountsCount: (dbUsers || []).length,
         pendingListingsCount: formattedListings.length,
         totalAuditCount: totalAuditLogs,
+        totalAccountsCount: totalAccountsCount || 0,
       },
     });
   } catch (err) {
