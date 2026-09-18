@@ -94,5 +94,6 @@ export async function getPapersByDepartment(
 
 export async function getPaperByCode(departmentId: string, paperCode: string): Promise<Paper | undefined> {
   const papers = await getPapersByDepartment(departmentId);
-  return papers.find((p) => p.paperCode.toLowerCase() === paperCode.toLowerCase());
+  const decodedPaperCode = decodeURIComponent(paperCode).toLowerCase();
+  return papers.find((p) => p.paperCode.toLowerCase() === decodedPaperCode);
 }

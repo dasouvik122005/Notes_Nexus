@@ -87,7 +87,7 @@ export async function getMaterialsByPaper(
         .from('materials')
         .select('id, type, department_id, paper_id, semester, paper_name, paper_code, section, faculty_name, exam_type, year, title, description, storage_key, file_size, page_count, rating_avg, rating_count, uploaded_by, created_at, users!uploaded_by(name, email)')
         .eq('department_id', departmentId)
-        .eq('paper_code', paperCode)
+        .eq('paper_code', decodeURIComponent(paperCode))
         .eq('status', 'approved');
 
       if (type) {
