@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
           
           try {
             const urlParts = storageKey.split('/');
-            const uploadIndex = urlParts.findIndex(part => part === 'upload');
+            const uploadIndex = urlParts.findIndex((part: string) => part === 'upload');
             if (uploadIndex !== -1) {
               // The public ID is everything after the version number (e.g. v12345)
               const partsAfterUpload = urlParts.slice(uploadIndex + 2);
