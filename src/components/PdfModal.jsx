@@ -2,18 +2,22 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  X,
+  FileText,
   Download,
+  X,
   ExternalLink,
   ChevronLeft,
   ChevronRight,
+  Maximize2,
+  Minimize2,
   ZoomIn,
   ZoomOut,
   RotateCcw,
-  FileText,
+  AlertTriangle,
   Layers,
   Monitor,
 } from 'lucide-react';
+import Image from 'next/image';
 
 /**
  * Builds high-resolution page image URLs for Cloudinary-hosted PDFs.
@@ -356,11 +360,12 @@ export default function PdfModal({
                         Page {page} {totalPages ? `/ ${totalPages}` : ''}
                       </div>
 
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
                         src={pageUrl}
                         alt={`Page ${page}`}
-                        loading={page <= 2 ? 'eager' : 'lazy'}
+                        width={800}
+                        height={1131}
+                        priority={page <= 2}
                         onError={() => handlePageError(page)}
                         style={{
                           width: '100%',
@@ -410,10 +415,12 @@ export default function PdfModal({
                     Page {currentPage} {totalPages ? `/ ${totalPages}` : ''}
                   </div>
 
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={getCloudinaryPageUrl(pdfUrl, currentPage, zoomLevel)}
                     alt={`Page ${currentPage}`}
+                    width={800}
+                    height={1131}
+                    priority
                     onError={() => handlePageError(currentPage)}
                     style={{
                       width: '100%',

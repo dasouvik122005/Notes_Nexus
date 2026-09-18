@@ -2,7 +2,8 @@
 
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
-import PdfModal from '@/components/PdfModal';
+import dynamic from 'next/dynamic';
+const PdfModal = dynamic(() => import('@/components/PdfModal'), { ssr: false });
 import StarRating from '@/components/StarRating';
 import NeoButton from '@/components/NeoButton';
 import {
