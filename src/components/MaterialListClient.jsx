@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FileText, Star, Eye, ExternalLink, Calendar, User, Share2 } from 'lucide-react';
+import { FileText, Star, Eye, ExternalLink, Calendar, User } from 'lucide-react';
 import PdfModal from '@/components/PdfModal';
 import StarRating from '@/components/StarRating';
 
@@ -75,7 +75,6 @@ export default function MaterialListClient({
           {materials.map((mat) => (
             <div
               key={mat.id}
-              id={`material-${mat.id}`}
               className="neo-card"
               style={{
                 padding: '1.5rem',
@@ -179,29 +178,6 @@ export default function MaterialListClient({
               </div>
 
               <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                <button
-                  onClick={() => {
-                    // Copy link to clipboard
-                    const url = `${window.location.origin}${window.location.pathname}#material-${mat.id}`;
-                    navigator.clipboard.writeText(url).then(() => {
-                      alert('Link copied to clipboard!');
-                    }).catch(err => {
-                      console.error('Failed to copy link: ', err);
-                    });
-                  }}
-                  className="neo-button"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: '0.65rem',
-                    backgroundColor: 'var(--white)',
-                    cursor: 'pointer',
-                  }}
-                  title="Share Link"
-                >
-                  <Share2 size={18} />
-                </button>
                 <button
                   onClick={() => openViewer(mat)}
                   className="neo-button primary"
