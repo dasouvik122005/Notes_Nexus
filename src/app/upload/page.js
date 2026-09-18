@@ -107,7 +107,7 @@ export default function UploadPage() {
         setSubmitError('Please enter the subject / paper name.');
         return;
       }
-      paperName = paperNameInput.trim();
+      paperName = paperNameInput.trim().toUpperCase();
       
       if (paperCodeInput.trim()) {
         paperCode = paperCodeInput.trim().toUpperCase();
@@ -787,7 +787,7 @@ export default function UploadPage() {
                       type="text"
                       placeholder="e.g. Distributed Operating Systems"
                       value={paperNameInput}
-                      onChange={(e) => setPaperNameInput(e.target.value)}
+                      onChange={(e) => setPaperNameInput(e.target.value.toUpperCase())}
                       style={{
                         width: '100%',
                         padding: '0.75rem 1rem',
@@ -797,6 +797,7 @@ export default function UploadPage() {
                         fontSize: '0.95rem',
                         backgroundColor: 'var(--white)',
                         outline: 'none',
+                        textTransform: 'uppercase',
                       }}
                     />
                   </div>
