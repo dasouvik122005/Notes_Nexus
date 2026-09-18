@@ -26,6 +26,7 @@ export const siteConfig = {
   },
   nav: [
     { label: "HOME", href: "/" },
+    { label: "SEARCH", href: "/search" },
     { label: "NOTES", href: "/notes" },
     { label: "PYQ", href: "/pyq" },
     { label: "INSTRUMENTS", href: "/instruments" },
