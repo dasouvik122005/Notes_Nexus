@@ -84,13 +84,15 @@ export async function GET(request: NextRequest) {
     }));
 
         let dbLogs: any[] = [];
+        let totalAuditLogs = 0;
         try {
-          const { data: logData } = await supabase
+          const { data: logData, count } = await supabase
             .from('audit_log')
-            .select('*')
+            .select('*', { count: 'exact' })
             .order('created_at', { ascending: false })
             .limit(20);
           dbLogs = logData || [];
+          totalAuditLogs = count || 0;
         } catch {
           // audit_log table may not exist yet
         }
@@ -105,7 +107,7 @@ export async function GET(request: NextRequest) {
         pendingMaterialsCount: formattedMaterials.length,
         pendingAccountsCount: (dbUsers || []).length,
         pendingListingsCount: formattedListings.length,
-        totalAuditCount: (dbLogs || []).length,
+        totalAuditCount: totalAuditLogs,
       },
     });
   } catch (err) {
