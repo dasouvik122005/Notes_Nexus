@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { motion } from 'framer-motion';
+import { LazyMotion, domAnimation, m } from 'framer-motion';
 
 export default function AnimateInView({ 
   children, 
@@ -36,14 +36,16 @@ export default function AnimateInView({
   };
 
   return (
-    <motion.div
-      initial={initialProps}
-      whileInView={animateProps}
-      viewport={{ once, margin: "-40px" }}
-      className={className}
-      style={{ ...style, willChange: 'transform, opacity' }}
-    >
-      {children}
-    </motion.div>
+    <LazyMotion features={domAnimation}>
+      <m.div
+        initial={initialProps}
+        whileInView={animateProps}
+        viewport={{ once, margin: "-40px" }}
+        className={className}
+        style={{ ...style, willChange: 'transform, opacity' }}
+      >
+        {children}
+      </m.div>
+    </LazyMotion>
   );
 }

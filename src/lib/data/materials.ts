@@ -38,7 +38,7 @@ export async function getLatestMaterials(limit = 4): Promise<Material[]> {
       const supabase = await createClient();
       const { data, error } = await supabase
         .from('materials')
-        .select('*, users!uploaded_by(name, email)')
+        .select('id, type, department_id, paper_id, semester, paper_name, paper_code, section, faculty_name, exam_type, year, title, description, storage_key, file_size, page_count, rating_avg, rating_count, uploaded_by, created_at, users!uploaded_by(name, email)')
         .eq('status', 'approved')
         .order('created_at', { ascending: false })
         .limit(limit);
@@ -85,7 +85,7 @@ export async function getMaterialsByPaper(
       const supabase = await createClient();
       let query = supabase
         .from('materials')
-        .select('*, users!uploaded_by(name, email)')
+        .select('id, type, department_id, paper_id, semester, paper_name, paper_code, section, faculty_name, exam_type, year, title, description, storage_key, file_size, page_count, rating_avg, rating_count, uploaded_by, created_at, users!uploaded_by(name, email)')
         .eq('department_id', departmentId)
         .eq('paper_code', paperCode)
         .eq('status', 'approved');
@@ -180,7 +180,7 @@ export async function getPYQMaterialsByDepartment(
       const supabase = await createClient();
       let query = supabase
         .from('materials')
-        .select('*, users!uploaded_by(name, email)')
+        .select('id, type, department_id, paper_id, semester, paper_name, paper_code, section, faculty_name, exam_type, year, title, description, storage_key, file_size, page_count, rating_avg, rating_count, uploaded_by, created_at, users!uploaded_by(name, email)')
         .eq('department_id', departmentId)
         .eq('type', 'pyq')
         .eq('status', 'approved');

@@ -28,7 +28,7 @@ export async function getPapersByDepartment(
       const supabase = await createClient();
       let query = supabase
         .from('papers')
-        .select('*')
+        .select('id, department_id, semester, paper_name, paper_code, is_active')
         .eq('department_id', departmentId);
 
       if (semester && semester > 0) {
