@@ -70,36 +70,6 @@
 | **Analytics** | [Vercel Analytics](https://vercel.com/analytics) + [Speed Insights](https://vercel.com/docs/speed-insights) |
 | **Deployment** | [Vercel](https://vercel.com/) |
 
-## Project Structure
-
-```
-Notes_Nexus/
-├── public/                  # Static assets (favicon, campus image)
-├── src/
-│   ├── app/                 # Next.js App Router pages
-│   │   ├── notes/           # Notes browsing (dept → semester → paper)
-│   │   ├── pyq/             # PYQ browsing (dept → semester → exam type)
-│   │   ├── instruments/     # Student marketplace
-│   │   ├── upload/          # Material upload form
-│   │   ├── admin/           # Admin moderation dashboard
-│   │   ├── me/              # User's uploads & listings
-│   │   ├── about/           # Team & about page
-│   │   └── api/             # Route handlers (upload, rate, admin actions)
-│   ├── components/          # Reusable UI components
-│   ├── config/              # Site config, departments, team roster
-│   │   ├── site.ts          # Brand name, URLs, theme tokens
-│   │   ├── departments.ts   # Department taxonomy
-│   │   └── team.ts          # Team member data
-│   └── lib/                 # Data fetching, auth, Supabase clients
-│       ├── data/            # Server-side data access (materials, papers, departments)
-│       ├── auth/            # Auth context & helpers
-│       └── supabase/        # Supabase client configs (server, client, admin, middleware)
-├── supabase/
-│   └── migrations/          # SQL schema migrations
-├── middleware.ts             # Route protection (/upload, /me, /admin)
-└── next.config.mjs          # Next.js configuration
-```
-
 ## Roles & Access
 
 | Role | Can Browse | Can Rate | Can Upload | Can Moderate |
