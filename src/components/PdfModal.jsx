@@ -370,23 +370,36 @@ export default function PdfModal({
                         }}
                       />
 
-                      {/* Watermark Overlay if authenticated */}
-                      {viewerEmail && (
+                      {/* Diagonal Watermark Overlay */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          overflow: 'hidden',
+                          pointerEvents: 'none',
+                          userSelect: 'none',
+                          zIndex: 10,
+                        }}
+                      >
                         <div
                           style={{
-                            position: 'absolute',
-                            bottom: '0.5rem',
-                            left: '0.75rem',
-                            fontSize: '0.68rem',
-                            fontWeight: 700,
-                            color: 'rgba(0, 0, 0, 0.25)',
-                            pointerEvents: 'none',
-                            userSelect: 'none',
+                            transform: 'rotate(-45deg)',
+                            whiteSpace: 'nowrap',
+                            fontSize: '3rem',
+                            fontWeight: 900,
+                            color: 'rgba(0, 0, 0, 0.08)',
+                            letterSpacing: '0.15em',
                           }}
                         >
-                          {viewerEmail} • Notes Nexus Verified
+                          {Array(15).fill("NOTES NEXUS").join("\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0")}
                         </div>
-                      )}
+                      </div>
                     </div>
                   );
                 })
@@ -410,22 +423,36 @@ export default function PdfModal({
                     }}
                   />
 
-                  {viewerEmail && (
+                  {/* Diagonal Watermark Overlay */}
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      overflow: 'hidden',
+                      pointerEvents: 'none',
+                      userSelect: 'none',
+                      zIndex: 10,
+                    }}
+                  >
                     <div
                       style={{
-                        position: 'absolute',
-                        bottom: '0.5rem',
-                        left: '0.75rem',
-                        fontSize: '0.68rem',
-                        fontWeight: 700,
-                        color: 'rgba(0, 0, 0, 0.25)',
-                        pointerEvents: 'none',
-                        userSelect: 'none',
+                        transform: 'rotate(-45deg)',
+                        whiteSpace: 'nowrap',
+                        fontSize: '3rem',
+                        fontWeight: 900,
+                        color: 'rgba(0, 0, 0, 0.08)',
+                        letterSpacing: '0.15em',
                       }}
                     >
-                      {viewerEmail} • Notes Nexus Verified
+                      {Array(15).fill("NOTES NEXUS").join("\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0")}
                     </div>
-                  )}
+                  </div>
                 </div>
               )}
 
