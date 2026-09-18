@@ -124,7 +124,7 @@ async function LatestUploadsFeed() {
 
               <div style={{ marginTop: 'auto', paddingTop: '0.75rem', borderTop: '2px dashed #eee' }}>
                 <Link
-                  href={`/notes/${item.departmentId}/${item.paperCode}`}
+                  href={`/${item.type}/${item.departmentId}/${item.paperCode}`}
                   style={{
                     fontSize: '0.9rem',
                     fontWeight: 800,
