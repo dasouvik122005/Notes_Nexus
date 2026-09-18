@@ -64,6 +64,41 @@ export async function GET(request: NextRequest) {
           }
         });
       }
+
+      // Also search individual Materials
+      let materialQuery = supabase
+        .from('materials')
+        .select('id, title, type, department_id, semester, paper_code, departments(short_code)')
+        .eq('status', 'approved');
+        
+      if (dept !== 'all') {
+        materialQuery = materialQuery.eq('department_id', dept);
+      }
+      if (type === 'notes') {
+        materialQuery = materialQuery.eq('type', 'notes');
+      } else if (type === 'pyq') {
+        materialQuery = materialQuery.eq('type', 'pyq');
+      }
+
+      const { data: materialsData, error: materialsError } = await materialQuery;
+
+      if (!materialsError && materialsData) {
+        const filteredMaterials = materialsData.filter(
+          m => m.title.toLowerCase().includes(lowerQuery) || m.paper_code.toLowerCase().includes(lowerQuery)
+        );
+
+        filteredMaterials.forEach(mat => {
+          results.push({
+            id: `material_${mat.id}`,
+            type: mat.type,
+            title: mat.title,
+            subtitle: `Material • Sem ${mat.semester} • ${mat.departments?.short_code || mat.department_id}`,
+            code: mat.paper_code,
+            url: `/${mat.type}/${mat.department_id}/${mat.paper_code}`,
+            departmentId: mat.department_id
+          });
+        });
+      }
     }
 
     // 2. Search Marketplace Listings
