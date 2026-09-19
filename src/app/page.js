@@ -13,6 +13,9 @@ import { BookOpen, GraduationCap, Store, Star, ArrowRight } from 'lucide-react';
 export const metadata = {
   title: `Home | ${siteConfig.name}`,
   description: `${siteConfig.name} - Free comprehensive study materials, notes, and previous year questions across all departments at ${siteConfig.university}.`,
+  alternates: {
+    canonical: '/',
+  },
 };
 
 async function LatestUploadsFeed() {
