@@ -188,6 +188,39 @@ export default function Home() {
           '@id': `${siteConfig.url}/#organization`,
         },
       },
+      {
+        '@type': 'ItemList',
+        itemListElement: [
+          {
+            '@type': 'SiteNavigationElement',
+            position: 1,
+            name: 'Notes & Study Materials',
+            description: 'Browse organized lecture notes and module summaries across all departments.',
+            url: `${siteConfig.url}/notes`,
+          },
+          {
+            '@type': 'SiteNavigationElement',
+            position: 2,
+            name: 'Previous Year Questions (PYQ)',
+            description: 'Ace your examinations with official previous year question papers.',
+            url: `${siteConfig.url}/pyq`,
+          },
+          {
+            '@type': 'SiteNavigationElement',
+            position: 3,
+            name: 'Upload & Contribute',
+            description: 'Share your study materials and PYQs with the community.',
+            url: `${siteConfig.url}/upload`,
+          },
+          {
+            '@type': 'SiteNavigationElement',
+            position: 4,
+            name: 'Instruments Marketplace',
+            description: 'Student second-hand board to buy and sell engineering and medical instruments.',
+            url: `${siteConfig.url}/instruments`,
+          }
+        ]
+      }
     ],
   };
 
