@@ -123,8 +123,8 @@ Built with ❤️ by students of JIS University.
 
 | Name | GitHub | LinkedIn |
 |---|---|---|
-| **Kumaresh Jana** | [@iamkumaresh](https://github.com/iamkumaresh) | [LinkedIn](https://www.linkedin.com/in/kumaresh-jana-050406k) |
 | **Souvik Das** | [@dasouvik122005](https://github.com/dasouvik122005) | [LinkedIn](https://www.linkedin.com/in/souvikdas12102005/) |
+| **Kumaresh Jana** | [@iamkumaresh](https://github.com/iamkumaresh) | [LinkedIn](https://www.linkedin.com/in/kumaresh-jana-050406k) |
 | **Rajdip Garai** | [@rajdipgarai](https://github.com/rajdipgarai) | [LinkedIn](https://www.linkedin.com/in/rajdip-garai) |
 
 ## License
