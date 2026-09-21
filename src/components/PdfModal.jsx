@@ -364,18 +364,7 @@ export default function PdfModal({
               </>
             )}
 
-            {/* Toggle between High-Res Images and Raw Browser Embed */}
-            {isCloudinary && (
-              <button
-                type="button"
-                onClick={() => setIsNativeEmbed((prev) => !prev)}
-                className={`pdf-tool-btn ${isNativeEmbed ? 'active' : ''}`}
-                title="Toggle between mobile-optimized image viewer and native browser embed"
-              >
-                <Monitor size={13} />
-                <span>{isNativeEmbed ? 'Fit View' : 'Embed'}</span>
-              </button>
-            )}
+
           </div>
         </div>
 
