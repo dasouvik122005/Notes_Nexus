@@ -57,6 +57,62 @@ export default function PdfModal({
   const [isNativeEmbed, setIsNativeEmbed] = useState(!isCloudinary);
   const [isDetectingPages, setIsDetectingPages] = useState(false);
   const [pageErrors, setPageErrors] = useState({});
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async (e) => {
+    e.preventDefault();
+    if (isDownloading) return;
+    
+    try {
+      setIsDownloading(true);
+      const { PDFDocument, rgb, degrees } = await import('pdf-lib');
+      const res = await fetch(pdfUrl);
+      if (!res.ok) throw new Error('Fetch failed');
+      const buffer = await res.arrayBuffer();
+      const doc = await PDFDocument.load(buffer, { ignoreEncryption: true });
+      
+      const pages = doc.getPages();
+      for (const page of pages) {
+        const { width, height } = page.getSize();
+        const text = Array(15).fill("NOTES NEXUS").join("        ");
+        
+        // Draw multiple lines to cover the page diagonally
+        for (let i = -4; i <= 4; i++) {
+          page.drawText(text, {
+            x: -600,
+            y: (height / 2) + (i * 250),
+            size: 40,
+            color: rgb(0, 0, 0),
+            opacity: 0.08,
+            rotate: degrees(-45),
+          });
+        }
+      }
+      
+      const pdfBytes = await doc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = title ? `${title}.pdf` : 'download.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(link.href), 100);
+      
+    } catch (error) {
+      console.error('Error adding watermark for download:', error);
+      // Fallback: normal download
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      link.download = title || 'download';
+      link.target = '_blank';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   // Reset & detect total pages when modal opens
   useEffect(() => {
@@ -172,27 +228,16 @@ export default function PdfModal({
 
           {/* Right Side: Action Buttons (Guaranteed flex-shrink: 0, NEVER pushed off screen) */}
           <div className="pdf-header-actions">
-            <a
-              href={pdfUrl}
-              download
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={handleDownload}
+              disabled={isDownloading}
               className="pdf-action-btn pdf-download-btn"
               title="Download PDF"
+              style={{ opacity: isDownloading ? 0.7 : 1, cursor: isDownloading ? 'not-allowed' : 'pointer' }}
             >
               <Download size={14} />
-              <span className="pdf-btn-label">Download</span>
-            </a>
-
-            <a
-              href={pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="pdf-action-btn"
-              title="Open raw PDF in new browser tab"
-            >
-              <ExternalLink size={14} />
-            </a>
+              <span className="pdf-btn-label">{isDownloading ? 'Downloading...' : 'Download'}</span>
+            </button>
 
             <button
               onClick={onClose}
@@ -521,19 +566,7 @@ export default function PdfModal({
                   gap: '0.35rem',
                 }}
               >
-                <span>Viewing via native browser PDF plugin. If clipped on mobile, open directly:</span>
-                <a
-                  href={pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    color: '#1D4ED8',
-                    textDecoration: 'underline',
-                    fontWeight: 900,
-                  }}
-                >
-                  Open in New Tab →
-                </a>
+                <span>Viewing via native browser PDF plugin. Use the Download button above to save a copy.</span>
               </div>
 
               <iframe
