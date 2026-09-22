@@ -213,6 +213,7 @@ export default function ListingDetailPage({ params }) {
                 <Image
                   unoptimized
                   fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   src={listing.photos[activePhotoIdx] || listing.photos[0]}
                   alt={listing.title}
                   style={{ objectFit: 'cover' }}
@@ -241,6 +242,7 @@ export default function ListingDetailPage({ params }) {
                     <Image
                       unoptimized
                       fill
+                      sizes="100px"
                       src={photo}
                       alt={`Thumbnail ${idx + 1}`}
                       style={{ objectFit: 'cover' }}
