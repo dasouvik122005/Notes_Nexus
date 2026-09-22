@@ -5,7 +5,6 @@ import AuthModal from '@/components/auth/AuthModal';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import CookieBanner from '@/components/CookieBanner';
-import MobileStickyCTA from '@/components/MobileStickyCTA';
 import { Inter, Outfit } from 'next/font/google';
 import { siteConfig } from '@/config/site';
 import './globals.css';
@@ -102,7 +101,6 @@ export default function RootLayout({ children }) {
           <Footer />
           <AuthModal />
           <CookieBanner />
-          <MobileStickyCTA />
           <Analytics />
           <SpeedInsights />
         </AuthProvider>
