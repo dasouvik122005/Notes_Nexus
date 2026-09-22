@@ -152,7 +152,7 @@ export default function SearchAndFilters({
             cursor: 'pointer',
             borderRadius: '4px',
             transform: selectedSemester === 0 ? 'translate(2px, 2px)' : 'none',
-            transition: 'all 0.1s',
+            transition: 'transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease',
           }}
         >
           All
@@ -176,7 +176,7 @@ export default function SearchAndFilters({
                 cursor: 'pointer',
                 borderRadius: '4px',
                 transform: isSelected ? 'translate(2px, 2px)' : 'none',
-                transition: 'all 0.1s',
+                transition: 'transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease',
               }}
             >
               Sem {sem}

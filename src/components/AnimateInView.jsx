@@ -1,6 +1,7 @@
 "use client";
 import React from 'react';
 import { LazyMotion, domAnimation, m } from 'framer-motion';
+import { springMacro } from '../lib/animation-config';
 
 export default function AnimateInView({ 
   children, 
@@ -29,9 +30,8 @@ export default function AnimateInView({
     y: 0,
     x: 0,
     transition: {
-      duration,
+      ...springMacro,
       delay,
-      ease: [0.16, 1, 0.3, 1]
     }
   };
 

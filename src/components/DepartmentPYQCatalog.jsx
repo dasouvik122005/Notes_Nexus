@@ -77,7 +77,7 @@ export default function DepartmentPYQCatalog({ department, initialPapers }) {
                 cursor: 'pointer',
                 borderRadius: '4px',
                 transform: isSelected ? 'translate(2px, 2px)' : 'none',
-                transition: 'all 0.1s',
+                transition: 'transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease',
               }}
             >
               {tab.label}

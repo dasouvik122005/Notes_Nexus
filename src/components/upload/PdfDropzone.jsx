@@ -144,7 +144,7 @@ export default function PdfDropzone({
             padding: '2.5rem 1.5rem',
             textAlign: 'center',
             cursor: disabled ? 'not-allowed' : 'pointer',
-            transition: 'all 0.15s ease',
+            transition: 'background-color 0.15s ease, box-shadow 0.15s ease',
             opacity: disabled ? 0.6 : 1,
           }}
         >

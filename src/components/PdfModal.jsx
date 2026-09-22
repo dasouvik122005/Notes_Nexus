@@ -379,7 +379,7 @@ export default function PdfModal({
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                transition: 'width 0.15s ease',
+                transition: 'transform 0.15s ease',
               }}
             >
               {viewMode === 'scroll' ? (

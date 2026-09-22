@@ -621,7 +621,7 @@ export default function UploadPage() {
                     flexDirection: 'column',
                     alignItems: 'center',
                     gap: '0.4rem',
-                    transition: 'all 0.15s ease',
+                    transition: 'box-shadow 0.15s ease, background-color 0.15s ease',
                   }}
                 >
                   <BookOpen size={24} />
@@ -651,7 +651,7 @@ export default function UploadPage() {
                     flexDirection: 'column',
                     alignItems: 'center',
                     gap: '0.4rem',
-                    transition: 'all 0.15s ease',
+                    transition: 'box-shadow 0.15s ease, background-color 0.15s ease',
                   }}
                 >
                   <GraduationCap size={24} />

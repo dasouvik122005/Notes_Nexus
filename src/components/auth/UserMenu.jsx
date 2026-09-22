@@ -66,7 +66,7 @@ export default function UserMenu() {
           cursor: 'pointer',
           fontWeight: 800,
           fontSize: '0.85rem',
-          transition: 'all 0.15s ease',
+          transition: 'transform 0.15s ease, background-color 0.15s ease',
         }}
       >
         {/* Initials Avatar */}

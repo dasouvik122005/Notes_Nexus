@@ -95,7 +95,7 @@ export default function DepartmentPYQBrowser({ department, initialMaterials = []
                   transform: isSelected ? 'translate(2px, 2px)' : 'none',
                   cursor: 'pointer',
                   textAlign: 'center',
-                  transition: 'all 0.1s ease',
+                  transition: 'transform 0.1s ease, box-shadow 0.1s ease, background-color 0.1s ease',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
