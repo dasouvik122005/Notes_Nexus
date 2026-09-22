@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { departments } from '@/config/departments';
-import PdfDropzone from '@/components/upload/PdfDropzone';
+import dynamic from 'next/dynamic';
+const PdfDropzone = dynamic(() => import('@/components/upload/PdfDropzone'), { ssr: false });
 import NeoButton from '@/components/NeoButton';
 import {
   Upload,

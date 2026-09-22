@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth/AuthContext';
 import RejectModal from '@/components/admin/RejectModal';
-import PdfModal from '@/components/PdfModal';
+import dynamic from 'next/dynamic';
+const PdfModal = dynamic(() => import('@/components/PdfModal'), { ssr: false });
 import NeoButton from '@/components/NeoButton';
 import {
   ShieldAlert,
