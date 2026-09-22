@@ -137,11 +137,12 @@ export default async function PaperDetailPage({ params }) {
 
           <h1
             style={{
-              fontSize: '2.75rem',
+              fontSize: 'clamp(2rem, 8vw, 2.75rem)',
               fontWeight: 900,
               letterSpacing: '-1px',
               lineHeight: 1.2,
               marginBottom: '1rem',
+              wordBreak: 'break-word',
             }}
           >
             {paper.paperName}

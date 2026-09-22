@@ -85,11 +85,12 @@ export default async function DepartmentPYQPage({ params }) {
           <h1
             className="hero-title"
             style={{
-              fontSize: '3.25rem',
+              fontSize: 'clamp(2.25rem, 8vw, 3.25rem)',
               fontWeight: 900,
               letterSpacing: '-1.5px',
               lineHeight: 1.15,
               margin: '0.5rem 0',
+              wordBreak: 'break-word',
             }}
           >
             {department.name} PYQs

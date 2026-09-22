@@ -58,10 +58,11 @@ export default function PaperCard({ paper, deptSlug, basePath = '/notes' }) {
       <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
         <h3
           style={{
-            fontSize: '1.25rem',
+            fontSize: 'clamp(1.1rem, 5vw, 1.25rem)',
             fontWeight: 900,
             lineHeight: 1.3,
             marginBottom: '0.75rem',
+            wordBreak: 'break-word',
           }}
         >
           {paper.paperName}
