@@ -63,7 +63,7 @@ export default async function CommunityProfilePage({ params }) {
 
   return (
     <div style={{ padding: '3rem 0 8rem 0', backgroundColor: '#F9FAFB', minHeight: '100vh' }}>
-      <div className="container" style={{ maxWidth: '900px' }}>
+      <div className="container">
         
         {/* Back Link & Edit Button */}
         <div style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
