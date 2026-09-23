@@ -214,11 +214,28 @@ export async function POST(request: NextRequest) {
               is_verified: true,
             })
             .eq('id', id);
+        } else if (action === 'hide_community') {
+          await supabase
+            .from('communities')
+            .update({
+              status: 'rejected',
+              reject_reason: 'HIDDEN_BY_ADMIN',
+            })
+            .eq('id', id);
+        } else if (action === 'unhide_community') {
+          await supabase
+            .from('communities')
+            .update({
+              status: 'approved',
+              reject_reason: null,
+            })
+            .eq('id', id);
         } else if (action === 'reject_community') {
           await supabase
             .from('communities')
             .update({
               status: 'rejected',
+              reject_reason: reason?.trim() || null,
             })
             .eq('id', id);
         } else if (action === 'delete_community') {

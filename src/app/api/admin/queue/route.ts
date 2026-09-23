@@ -88,6 +88,25 @@ export async function GET(request: NextRequest) {
       createdAt: l.created_at,
     }));
 
+    // Fetch pending communities
+    const { data: dbCommunities, error: commErr } = await supabase
+      .from('communities')
+      .select('*')
+      .in('status', ['pending', 'approved', 'rejected'])
+      .order('created_at', { ascending: false });
+    if (commErr) console.error('[Admin Queue] Communities query error:', commErr);
+
+    const formattedCommunities = (dbCommunities || []).map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      category: c.category,
+      departmentId: c.department_id,
+      communityType: c.community_type,
+      leadershipTeam: c.leadership_team,
+      status: c.status === 'rejected' && c.reject_reason === 'HIDDEN_BY_ADMIN' ? 'hidden' : c.status,
+      createdAt: c.created_at,
+    })).filter(c => c.status !== 'rejected'); // Only keep pending, approved, hidden
+
         let dbLogs: any[] = [];
         let totalAuditLogs = 0;
         try {
@@ -115,20 +134,27 @@ export async function GET(request: NextRequest) {
           .from('listings')
           .select('*', { count: 'exact', head: true });
 
+        const { count: totalCommunitiesCount } = await supabase
+          .from('communities')
+          .select('*', { count: 'exact', head: true });
+
     return NextResponse.json({
       success: true,
       materials: formattedMaterials,
       accounts: dbUsers || [],
       listings: formattedListings,
+      communities: formattedCommunities,
       auditLogs: dbLogs || [],
       stats: {
         pendingMaterialsCount: formattedMaterials.length,
         pendingAccountsCount: (dbUsers || []).length,
-        pendingListingsCount: formattedListings.length,
+        pendingListingsCount: formattedListings.filter(l => l.status === 'pending').length, // count pending properly
+        pendingCommunitiesCount: formattedCommunities.filter(c => c.status === 'pending').length,
         totalAuditCount: totalAuditLogs,
         totalAccountsCount: totalAccountsCount || 0,
         totalMaterialsCount: totalMaterialsCount || 0,
         totalListingsCount: totalListingsCount || 0,
+        totalCommunitiesCount: totalCommunitiesCount || 0,
       },
     });
   } catch (err) {

@@ -26,6 +26,7 @@ import {
   AlertTriangle,
   RefreshCw,
   Trash2,
+  Users,
 } from 'lucide-react';
 
 function formatBytes(bytes) {
@@ -46,15 +47,18 @@ export default function AdminModerationPage() {
   const [materials, setMaterials] = useState([]);
   const [accounts, setAccounts] = useState([]);
   const [listings, setListings] = useState([]);
+  const [communities, setCommunities] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
   const [stats, setStats] = useState({
     pendingMaterialsCount: 0,
     pendingAccountsCount: 0,
     pendingListingsCount: 0,
+    pendingCommunitiesCount: 0,
     totalAuditCount: 0,
     totalAccountsCount: 0,
     totalMaterialsCount: 0,
     totalListingsCount: 0,
+    totalCommunitiesCount: 0,
   });
 
   const [isLoadingQueue, setIsLoadingQueue] = useState(true);
@@ -81,12 +85,14 @@ export default function AdminModerationPage() {
             setMaterials(data.materials || []);
             setAccounts(data.accounts || []);
             setListings(data.listings || []);
+            setCommunities(data.communities || []);
             setAuditLogs(data.auditLogs || []);
             setStats(
               data.stats || {
                 pendingMaterialsCount: (data.materials || []).length,
                 pendingAccountsCount: (data.accounts || []).length,
                 pendingListingsCount: (data.listings || []).length,
+                pendingCommunitiesCount: (data.communities || []).length,
                 totalAuditCount: (data.auditLogs || []).length,
               }
             );
@@ -116,16 +122,19 @@ export default function AdminModerationPage() {
         setMaterials(data.materials || []);
         setAccounts(data.accounts || []);
         setListings(data.listings || []);
+        setCommunities(data.communities || []);
         setAuditLogs(data.auditLogs || []);
         setStats(
           data.stats || {
             pendingMaterialsCount: (data.materials || []).length,
             pendingAccountsCount: (data.accounts || []).length,
             pendingListingsCount: data.stats?.pendingListingsCount || 0,
+            pendingCommunitiesCount: data.stats?.pendingCommunitiesCount || 0,
             totalAuditCount: data.stats?.totalAuditCount || 0,
             totalAccountsCount: data.stats?.totalAccountsCount || 0,
             totalMaterialsCount: data.stats?.totalMaterialsCount || 0,
             totalListingsCount: data.stats?.totalListingsCount || 0,
+            totalCommunitiesCount: data.stats?.totalCommunitiesCount || 0,
           }
         );
       }
@@ -314,6 +323,7 @@ export default function AdminModerationPage() {
       let actionName = 'reject_material';
       if (rejectItem.type === 'user') actionName = 'block_user';
       if (rejectItem.type === 'listing') actionName = 'reject_listing';
+      if (rejectItem.type === 'community') actionName = 'reject_community';
 
       const res = await fetch('/api/admin/action', {
         method: 'POST',
@@ -346,6 +356,13 @@ export default function AdminModerationPage() {
           setStats((prev) => ({
             ...prev,
             pendingListingsCount: Math.max(0, prev.pendingListingsCount - 1),
+            totalAuditCount: prev.totalAuditCount + 1,
+          }));
+        } else if (rejectItem.type === 'community') {
+          setCommunities((prev) => prev.filter((c) => c.id !== rejectItem.id));
+          setStats((prev) => ({
+            ...prev,
+            pendingCommunitiesCount: Math.max(0, prev.pendingCommunitiesCount - 1),
             totalAuditCount: prev.totalAuditCount + 1,
           }));
         }
@@ -455,6 +472,175 @@ export default function AdminModerationPage() {
       }
     } catch (err) {
       console.error('Failed to approve listing:', err);
+    } finally {
+      setIsProcessingAction(false);
+    }
+  };
+
+  // Handle Approve Community
+  const handleApproveCommunity = async (item) => {
+    setIsProcessingAction(true);
+    try {
+      const res = await fetch('/api/admin/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'approve_community',
+          id: item.id,
+          targetSummary: `${item.name}`,
+        }),
+      });
+
+      if (res.ok) {
+        setCommunities((prev) => prev.filter((m) => m.id !== item.id));
+        setStats((prev) => ({
+          ...prev,
+          pendingCommunitiesCount: Math.max(0, prev.pendingCommunitiesCount - 1),
+          totalAuditCount: prev.totalAuditCount + 1,
+        }));
+        setAuditLogs((prev) => [
+          {
+            id: `log-${Date.now()}`,
+            actorName: user?.name || 'Admin',
+            actorEmail: user?.email || 'admin@jisuniversity.ac.in',
+            action: 'approve_community',
+            entityType: 'community',
+            entityId: item.id,
+            entitySummary: `${item.name}`,
+            timestamp: new Date().toISOString(),
+          },
+          ...prev,
+        ]);
+        setStatusNotification(`Approved "${item.name}". Community is now live.`);
+      }
+    } catch (err) {
+      console.error('Failed to approve community:', err);
+    } finally {
+      setIsProcessingAction(false);
+    }
+  };
+
+  // Handle Hide Community
+  const handleHideCommunity = async (item) => {
+    setIsProcessingAction(true);
+    try {
+      const res = await fetch('/api/admin/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'hide_community',
+          id: item.id,
+          targetSummary: `${item.name}`,
+        }),
+      });
+
+      if (res.ok) {
+        setCommunities((prev) =>
+          prev.map((m) => (m.id === item.id ? { ...m, status: 'hidden' } : m))
+        );
+        setAuditLogs((prev) => [
+          {
+            id: `log-${Date.now()}`,
+            actorName: user?.name || 'Admin',
+            actorEmail: user?.email || 'admin@jisuniversity.ac.in',
+            action: 'hide_community',
+            entityType: 'community',
+            entityId: item.id,
+            entitySummary: `${item.name}`,
+            timestamp: new Date().toISOString(),
+          },
+          ...prev,
+        ]);
+        setStatusNotification(`Hidden "${item.name}" from public catalog.`);
+      }
+    } catch (err) {
+      console.error('Failed to hide community:', err);
+    } finally {
+      setIsProcessingAction(false);
+    }
+  };
+
+  // Handle Unhide Community
+  const handleUnhideCommunity = async (item) => {
+    setIsProcessingAction(true);
+    try {
+      const res = await fetch('/api/admin/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'unhide_community',
+          id: item.id,
+          targetSummary: `${item.name}`,
+        }),
+      });
+
+      if (res.ok) {
+        setCommunities((prev) =>
+          prev.map((m) => (m.id === item.id ? { ...m, status: 'approved' } : m))
+        );
+        setAuditLogs((prev) => [
+          {
+            id: `log-${Date.now()}`,
+            actorName: user?.name || 'Admin',
+            actorEmail: user?.email || 'admin@jisuniversity.ac.in',
+            action: 'unhide_community',
+            entityType: 'community',
+            entityId: item.id,
+            entitySummary: `${item.name}`,
+            timestamp: new Date().toISOString(),
+          },
+          ...prev,
+        ]);
+        setStatusNotification(`Restored "${item.name}" to public catalog.`);
+      }
+    } catch (err) {
+      console.error('Failed to restore community:', err);
+    } finally {
+      setIsProcessingAction(false);
+    }
+  };
+
+  // Handle Delete Community
+  const handleDeleteCommunity = async (item) => {
+    if (!window.confirm(`Are you sure you want to PERMANENTLY delete "${item.name}"? This cannot be undone.`)) {
+      return;
+    }
+    
+    setIsProcessingAction(true);
+    try {
+      const res = await fetch('/api/admin/action', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'delete_community',
+          id: item.id,
+          targetSummary: `${item.name}`,
+        }),
+      });
+
+      if (res.ok) {
+        setCommunities((prev) => prev.filter((m) => m.id !== item.id));
+        setAuditLogs((prev) => [
+          {
+            id: `log-${Date.now()}`,
+            actorName: user?.name || 'Admin',
+            actorEmail: user?.email || 'admin@jisuniversity.ac.in',
+            action: 'delete_community',
+            entityType: 'community',
+            entityId: item.id,
+            entitySummary: `${item.name}`,
+            timestamp: new Date().toISOString(),
+          },
+          ...prev,
+        ]);
+        setStatusNotification(`Permanently deleted "${item.name}".`);
+      } else {
+        const data = await res.json();
+        alert(`Deletion failed: ${data.error || 'Unknown error'}`);
+      }
+    } catch (err) {
+      console.error('Failed to delete community:', err);
+      alert('An error occurred while deleting the community.');
     } finally {
       setIsProcessingAction(false);
     }
@@ -810,6 +996,29 @@ export default function AdminModerationPage() {
           <div
             className="neo-card"
             style={{
+              backgroundColor: '#FEF08A', // Yellow-200 for communities
+              padding: '1.5rem',
+              cursor: 'pointer',
+            }}
+            onClick={() => setActiveTab('communities')}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontWeight: 900, fontSize: '0.85rem', textTransform: 'uppercase' }}>
+                Communities
+              </span>
+              <Users size={20} />
+            </div>
+            <div style={{ fontSize: '2.4rem', fontWeight: 900, marginTop: '0.5rem' }}>
+              {stats.totalCommunitiesCount}
+            </div>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#374151' }}>
+              Registered • <span style={{ color: stats.pendingCommunitiesCount > 0 ? '#DC2626' : 'inherit' }}>{stats.pendingCommunitiesCount} Pending</span>
+            </div>
+          </div>
+
+          <div
+            className="neo-card"
+            style={{
               backgroundColor: '#F3F4F6',
               padding: '1.5rem',
               cursor: 'pointer',
@@ -858,6 +1067,15 @@ export default function AdminModerationPage() {
           >
             <Store size={16} />
             <span>Marketplace ({stats.pendingListingsCount})</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('communities')}
+            className={`admin-tab-btn ${activeTab === 'communities' ? 'active' : ''}`}
+          >
+            <Users size={16} />
+            <span>Communities ({stats.pendingCommunitiesCount})</span>
           </button>
 
           <button
@@ -1580,7 +1798,255 @@ export default function AdminModerationPage() {
           </div>
         )}
 
-        {/* Tab 4: Audit Trail */}
+        {/* Tab 4: Communities Queue */}
+        {activeTab === 'communities' && (
+          <div>
+            {communities.length === 0 ? (
+              <div
+                className="neo-card"
+                style={{
+                  backgroundColor: 'var(--white)',
+                  padding: '3rem',
+                  textAlign: 'center',
+                }}
+              >
+                <Users size={40} style={{ color: '#22C55E', margin: '0 auto 1rem auto' }} />
+                <h3 style={{ fontSize: '1.4rem', fontWeight: 900, marginBottom: '0.5rem' }}>
+                  No Pending Communities
+                </h3>
+                <p style={{ color: '#6B7280', fontWeight: 600, margin: 0 }}>
+                  All communities have been reviewed.
+                </p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                {communities.map((item) => (
+                  <div
+                    key={item.id}
+                    className="neo-card"
+                    style={{
+                      backgroundColor: 'var(--white)',
+                      padding: '1.5rem',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                        gap: '1rem',
+                        flexWrap: 'wrap',
+                        marginBottom: '1rem',
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            display: 'flex',
+                            gap: '0.5rem',
+                            marginBottom: '0.5rem',
+                          }}
+                        >
+                          <span
+                            style={{
+                              backgroundColor: 'var(--primary-cyan)',
+                              border: '2px solid var(--black)',
+                              padding: '0.15rem 0.5rem',
+                              fontWeight: 900,
+                              fontSize: '0.75rem',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            {item.communityType}
+                          </span>
+                          {item.departmentId && (
+                            <span
+                              style={{
+                                backgroundColor: '#F3F4F6',
+                                border: '2px solid var(--black)',
+                                padding: '0.15rem 0.5rem',
+                                fontWeight: 800,
+                                fontSize: '0.75rem',
+                              }}
+                            >
+                              {item.departmentId}
+                            </span>
+                          )}
+                        </div>
+
+                        <h3 style={{ margin: '0 0 0.35rem 0', fontWeight: 900, fontSize: '1.2rem' }}>
+                          {item.name}
+                        </h3>
+
+                        <div style={{ fontSize: '1rem', fontWeight: 700, color: '#374151' }}>
+                          {item.category}
+                        </div>
+                      </div>
+
+                      <div
+                        style={{
+                          backgroundColor: '#F9FAFB',
+                          border: '2px solid var(--black)',
+                          boxShadow: '2px 2px 0px 0px var(--black)',
+                          padding: '0.75rem 1rem',
+                          fontSize: '0.8rem',
+                          fontWeight: 700,
+                          minWidth: '220px',
+                        }}
+                      >
+                        <div style={{ marginBottom: '0.3rem' }}>
+                          <span style={{ color: '#6B7280' }}>Status: </span>
+                          <strong>{item.status.toUpperCase()}</strong>
+                        </div>
+                        <div style={{ marginBottom: '0.3rem' }}>
+                          <span style={{ color: '#6B7280' }}>Leads: </span>
+                          <span>{item.leadershipTeam?.length || 0}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        gap: '0.75rem',
+                        borderTop: '2px dashed #E5E7EB',
+                        paddingTop: '1rem',
+                      }}
+                    >
+                      {item.status === 'pending' && (
+                        <>
+                          <button
+                            type="button"
+                            disabled={isProcessingAction}
+                            onClick={() =>
+                              setRejectItem({
+                                id: item.id,
+                                title: item.name,
+                                type: 'community',
+                              })
+                            }
+                            style={{
+                              backgroundColor: '#FEE2E2',
+                              color: '#991B1B',
+                              border: '2px solid var(--black)',
+                              boxShadow: '2px 2px 0px 0px var(--black)',
+                              padding: '0.5rem 1rem',
+                              fontWeight: 900,
+                              fontSize: '0.85rem',
+                              cursor: 'pointer',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            <XCircle size={16} style={{ display: 'inline', marginRight: '4px' }} /> Reject
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={isProcessingAction}
+                            onClick={() => handleApproveCommunity(item)}
+                            style={{
+                              backgroundColor: '#22C55E',
+                              color: 'var(--white)',
+                              border: '2px solid var(--black)',
+                              boxShadow: '3px 3px 0px 0px var(--black)',
+                              padding: '0.5rem 1.25rem',
+                              fontWeight: 900,
+                              fontSize: '0.85rem',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '0.35rem',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            <CheckCircle2 size={16} /> Approve Community
+                          </button>
+                        </>
+                      )}
+
+                      {item.status === 'approved' && (
+                        <button
+                          type="button"
+                          disabled={isProcessingAction}
+                          onClick={() => handleHideCommunity(item)}
+                          style={{
+                            backgroundColor: '#F97316',
+                            color: 'var(--white)',
+                            border: '2px solid var(--black)',
+                            boxShadow: '3px 3px 0px 0px var(--black)',
+                            padding: '0.5rem 1.3rem',
+                            fontWeight: 900,
+                            fontSize: '0.85rem',
+                            cursor: isProcessingAction ? 'not-allowed' : 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          <Eye size={16} /> Hide from Public
+                        </button>
+                      )}
+
+                      {item.status === 'hidden' && (
+                        <button
+                          type="button"
+                          disabled={isProcessingAction}
+                          onClick={() => handleUnhideCommunity(item)}
+                          style={{
+                            backgroundColor: '#3B82F6',
+                            color: 'var(--white)',
+                            border: '2px solid var(--black)',
+                            boxShadow: '3px 3px 0px 0px var(--black)',
+                            padding: '0.5rem 1.3rem',
+                            fontWeight: 900,
+                            fontSize: '0.85rem',
+                            cursor: isProcessingAction ? 'not-allowed' : 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          <RefreshCw size={16} /> Restore to Public
+                        </button>
+                      )}
+
+                      {(item.status === 'hidden' || item.status === 'rejected') && (
+                        <button
+                          type="button"
+                          disabled={isProcessingAction}
+                          onClick={() => handleDeleteCommunity(item)}
+                          style={{
+                            backgroundColor: '#DC2626',
+                            color: 'var(--white)',
+                            border: '2px solid var(--black)',
+                            boxShadow: '3px 3px 0px 0px var(--black)',
+                            padding: '0.5rem 1.3rem',
+                            fontWeight: 900,
+                            fontSize: '0.85rem',
+                            cursor: isProcessingAction ? 'not-allowed' : 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          <Trash2 size={16} /> Delete Permanently
+                        </button>
+                      )}
+
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tab 5: Audit Trail */}
         {activeTab === 'audit' && (
           <div
             className="neo-card"
