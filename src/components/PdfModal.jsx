@@ -57,6 +57,7 @@ export default function PdfModal({
   const [isNativeEmbed, setIsNativeEmbed] = useState(!isCloudinary);
   const [isDetectingPages, setIsDetectingPages] = useState(false);
   const [pageErrors, setPageErrors] = useState({});
+  const [maxRendered, setMaxRendered] = useState(3);
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleDownload = async (e) => {
@@ -122,6 +123,7 @@ export default function PdfModal({
       setCurrentPage(1);
       setZoomLevel(100);
       setPageErrors({});
+      setMaxRendered(3);
       setIsNativeEmbed(!isCloudinary);
 
       if (initialPageCount && initialPageCount > 0) {
@@ -196,10 +198,10 @@ export default function PdfModal({
 
   if (!isOpen || !pdfUrl) return null;
 
-  // Pages to render in scroll view: either known totalPages or default to first 3 then discovered
+  // Pages to render in scroll view
   const pagesToRender = totalPages
     ? Array.from({ length: totalPages }, (_, i) => i + 1)
-    : [1, 2, 3];
+    : Array.from({ length: maxRendered }, (_, i) => i + 1);
 
   return (
     <div
@@ -400,6 +402,11 @@ export default function PdfModal({
                         width={800}
                         height={1131}
                         priority={page <= 2}
+                        onLoad={() => {
+                          if (!totalPages && page === maxRendered) {
+                            setMaxRendered((prev) => prev + 3);
+                          }
+                        }}
                         onError={() => handlePageError(page)}
                         style={{
                           width: '100%',
