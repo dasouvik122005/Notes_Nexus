@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import RejectModal from '@/components/admin/RejectModal';
 import dynamic from 'next/dynamic';
 const PdfModal = dynamic(() => import('@/components/PdfModal'), { ssr: false });
+import CommunityPreviewModal from '@/components/admin/CommunityPreviewModal';
 import NeoButton from '@/components/NeoButton';
 import {
   ShieldAlert,
@@ -70,6 +71,7 @@ export default function AdminModerationPage() {
 
   // Modal States
   const [previewPdf, setPreviewPdf] = useState(null); // { url, title }
+  const [previewCommunity, setPreviewCommunity] = useState(null); // full community object
   const [rejectItem, setRejectItem] = useState(null); // { id, title, type: 'material'|'user'|'listing' }
   const [isProcessingAction, setIsProcessingAction] = useState(false);
 
@@ -1869,6 +1871,27 @@ export default function AdminModerationPage() {
                         paddingTop: '1rem',
                       }}
                     >
+                      <button
+                        type="button"
+                        onClick={() => setPreviewCommunity(item)}
+                        style={{
+                          backgroundColor: 'var(--primary-yellow)',
+                          color: 'var(--black)',
+                          border: '2px solid var(--black)',
+                          boxShadow: '2px 2px 0px 0px var(--black)',
+                          padding: '0.5rem 1.1rem',
+                          fontWeight: 900,
+                          fontSize: '0.85rem',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.35rem',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        <FileText size={16} /> View Community
+                      </button>
+                      
                       {item.status === 'pending' && (
                         <>
                           <button
@@ -2094,6 +2117,14 @@ export default function AdminModerationPage() {
           pdfUrl={previewPdf.url}
           title={previewPdf.title}
           viewerEmail={user?.email || 'admin@jisuniversity.ac.in'}
+        />
+      )}
+
+      {/* Community Preview Modal */}
+      {previewCommunity && (
+        <CommunityPreviewModal
+          community={previewCommunity}
+          onClose={() => setPreviewCommunity(null)}
         />
       )}
     </div>
