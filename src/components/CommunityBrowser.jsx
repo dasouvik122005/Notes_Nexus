@@ -1,20 +1,13 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Search, Filter, Layers } from 'lucide-react';
+import { Search, Filter } from 'lucide-react';
 import CommunityCard from './CommunityCard';
 import { departments } from '@/config/departments';
 
 export default function CommunityBrowser({ initialCommunities }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDept, setSelectedDept] = useState('all');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-
-  // Extract unique categories from the data
-  const categories = useMemo(() => {
-    const cats = new Set(initialCommunities.map((c) => c.category));
-    return Array.from(cats).sort();
-  }, [initialCommunities]);
 
   // Filter logic
   const filteredCommunities = useMemo(() => {
@@ -26,12 +19,10 @@ export default function CommunityBrowser({ initialCommunities }) {
       // Actually, if a user selects a specific dept, show communities mapped to that dept PLUS open communities.
       // Or maybe just strict filtering. Let's do strict filtering:
       const matchesDept = selectedDept === 'all' || community.department_id === selectedDept || community.department_id === null;
-      
-      const matchesCategory = selectedCategory === 'all' || community.category === selectedCategory;
 
-      return matchesSearch && matchesDept && matchesCategory;
+      return matchesSearch && matchesDept;
     });
-  }, [initialCommunities, searchQuery, selectedDept, selectedCategory]);
+  }, [initialCommunities, searchQuery, selectedDept]);
 
   return (
     <div>
@@ -108,37 +99,6 @@ export default function CommunityBrowser({ initialCommunities }) {
           </div>
         </div>
 
-        {/* Category Filter */}
-        <div>
-          <label style={{ display: 'block', fontWeight: 800, fontSize: '0.8rem', color: '#4B5563', marginBottom: '0.35rem', textTransform: 'uppercase' }}>
-            Category
-          </label>
-          <div style={{ position: 'relative' }}>
-            <div style={{ position: 'absolute', top: '50%', left: '1rem', transform: 'translateY(-50%)', color: '#6B7280' }}>
-              <Layers size={18} />
-            </div>
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.75rem 1rem 0.75rem 2.75rem',
-                border: '3px solid var(--black)',
-                boxShadow: '3px 3px 0px 0px var(--black)',
-                fontWeight: 800,
-                fontSize: '0.9rem',
-                outline: 'none',
-                appearance: 'none',
-                backgroundColor: 'var(--white)',
-              }}
-            >
-              <option value="all">All Categories</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-          </div>
-        </div>
       </div>
 
       {/* Results */}
