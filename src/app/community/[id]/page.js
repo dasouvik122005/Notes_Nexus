@@ -23,7 +23,6 @@ import {
 } from 'lucide-react';
 import { FaLinkedin, FaInstagram, FaFacebook, FaGithub, FaTwitter } from 'react-icons/fa';
 import { siteConfig } from '@/config/site';
-import EditCommunityButton from '@/components/EditCommunityButton';
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
@@ -70,7 +69,6 @@ export default async function CommunityProfilePage({ params }) {
           <Link href="/community" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', fontWeight: 800, fontSize: '0.9rem', color: '#4B5563', textDecoration: 'none' }}>
             <ChevronLeft size={16} /> BACK TO DIRECTORY
           </Link>
-          <EditCommunityButton communityId={community.id} submittedBy={community.submitted_by} />
         </div>
 
         {/* Header Profile Section */}

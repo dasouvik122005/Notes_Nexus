@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth/AuthContext';
+import EditCommunityButton from '@/components/EditCommunityButton';
 import {
   User,
   CheckCircle2,
@@ -24,6 +25,7 @@ export default function MyDashboardPage() {
   const [activeTab, setActiveTab] = useState('submissions');
   const [materials, setMaterials] = useState([]);
   const [listings, setListings] = useState([]);
+  const [communities, setCommunities] = useState([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
   useEffect(() => {
@@ -36,6 +38,7 @@ export default function MyDashboardPage() {
 
       let userMats = [];
       let userLists = [];
+      let userComms = [];
 
       try {
         const supabase = createClient();
@@ -77,6 +80,24 @@ export default function MyDashboardPage() {
             createdAt: l.created_at ? new Date(l.created_at).toLocaleDateString() : '',
           }));
         }
+
+        const { data: dbComms } = await supabase
+          .from('communities')
+          .select('*')
+          .eq('submitted_by', user.id)
+          .order('created_at', { ascending: false });
+
+        if (dbComms && dbComms.length > 0) {
+          userComms = dbComms.map((c) => ({
+            id: c.id,
+            name: c.name,
+            category: c.category,
+            status: c.status,
+            rejectReason: c.reject_reason,
+            createdAt: c.created_at ? new Date(c.created_at).toLocaleDateString() : '',
+            submittedBy: c.submitted_by,
+          }));
+        }
       } catch {
         // Fall back
       }
@@ -86,6 +107,7 @@ export default function MyDashboardPage() {
       if (isMounted) {
         setMaterials(userMats);
         setListings(userLists);
+        setCommunities(userComms);
         setIsLoadingData(false);
       }
     }
@@ -373,6 +395,25 @@ export default function MyDashboardPage() {
             <Store size={18} />
             <span>My Marketplace Items ({listings.length})</span>
           </button>
+
+          <button
+            onClick={() => setActiveTab('communities')}
+            style={{
+              padding: '0.65rem 1.5rem',
+              fontWeight: 900,
+              fontSize: '1rem',
+              backgroundColor: activeTab === 'communities' ? '#A78BFA' : 'var(--white)',
+              border: '3px solid var(--black)',
+              boxShadow: activeTab === 'communities' ? '4px 4px 0px 0px var(--black)' : '2px 2px 0px 0px var(--black)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+            }}
+          >
+            <Users size={18} />
+            <span>My Communities ({communities.length})</span>
+          </button>
         </div>
 
         {/* Tab 1: Submissions */}
@@ -653,6 +694,156 @@ export default function MyDashboardPage() {
                   >
                     {item.status === 'sold' ? 'Re-list Item' : 'Mark as Sold'}
                   </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          )
+        )}
+
+        {/* Tab 3: Communities */}
+        {activeTab === 'communities' && (
+          communities.length === 0 ? (
+            <div
+              className="neo-card"
+              style={{
+                padding: '3.5rem 2rem',
+                textAlign: 'center',
+                backgroundColor: 'var(--white)',
+              }}
+            >
+              <Users size={40} style={{ margin: '0 auto 1rem auto', color: '#9CA3AF' }} />
+              <h3 style={{ fontSize: '1.35rem', fontWeight: 900, marginBottom: '0.5rem' }}>
+                No Communities Registered Yet
+              </h3>
+              <p style={{ color: '#6B7280', fontWeight: 600, marginBottom: '1.5rem', maxWidth: '400px', margin: '0 auto 1.5rem auto' }}>
+                Register your student club, technical society, or department group.
+              </p>
+              <NeoButton href="/community/register" variant="primary">
+                Register a Community →
+              </NeoButton>
+            </div>
+          ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            {communities.map((item) => (
+              <div
+                key={item.id}
+                className="neo-card"
+                style={{
+                  padding: '1.5rem',
+                  backgroundColor: 'var(--white)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '1.25rem',
+                }}
+              >
+                <div style={{ flex: '1 1 350px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                    {item.status === 'approved' && (
+                      <span
+                        style={{
+                          backgroundColor: '#DCFCE7',
+                          border: '2px solid var(--black)',
+                          color: '#166534',
+                          fontWeight: 900,
+                          fontSize: '0.75rem',
+                          padding: '0.15rem 0.5rem',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        ✓ Approved
+                      </span>
+                    )}
+                    {item.status === 'pending' && (
+                      <span
+                        style={{
+                          backgroundColor: '#FEF9C3',
+                          border: '2px solid var(--black)',
+                          color: '#854D0E',
+                          fontWeight: 900,
+                          fontSize: '0.75rem',
+                          padding: '0.15rem 0.5rem',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        ⏳ Pending Review
+                      </span>
+                    )}
+                    {item.status === 'rejected' && (
+                      <span
+                        style={{
+                          backgroundColor: '#FEE2E2',
+                          border: '2px solid var(--black)',
+                          color: '#991B1B',
+                          fontWeight: 900,
+                          fontSize: '0.75rem',
+                          padding: '0.15rem 0.5rem',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        ✕ Rejected
+                      </span>
+                    )}
+
+                    <span
+                      style={{
+                        backgroundColor: 'var(--white)',
+                        border: '2px solid var(--black)',
+                        fontWeight: 800,
+                        fontSize: '0.75rem',
+                        padding: '0.15rem 0.5rem',
+                      }}
+                    >
+                      {item.category}
+                    </span>
+                  </div>
+
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 900, margin: '0 0 0.4rem 0' }}>
+                    {item.name}
+                  </h3>
+
+                  <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 600, color: '#666' }}>
+                    Submitted on {item.createdAt}
+                  </p>
+
+                  {item.status === 'rejected' && item.rejectReason && (
+                    <div
+                      style={{
+                        marginTop: '0.75rem',
+                        padding: '0.65rem 0.85rem',
+                        backgroundColor: '#FEE2E2',
+                        border: '2px solid #EF4444',
+                        fontSize: '0.85rem',
+                        fontWeight: 700,
+                        color: '#991B1B',
+                      }}
+                    >
+                      <strong>Moderator note:</strong> {item.rejectReason}
+                    </div>
+                  )}
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  {item.status === 'approved' && (
+                    <Link
+                      href={`/community/${item.id}`}
+                      className="neo-button"
+                      style={{
+                        fontSize: '0.85rem',
+                        padding: '0.5rem 1rem',
+                        backgroundColor: 'var(--white)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                      }}
+                    >
+                      <Eye size={15} />
+                      <span>View Page</span>
+                    </Link>
+                  )}
+                  <EditCommunityButton communityId={item.id} submittedBy={item.submittedBy} />
                 </div>
               </div>
             ))}
