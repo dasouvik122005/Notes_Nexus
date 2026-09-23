@@ -67,7 +67,11 @@ export default function PdfModal({
     try {
       setIsDownloading(true);
       const { PDFDocument, rgb, degrees } = await import('pdf-lib');
-      const res = await fetch(pdfUrl);
+      
+      // Use our proxy route to bypass Cloudinary's CORS restrictions
+      const proxyUrl = `/api/proxy-pdf?url=${encodeURIComponent(pdfUrl)}`;
+      const res = await fetch(proxyUrl);
+      
       if (!res.ok) throw new Error('Fetch failed');
       const buffer = await res.arrayBuffer();
       const doc = await PDFDocument.load(buffer, { ignoreEncryption: true });
@@ -102,9 +106,9 @@ export default function PdfModal({
       
     } catch (error) {
       console.error('Error adding watermark for download:', error);
-      // Fallback: normal download
+      // Fallback: normal download via proxy if watermark generation fails
       const link = document.createElement('a');
-      link.href = pdfUrl;
+      link.href = `/api/proxy-pdf?url=${encodeURIComponent(pdfUrl)}&download=1`;
       link.download = title || 'download';
       link.target = '_blank';
       document.body.appendChild(link);
