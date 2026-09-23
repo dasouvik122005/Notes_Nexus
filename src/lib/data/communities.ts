@@ -1,4 +1,5 @@
 import { createClient, isSupabaseConfigured } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export interface CommunityLinks {
   website?: string;
@@ -54,8 +55,8 @@ export interface Community {
 export async function getApprovedCommunities(): Promise<Community[]> {
   if (isSupabaseConfigured) {
     try {
-      const supabase = await createClient();
-      const { data, error } = await supabase
+      const adminClient = createAdminClient();
+      const { data, error } = await adminClient
         .from('communities')
         .select('*')
         .eq('status', 'approved')
@@ -77,8 +78,8 @@ export async function getApprovedCommunities(): Promise<Community[]> {
 export async function getCommunityById(id: string): Promise<Community | null> {
   if (isSupabaseConfigured) {
     try {
-      const supabase = await createClient();
-      const { data, error } = await supabase
+      const adminClient = createAdminClient();
+      const { data, error } = await adminClient
         .from('communities')
         .select('*')
         .eq('id', id)
