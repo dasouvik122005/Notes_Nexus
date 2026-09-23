@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { revalidatePath } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
@@ -85,6 +86,10 @@ export async function PUT(request: NextRequest) {
       console.error('[Community Edit] Update error:', error);
       return NextResponse.json({ error: 'Database error. Please try again later.' }, { status: 500 });
     }
+
+    // Revalidate paths so the user sees the changes immediately
+    revalidatePath(`/community/${id}`);
+    revalidatePath('/community');
 
     return NextResponse.json({ 
       success: true, 
