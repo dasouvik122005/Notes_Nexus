@@ -193,7 +193,10 @@ export default function CommunityEditPage() {
           body: JSON.stringify({ folder: 'notes-nexus/communities/logos' }),
         });
 
-        if (!signRes.ok) throw new Error('Failed to get image upload credentials.');
+        if (!signRes.ok) {
+          const errData = await signRes.json().catch(() => ({}));
+          throw new Error(errData.error || 'Failed to get image upload credentials.');
+        }
         const { signature, timestamp, folder, apiKey, cloudName } = await signRes.json();
 
         const cloudFormData = new FormData();
