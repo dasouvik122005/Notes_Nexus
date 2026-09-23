@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { generateUploadSignature, isCloudinaryConfigured } from '@/lib/storage/cloudinary';
+import { applyRateLimit, signLimiter } from '@/lib/rate-limit';
 
 /**
  * Generate a signed upload signature so the browser can upload
@@ -17,6 +18,10 @@ const ALLOWED_FOLDERS = [
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 10 signature requests per minute per IP
+    const rateLimited = await applyRateLimit(signLimiter, request);
+    if (rateLimited) return rateLimited;
+
     if (!isCloudinaryConfigured) {
       return NextResponse.json(
         { error: 'Cloudinary is not configured on the server.' },

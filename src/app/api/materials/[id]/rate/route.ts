@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { applyRateLimit, rateLimiter } from '@/lib/rate-limit';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    // Rate limit: 20 rating submissions per minute per IP
+    const rateLimited = await applyRateLimit(rateLimiter, request);
+    if (rateLimited) return rateLimited;
+
     const { id: materialId } = await params;
     let stars = 0;
     try {

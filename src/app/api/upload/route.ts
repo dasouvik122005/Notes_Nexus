@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { applyRateLimit, uploadLimiter } from '@/lib/rate-limit';
 
 // Next.js App Router config
 export const maxDuration = 30;
@@ -12,6 +13,10 @@ export const dynamic = 'force-dynamic';
  */
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 5 uploads per minute per IP
+    const rateLimited = await applyRateLimit(uploadLimiter, request);
+    if (rateLimited) return rateLimited;
+
     const body = await request.json();
 
     const {

@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { applyRateLimit, uploadLimiter } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 5 listing creations per minute per IP
+    const rateLimited = await applyRateLimit(uploadLimiter, request);
+    if (rateLimited) return rateLimited;
+
     const {
       category = 'other',
       title,

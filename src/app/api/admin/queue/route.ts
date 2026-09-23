@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { applyRateLimit, adminQueueLimiter } from '@/lib/rate-limit';
 
 export async function GET(request: NextRequest) {
   try {
+    // Rate limit: 20 queue reads per minute per IP
+    const rateLimited = await applyRateLimit(adminQueueLimiter, request);
+    if (rateLimited) return rateLimited;
+
     const supabase = await createClient();
 
     const {

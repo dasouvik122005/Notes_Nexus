@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { applyRateLimit, markSoldLimiter } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 10 mark-sold requests per minute per IP
+    const rateLimited = await applyRateLimit(markSoldLimiter, request);
+    if (rateLimited) return rateLimited;
+
     const { listingId } = await request.json();
 
     if (!listingId) {

@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPapersByDepartment } from '@/lib/data/papers';
+import { applyRateLimit, readLimiter } from '@/lib/rate-limit';
 
 export async function GET(request: NextRequest) {
   try {
+    // Rate limit: 60 reads per minute per IP
+    const rateLimited = await applyRateLimit(readLimiter, request);
+    if (rateLimited) return rateLimited;
+
     const { searchParams } = new URL(request.url);
     const department = searchParams.get('department');
     const semesterParam = searchParams.get('semester');

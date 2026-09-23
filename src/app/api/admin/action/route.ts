@@ -2,9 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { cloudinary, isCloudinaryConfigured } from '@/lib/storage/cloudinary';
+import { applyRateLimit, adminActionLimiter } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 30 admin actions per minute per IP
+    const rateLimited = await applyRateLimit(adminActionLimiter, request);
+    if (rateLimited) return rateLimited;
+
     const body = await request.json();
     const { action, id, reason, targetSummary } = body;
 
