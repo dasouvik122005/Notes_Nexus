@@ -23,18 +23,19 @@ export async function POST(request: NextRequest) {
       events_workshops,
       member_benefits,
       membership_fee,
-      lead_name,
-      lead_role,
-      official_email,
-      contact_number,
+      leadership_team,
       faculty_coordinator,
       verification_proof,
       representative_linkedin,
     } = body;
 
     // 1. Basic validation
-    if (!name || !logo_url || !description || !category || !department_id || !target_audience || !community_type || !focus_areas || !lead_name || !lead_role || !official_email || !verification_proof) {
+    if (!name || !logo_url || !description || !category || !department_id || !target_audience || !community_type || !focus_areas || !verification_proof) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    if (!leadership_team || !Array.isArray(leadership_team) || leadership_team.length === 0) {
+      return NextResponse.json({ error: 'At least one community lead is required.' }, { status: 400 });
     }
 
     // Ensure at least one join link is provided
@@ -81,10 +82,7 @@ export async function POST(request: NextRequest) {
       events_workshops: events_workshops ? events_workshops.trim() : null,
       member_benefits: member_benefits ? member_benefits.trim() : null,
       membership_fee: membership_fee || 'Free',
-      lead_name: lead_name.trim(),
-      lead_role: lead_role.trim(),
-      official_email: official_email.trim(),
-      contact_number: contact_number ? contact_number.trim() : null,
+      leadership_team: leadership_team,
       faculty_coordinator: faculty_coordinator ? faculty_coordinator.trim() : null,
       verification_proof: verification_proof.trim(),
       representative_linkedin: representative_linkedin ? representative_linkedin.trim() : null,

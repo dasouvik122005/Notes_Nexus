@@ -321,25 +321,19 @@ export default async function CommunityProfilePage({ params }) {
               </h3>
               <div className="neo-card" style={{ backgroundColor: 'var(--white)', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 
-                <div>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#6B7280', marginBottom: '0.2rem' }}>{community.lead_role}</div>
-                  <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#111827' }}>{community.lead_name}</div>
-                </div>
-
-                <div>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#6B7280', marginBottom: '0.2rem' }}>Official Email</div>
-                  <a href={`mailto:${community.official_email}`} style={{ fontWeight: 700, color: '#2563EB', textDecoration: 'none', wordBreak: 'break-all' }}>{community.official_email}</a>
-                </div>
-
-                {community.contact_number && (
-                  <div>
-                    <div style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#6B7280', marginBottom: '0.2rem' }}>Contact Number</div>
-                    <div style={{ fontWeight: 700, color: '#374151' }}>{community.contact_number}</div>
+                {Array.isArray(community.leadership_team) && community.leadership_team.map((lead, idx) => (
+                  <div key={idx} style={{ paddingBottom: idx !== community.leadership_team.length - 1 ? '1rem' : 0, borderBottom: idx !== community.leadership_team.length - 1 ? '2px dashed #E5E7EB' : 'none' }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#6B7280', marginBottom: '0.2rem' }}>{lead.role}</div>
+                    <div style={{ fontWeight: 800, fontSize: '1.1rem', color: '#111827', marginBottom: '0.25rem' }}>{lead.name}</div>
+                    <a href={`mailto:${lead.email}`} style={{ display: 'block', fontSize: '0.85rem', fontWeight: 700, color: '#2563EB', textDecoration: 'none', wordBreak: 'break-all' }}>{lead.email}</a>
+                    {lead.phone && (
+                      <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#374151', marginTop: '0.2rem' }}>{lead.phone}</div>
+                    )}
                   </div>
-                )}
+                ))}
 
                 {community.faculty_coordinator && (
-                  <div>
+                  <div style={{ marginTop: '0.5rem' }}>
                     <div style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', color: '#6B7280', marginBottom: '0.2rem' }}>Faculty Coordinator</div>
                     <div style={{ fontWeight: 700, color: '#374151' }}>{community.faculty_coordinator}</div>
                   </div>

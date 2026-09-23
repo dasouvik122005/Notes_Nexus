@@ -60,6 +60,12 @@ export async function PUT(request: NextRequest) {
       }
     }
 
+    if (updateData.leadership_team !== undefined) {
+      if (!Array.isArray(updateData.leadership_team) || updateData.leadership_team.length === 0) {
+        return NextResponse.json({ error: 'At least one community lead is required.' }, { status: 400 });
+      }
+    }
+
     // 4. Update the database
     // Clean up data before update
     const cleanedData = { ...updateData };

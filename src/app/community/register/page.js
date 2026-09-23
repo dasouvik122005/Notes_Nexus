@@ -55,10 +55,7 @@ export default function CommunityRegisterPage() {
     membership_fee: 'Free',
     
     // Leadership & Verification
-    lead_name: '',
-    lead_role: '',
-    official_email: '',
-    contact_number: '',
+    leadership_team: [{ name: '', role: '', email: '', phone: '' }],
     faculty_coordinator: '',
     verification_proof: '',
     representative_linkedin: '',
@@ -170,10 +167,7 @@ export default function CommunityRegisterPage() {
         events_workshops: formData.events_workshops,
         member_benefits: formData.member_benefits,
         membership_fee: formData.membership_fee,
-        lead_name: formData.lead_name,
-        lead_role: formData.lead_role,
-        official_email: formData.official_email,
-        contact_number: formData.contact_number,
+        leadership_team: formData.leadership_team,
         faculty_coordinator: formData.faculty_coordinator,
         verification_proof: formData.verification_proof,
         representative_linkedin: formData.representative_linkedin,
@@ -423,30 +417,78 @@ export default function CommunityRegisterPage() {
 
           {/* Section 5: Leadership */}
           <div className="neo-card" style={{ backgroundColor: 'var(--white)', padding: '2.5rem 2rem', marginBottom: '2rem' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: 900, borderBottom: '3px solid var(--black)', paddingBottom: '0.75rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ backgroundColor: 'var(--black)', color: 'var(--white)', width: '28px', height: '28px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', borderRadius: '50%' }}>5</span> Community Leadership
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 900, borderBottom: '3px solid var(--black)', paddingBottom: '0.75rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'space-between' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span style={{ backgroundColor: 'var(--black)', color: 'var(--white)', width: '28px', height: '28px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', borderRadius: '50%' }}>5</span> Community Leadership
+              </span>
+              <NeoButton
+                type="button"
+                variant="secondary"
+                onClick={() => setFormData(prev => ({ ...prev, leadership_team: [...prev.leadership_team, { name: '', role: '', email: '', phone: '' }] }))}
+                style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}
+              >
+                <Plus size={14} style={{ marginRight: '0.25rem' }} /> ADD LEAD
+              </NeoButton>
             </h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
-              <div>
-                <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Lead Name *</label>
-                <input required type="text" name="lead_name" value={formData.lead_name} onChange={handleChange} style={{ width: '100%', padding: '0.6rem 0.75rem', border: '3px solid var(--black)', fontWeight: 700, outline: 'none' }} />
+
+            {formData.leadership_team.map((lead, index) => (
+              <div key={index} style={{ border: '2px solid var(--black)', padding: '1.5rem', marginBottom: '1.5rem', position: 'relative', backgroundColor: '#F9FAFB' }}>
+                <div style={{ position: 'absolute', top: '-12px', left: '1rem', backgroundColor: 'var(--primary-yellow)', border: '2px solid var(--black)', padding: '0.1rem 0.5rem', fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase' }}>
+                  Lead {index + 1}
+                </div>
+                {index > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newLeads = [...formData.leadership_team];
+                      newLeads.splice(index, 1);
+                      setFormData(prev => ({ ...prev, leadership_team: newLeads }));
+                    }}
+                    style={{ position: 'absolute', top: '0.5rem', right: '0.5rem', background: 'none', border: 'none', color: '#DC2626', cursor: 'pointer', fontWeight: 800, fontSize: '0.8rem' }}
+                  >
+                    REMOVE
+                  </button>
+                )}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginTop: '0.5rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Name *</label>
+                    <input required type="text" value={lead.name} onChange={(e) => {
+                      const newLeads = [...formData.leadership_team];
+                      newLeads[index].name = e.target.value;
+                      setFormData(prev => ({ ...prev, leadership_team: newLeads }));
+                    }} style={{ width: '100%', padding: '0.6rem 0.75rem', border: '2px solid var(--black)', fontWeight: 700, outline: 'none' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Role *</label>
+                    <input required type="text" value={lead.role} onChange={(e) => {
+                      const newLeads = [...formData.leadership_team];
+                      newLeads[index].role = e.target.value;
+                      setFormData(prev => ({ ...prev, leadership_team: newLeads }));
+                    }} placeholder="e.g. President, Founder" style={{ width: '100%', padding: '0.6rem 0.75rem', border: '2px solid var(--black)', fontWeight: 700, outline: 'none' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Official Email *</label>
+                    <input required type="email" value={lead.email} onChange={(e) => {
+                      const newLeads = [...formData.leadership_team];
+                      newLeads[index].email = e.target.value;
+                      setFormData(prev => ({ ...prev, leadership_team: newLeads }));
+                    }} style={{ width: '100%', padding: '0.6rem 0.75rem', border: '2px solid var(--black)', fontWeight: 700, outline: 'none' }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Contact Number (optional)</label>
+                    <input type="text" value={lead.phone} onChange={(e) => {
+                      const newLeads = [...formData.leadership_team];
+                      newLeads[index].phone = e.target.value;
+                      setFormData(prev => ({ ...prev, leadership_team: newLeads }));
+                    }} style={{ width: '100%', padding: '0.6rem 0.75rem', border: '2px solid var(--black)', fontWeight: 600, outline: 'none' }} />
+                  </div>
+                </div>
               </div>
-              <div>
-                <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Lead's Role *</label>
-                <input required type="text" name="lead_role" value={formData.lead_role} onChange={handleChange} placeholder="e.g. President, Founder" style={{ width: '100%', padding: '0.6rem 0.75rem', border: '3px solid var(--black)', fontWeight: 700, outline: 'none' }} />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Official Email *</label>
-                <input required type="email" name="official_email" value={formData.official_email} onChange={handleChange} style={{ width: '100%', padding: '0.6rem 0.75rem', border: '3px solid var(--black)', fontWeight: 700, outline: 'none' }} />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Contact Number (optional)</label>
-                <input type="text" name="contact_number" value={formData.contact_number} onChange={handleChange} style={{ width: '100%', padding: '0.6rem 0.75rem', border: '2px solid var(--black)', fontWeight: 600, outline: 'none' }} />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Faculty Coordinator (optional)</label>
-                <input type="text" name="faculty_coordinator" value={formData.faculty_coordinator} onChange={handleChange} style={{ width: '100%', padding: '0.6rem 0.75rem', border: '2px solid var(--black)', fontWeight: 600, outline: 'none' }} />
-              </div>
+            ))}
+
+            <div style={{ marginTop: '1.5rem' }}>
+              <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Faculty Coordinator (optional)</label>
+              <input type="text" name="faculty_coordinator" value={formData.faculty_coordinator} onChange={handleChange} style={{ width: '100%', maxWidth: '400px', padding: '0.6rem 0.75rem', border: '2px solid var(--black)', fontWeight: 600, outline: 'none' }} />
             </div>
           </div>
 
