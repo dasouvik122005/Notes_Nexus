@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { cloudinary, isCloudinaryConfigured } from '@/lib/storage/cloudinary';
 import { applyRateLimit, adminActionLimiter } from '@/lib/rate-limit';
 
@@ -37,9 +38,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 });
     }
 
+    const adminClient = createAdminClient();
     // Verify the user has admin role
-    const { data: profile } = await supabase
-      .from('users')
+    const { data: profile } = await adminClient
+            .from('users')
       .select('role')
       .eq('id', user.id)
       .single();
@@ -48,9 +50,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden. Admin access required.' }, { status: 403 });
     }
 
+    
+
     // Perform live DB update based on action
         if (action === 'approve_material') {
-          const { data: updatedMaterial } = await supabase
+          const { data: updatedMaterial } = await adminClient
             .from('materials')
             .update({
               status: 'approved',
@@ -62,20 +66,20 @@ export async function POST(request: NextRequest) {
             .single();
 
           if (updatedMaterial?.paper_id) {
-            await supabase
-              .from('papers')
+            await adminClient
+            .from('papers')
               .update({ is_active: true })
               .eq('id', updatedMaterial.paper_id);
           } else if (updatedMaterial?.department_id && updatedMaterial?.paper_code) {
-            await supabase
-              .from('papers')
+            await adminClient
+            .from('papers')
               .update({ is_active: true })
               .eq('department_id', updatedMaterial.department_id)
               .eq('semester', updatedMaterial.semester)
               .ilike('paper_code', updatedMaterial.paper_code);
           }
         } else if (action === 'hide_material') {
-          const { error: hideErr } = await supabase
+          const { error: hideErr } = await adminClient
             .from('materials')
             .update({
               status: 'rejected',
@@ -90,7 +94,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Failed to hide material.' }, { status: 500 });
           }
         } else if (action === 'unhide_material') {
-          const { error: unhideErr } = await supabase
+          const { error: unhideErr } = await adminClient
             .from('materials')
             .update({
               status: 'approved',
@@ -105,7 +109,7 @@ export async function POST(request: NextRequest) {
              return NextResponse.json({ error: 'Failed to unhide material.' }, { status: 500 });
           }
         } else if (action === 'reject_material') {
-          await supabase
+          await adminClient
             .from('materials')
             .update({
               status: 'rejected',
@@ -116,7 +120,7 @@ export async function POST(request: NextRequest) {
             .eq('id', id);
         } else if (action === 'delete_material') {
           // 1. Fetch material to get storage_key
-          const { data: material, error: fetchErr } = await supabase
+          const { data: material, error: fetchErr } = await adminClient
             .from('materials')
             .select('storage_key')
             .eq('id', id)
@@ -159,7 +163,7 @@ export async function POST(request: NextRequest) {
           }
 
           // 4. Delete from Supabase Database
-          const { error: delErr } = await supabase
+          const { error: delErr } = await adminClient
             .from('materials')
             .delete()
             .eq('id', id);
@@ -169,7 +173,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Failed to delete material.' }, { status: 500 });
           }
         } else if (action === 'approve_user' || action === 'verify_user') {
-          await supabase
+          await adminClient
             .from('users')
             .update({
               account_status: 'verified',
@@ -178,21 +182,21 @@ export async function POST(request: NextRequest) {
             })
             .eq('id', id);
         } else if (action === 'block_user') {
-          await supabase
+          await adminClient
             .from('users')
             .update({
               account_status: 'blocked',
             })
             .eq('id', id);
         } else if (action === 'approve_listing') {
-          await supabase
+          await adminClient
             .from('listings')
             .update({
               status: 'approved',
             })
             .eq('id', id);
         } else if (action === 'reject_listing') {
-          await supabase
+          await adminClient
             .from('listings')
             .update({
               status: 'rejected',
@@ -200,14 +204,14 @@ export async function POST(request: NextRequest) {
             })
             .eq('id', id);
         } else if (action === 'mark_sold_listing') {
-          await supabase
+          await adminClient
             .from('listings')
             .update({
               status: 'sold',
             })
             .eq('id', id);
         } else if (action === 'approve_community') {
-          await supabase
+          await adminClient
             .from('communities')
             .update({
               status: 'approved',
@@ -215,7 +219,7 @@ export async function POST(request: NextRequest) {
             })
             .eq('id', id);
         } else if (action === 'hide_community') {
-          await supabase
+          await adminClient
             .from('communities')
             .update({
               status: 'rejected',
@@ -223,7 +227,7 @@ export async function POST(request: NextRequest) {
             })
             .eq('id', id);
         } else if (action === 'unhide_community') {
-          await supabase
+          await adminClient
             .from('communities')
             .update({
               status: 'approved',
@@ -231,7 +235,7 @@ export async function POST(request: NextRequest) {
             })
             .eq('id', id);
         } else if (action === 'reject_community') {
-          await supabase
+          await adminClient
             .from('communities')
             .update({
               status: 'rejected',
@@ -240,7 +244,7 @@ export async function POST(request: NextRequest) {
             .eq('id', id);
         } else if (action === 'delete_community') {
           // 1. Fetch community to get logo_url
-          const { data: community, error: fetchErr } = await supabase
+          const { data: community, error: fetchErr } = await adminClient
             .from('communities')
             .select('logo_url')
             .eq('id', id)
@@ -277,14 +281,14 @@ export async function POST(request: NextRequest) {
           }
 
           // 4. Delete from Supabase Database
-          await supabase
+          await adminClient
             .from('communities')
             .delete()
             .eq('id', id);
         }
 
         // Insert audit log
-        await supabase.from('audit_log').insert({
+        await adminClient.from('audit_log').insert({
           actor_id: user.id,
           action,
           entity_type: action.includes('material')
