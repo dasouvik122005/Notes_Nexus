@@ -14,6 +14,7 @@ const ALLOWED_FOLDERS = [
   'notes-nexus/pyq',
   'notes-nexus/marketplace',
   'notes-nexus/pending',
+  'notes-nexus/communities/logos',
 ];
 
 export async function POST(request: NextRequest) {
