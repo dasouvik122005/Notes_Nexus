@@ -6,7 +6,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
 import { departments } from '@/config/departments';
 import NeoButton from '@/components/NeoButton';
-import { getCommunityById } from '@/lib/data/communities';
+import { createClient } from '@/lib/supabase/client';
 import {
   Upload,
   CheckCircle2,
@@ -77,8 +77,14 @@ export default function CommunityEditPage() {
     async function fetchData() {
       if (!id || !user) return;
       try {
-        const community = await getCommunityById(id);
-        if (!community) {
+        const supabase = createClient();
+        const { data: community, error: fetchErr } = await supabase
+          .from('communities')
+          .select('*')
+          .eq('id', id)
+          .single();
+          
+        if (fetchErr || !community) {
           setFetchError("Community not found.");
           return;
         }

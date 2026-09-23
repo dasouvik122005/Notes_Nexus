@@ -8,11 +8,6 @@ import NeoButton from '@/components/NeoButton';
 import {
   ShieldCheck,
   Globe,
-  Linkedin,
-  Instagram,
-  Facebook,
-  Github,
-  Twitter,
   Link as LinkIcon,
   MessageCircle,
   Users,
@@ -26,6 +21,7 @@ import {
   Building2,
   ChevronLeft,
 } from 'lucide-react';
+import { FaLinkedin, FaInstagram, FaFacebook, FaGithub, FaTwitter } from 'react-icons/fa';
 import { siteConfig } from '@/config/site';
 import EditCommunityButton from '@/components/EditCommunityButton';
 
@@ -282,27 +278,27 @@ export default async function CommunityProfilePage({ params }) {
                   )}
                   {off.linkedin && (
                     <a href={off.linkedin} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 700, color: '#0A66C2', textDecoration: 'none' }}>
-                      <Linkedin size={18} /> LinkedIn
+                      <FaLinkedin size={18} /> LinkedIn
                     </a>
                   )}
                   {off.instagram && (
                     <a href={off.instagram} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 700, color: '#E1306C', textDecoration: 'none' }}>
-                      <Instagram size={18} /> Instagram
+                      <FaInstagram size={18} /> Instagram
                     </a>
                   )}
                   {off.facebook && (
                     <a href={off.facebook} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 700, color: '#1877F2', textDecoration: 'none' }}>
-                      <Facebook size={18} /> Facebook
+                      <FaFacebook size={18} /> Facebook
                     </a>
                   )}
                   {off.github && (
                     <a href={off.github} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 700, color: '#181717', textDecoration: 'none' }}>
-                      <Github size={18} /> GitHub
+                      <FaGithub size={18} /> GitHub
                     </a>
                   )}
                   {off.twitter && (
                     <a href={off.twitter} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontWeight: 700, color: '#1DA1F2', textDecoration: 'none' }}>
-                      <Twitter size={18} /> X / Twitter
+                      <FaTwitter size={18} /> X / Twitter
                     </a>
                   )}
                   {off.other && (
