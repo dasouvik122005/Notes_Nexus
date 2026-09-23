@@ -8,7 +8,7 @@ const AnimateFloat = dynamic(() => import('@/components/AnimateFloat'));
 import NeoButton from '@/components/NeoButton';
 import { siteConfig } from '@/config/site';
 import { getLatestMaterials } from '@/lib/data/materials';
-import { BookOpen, GraduationCap, Store, Star, ArrowRight } from 'lucide-react';
+import { BookOpen, GraduationCap, Store, Star, ArrowRight, Users } from 'lucide-react';
 
 export const metadata = {
   title: `Home | ${siteConfig.name}`,
@@ -612,6 +612,67 @@ export default function Home() {
                       }}
                     >
                       Visit Marketplace →
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </AnimateInView>
+            {/* Card 4: Communities */}
+            <AnimateInView delay={0.3} direction="up">
+              <div
+                className="neo-card"
+                style={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  backgroundColor: 'var(--white)',
+                }}
+              >
+                <div
+                  style={{
+                    backgroundColor: 'var(--primary-green)',
+                    padding: '2rem 1.5rem',
+                    borderBottom: '3px solid var(--black)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                  }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: 'var(--white)',
+                      border: '3px solid var(--black)',
+                      padding: '0.75rem',
+                      borderRadius: '8px',
+                      boxShadow: '3px 3px 0px 0px var(--black)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Users size={36} color="var(--black)" strokeWidth={2.5} />
+                  </div>
+                  <div>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase' }}>Student Network</span>
+                    <h3 style={{ fontSize: '1.75rem', fontWeight: 900, margin: 0 }}>COMMUNITIES</h3>
+                  </div>
+                </div>
+
+                <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                  <p style={{ fontWeight: 600, color: '#333', lineHeight: 1.5, marginBottom: '1.5rem' }}>
+                    Discover, join, and collaborate with student clubs, department groups, and technical societies across the campus.
+                  </p>
+                  <div style={{ marginTop: 'auto' }}>
+                    <Link
+                      href="/community"
+                      className="neo-button"
+                      style={{
+                        width: '100%',
+                        backgroundColor: 'var(--primary-yellow)',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      Join Communities →
                     </Link>
                   </div>
                 </div>
