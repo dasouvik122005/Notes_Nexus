@@ -206,6 +206,64 @@ export async function POST(request: NextRequest) {
               status: 'sold',
             })
             .eq('id', id);
+        } else if (action === 'approve_community') {
+          await supabase
+            .from('communities')
+            .update({
+              status: 'approved',
+              is_verified: true,
+            })
+            .eq('id', id);
+        } else if (action === 'reject_community') {
+          await supabase
+            .from('communities')
+            .update({
+              status: 'rejected',
+            })
+            .eq('id', id);
+        } else if (action === 'delete_community') {
+          // 1. Fetch community to get logo_url
+          const { data: community, error: fetchErr } = await supabase
+            .from('communities')
+            .select('logo_url')
+            .eq('id', id)
+            .single();
+
+          if (fetchErr || !community) {
+            console.error('[Admin Action] Error fetching community for deletion:', fetchErr);
+            return NextResponse.json({ error: 'Community not found.' }, { status: 404 });
+          }
+
+          // 2. Extract Cloudinary Public ID from URL
+          const logoUrl = community.logo_url;
+          let publicId = '';
+          
+          try {
+            const urlParts = logoUrl.split('/');
+            const uploadIndex = urlParts.findIndex((part: string) => part === 'upload');
+            if (uploadIndex !== -1) {
+              const partsAfterUpload = urlParts.slice(uploadIndex + 2);
+              const fullPath = partsAfterUpload.join('/');
+              publicId = fullPath.substring(0, fullPath.lastIndexOf('.')) || fullPath;
+            }
+          } catch (e) {
+            console.error('Failed to parse Cloudinary URL for public ID:', e);
+          }
+
+          // 3. Delete from Cloudinary
+          if (publicId && isCloudinaryConfigured) {
+            try {
+              await cloudinary.uploader.destroy(publicId, { resource_type: 'image' });
+            } catch (cloudErr) {
+              console.error('[Admin Action] Cloudinary deletion error:', cloudErr);
+            }
+          }
+
+          // 4. Delete from Supabase Database
+          await supabase
+            .from('communities')
+            .delete()
+            .eq('id', id);
         }
 
         // Insert audit log
@@ -216,6 +274,8 @@ export async function POST(request: NextRequest) {
             ? 'material'
             : action.includes('user')
             ? 'user'
+            : action.includes('community')
+            ? 'community'
             : 'listing',
           entity_id: id,
           meta: {
@@ -232,6 +292,8 @@ export async function POST(request: NextRequest) {
           revalidatePath('/', 'layout');
         } else if (action.includes('listing')) {
           revalidatePath('/instruments', 'layout');
+        } else if (action.includes('community')) {
+          revalidatePath('/community', 'layout');
         }
 
     return NextResponse.json({

@@ -28,6 +28,7 @@ export const siteConfig = {
     { label: "HOME", href: "/" },
     { label: "NOTES", href: "/notes" },
     { label: "PYQ", href: "/pyq" },
+    { label: "COMMUNITY", href: "/community" },
     { label: "INSTRUMENTS", href: "/instruments" },
     { label: "ABOUT", href: "/about" },
   ],
