@@ -32,6 +32,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized. Please sign in.' }, { status: 401 });
     }
 
+    // Verify the user has admin role
+    const { data: profile } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (profile?.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden. Admin access required.' }, { status: 403 });
+    }
+
     // Perform live DB update based on action
         if (action === 'approve_material') {
           const { data: updatedMaterial } = await supabase
@@ -71,7 +82,7 @@ export async function POST(request: NextRequest) {
             
           if (hideErr) {
             console.error('[Admin Action] Error hiding material:', hideErr);
-            return NextResponse.json({ error: `Database error: ${hideErr.message}` }, { status: 500 });
+            return NextResponse.json({ error: 'Failed to hide material.' }, { status: 500 });
           }
         } else if (action === 'unhide_material') {
           const { error: unhideErr } = await supabase
@@ -86,7 +97,7 @@ export async function POST(request: NextRequest) {
 
           if (unhideErr) {
              console.error('[Admin Action] Error unhiding material:', unhideErr);
-             return NextResponse.json({ error: `Database error: ${unhideErr.message}` }, { status: 500 });
+             return NextResponse.json({ error: 'Failed to unhide material.' }, { status: 500 });
           }
         } else if (action === 'reject_material') {
           await supabase
@@ -150,7 +161,7 @@ export async function POST(request: NextRequest) {
 
           if (delErr) {
             console.error('[Admin Action] Error deleting material from DB:', delErr);
-            return NextResponse.json({ error: `Database error: ${delErr.message}` }, { status: 500 });
+            return NextResponse.json({ error: 'Failed to delete material.' }, { status: 500 });
           }
         } else if (action === 'approve_user' || action === 'verify_user') {
           await supabase

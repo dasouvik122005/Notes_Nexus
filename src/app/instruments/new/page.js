@@ -163,7 +163,7 @@ export default function CreateListingPage() {
         description: description.trim(),
         condition,
         price: priceNum.toString(),
-        isNegotiable: isNegotiable ? 'true' : 'false',
+        isNegotiable: !!isNegotiable,
         department: department.trim(),
         contactName: contactName.trim(),
         contactPhone: contactPhone.trim(),

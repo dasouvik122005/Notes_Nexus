@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
-const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB per photo
-
 export async function POST(request: NextRequest) {
   try {
     const {

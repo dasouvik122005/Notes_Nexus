@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 // Next.js App Router config
 export const maxDuration = 30;
@@ -34,6 +34,10 @@ export async function POST(request: NextRequest) {
     // 1. Validate required fields
     if (!cloudinaryUrl) {
       return NextResponse.json({ error: 'Cloudinary upload URL is required.' }, { status: 400 });
+    }
+    // Validate that the URL is actually from Cloudinary to prevent storing arbitrary/malicious URLs
+    if (!cloudinaryUrl.startsWith('https://res.cloudinary.com/')) {
+      return NextResponse.json({ error: 'Invalid file URL. Only Cloudinary URLs are accepted.' }, { status: 400 });
     }
     if (!departmentId || !semesterStr || !paperName || !paperCode || !title) {
       return NextResponse.json(
@@ -88,10 +92,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create an admin client to bypass RLS for inserts (since we already auth checked above)
-    const adminClient = createSupabaseClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const adminClient = createAdminClient();
 
     // 3. Check/Insert dynamic paper row & insert material into database
     let paperId: string | null = null;
@@ -163,7 +164,7 @@ export async function POST(request: NextRequest) {
       );
     } else {
       console.error('[Upload API] Database insertion error:', error);
-      return NextResponse.json({ error: `Database error: ${error?.message || 'Unknown database error'}` }, { status: 500 });
+      return NextResponse.json({ error: 'Failed to save material to database. Please try again.' }, { status: 500 });
     }
   } catch (err) {
     console.error('[Upload API] Unexpected error:', err);

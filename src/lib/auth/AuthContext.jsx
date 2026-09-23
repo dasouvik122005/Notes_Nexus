@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { createClient } from '@/lib/supabase/client';
 
 const AuthContext = createContext({
@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authPromptMessage, setAuthPromptMessage] = useState('');
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const openAuthModal = useCallback((message = '') => {
     setAuthPromptMessage(message);
@@ -35,7 +35,7 @@ export function AuthProvider({ children }) {
     setAuthPromptMessage('');
   }, []);
 
-  // Fetch or mock profile from DB
+  // Fetch profile from DB — role is always trusted from the database, never determined client-side
   const loadProfile = useCallback(async (sessionUser) => {
     if (!sessionUser) {
       setProfile(null);
@@ -49,43 +49,27 @@ export function AuthProvider({ children }) {
         .eq('id', sessionUser.id)
         .single();
 
-      const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || 'kumaresh2106@gmail.com,dasouvik122005@gmail.com')
-        .split(',')
-        .map((e) => e.trim().toLowerCase())
-        .filter(Boolean);
-      const isAdmin = adminEmails.includes(sessionUser.email?.toLowerCase());
-
       if (!error && data) {
-        if (isAdmin && (data.role !== 'admin' || data.account_status !== 'verified')) {
-          data.role = 'admin';
-          data.account_status = 'verified';
-        }
         setProfile(data);
       } else {
-        // Fallback profile if DB row doesn't exist yet
+        // Fallback profile if DB row doesn't exist yet (new user before trigger runs)
         setProfile({
           id: sessionUser.id,
-          email: sessionUser.email || 'student@jisuniversity.ac.in',
+          email: sessionUser.email || '',
           name: sessionUser.user_metadata?.full_name || sessionUser.email?.split('@')[0] || 'Student Contributor',
           avatar_url: sessionUser.user_metadata?.avatar_url || null,
-          role: isAdmin ? 'admin' : 'contributor',
-          account_status: 'verified',
+          role: 'contributor',
+          account_status: 'pending',
         });
       }
     } catch {
-      const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || 'kumaresh2106@gmail.com,dasouvik122005@gmail.com')
-        .split(',')
-        .map((e) => e.trim().toLowerCase())
-        .filter(Boolean);
-      const isAdmin = adminEmails.includes(sessionUser.email?.toLowerCase());
-
       setProfile({
         id: sessionUser.id,
-        email: sessionUser.email || 'student@jisuniversity.ac.in',
+        email: sessionUser.email || '',
         name: sessionUser.user_metadata?.full_name || 'Student Contributor',
         avatar_url: sessionUser.user_metadata?.avatar_url || null,
-        role: isAdmin ? 'admin' : 'contributor',
-        account_status: 'verified',
+        role: 'contributor',
+        account_status: 'pending',
       });
     }
   }, [supabase]);
@@ -109,10 +93,10 @@ export function AuthProvider({ children }) {
           }
         }
 
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          setUser(session.user);
-          await loadProfile(session.user);
+        const { data: { user: existingUser } } = await supabase.auth.getUser();
+        if (existingUser) {
+          setUser(existingUser);
+          await loadProfile(existingUser);
         }
       } catch (err) {
         console.warn('[Auth] Supabase session check error:', err);
