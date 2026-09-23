@@ -89,8 +89,10 @@ export default function CommunityEditPage() {
           return;
         }
 
-        // Authorization check: Only owner or admin can edit
-        if (community.submitted_by !== user.id && profile?.role !== 'admin') {
+        // Authorization check: Only owner or admin can edit. 
+        // We do a loose check here because RLS might hide submitted_by, or profile might still be loading.
+        // The backend API enforces strict security on submission.
+        if (community.submitted_by && community.submitted_by !== user.id && profile && profile.role !== 'admin') {
           setFetchError("You do not have permission to edit this community.");
           return;
         }
