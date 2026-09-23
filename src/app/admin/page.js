@@ -1040,53 +1040,7 @@ export default function AdminModerationPage() {
           </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="admin-tab-container">
-          <button
-            type="button"
-            onClick={() => setActiveTab('materials')}
-            className={`admin-tab-btn ${activeTab === 'materials' ? 'active' : ''}`}
-          >
-            <BookOpen size={16} />
-            <span>Materials Queue ({pendingMaterialsOnly.length})</span>
-          </button>
 
-          <button
-            type="button"
-            onClick={() => setActiveTab('accounts')}
-            className={`admin-tab-btn ${activeTab === 'accounts' ? 'active' : ''}`}
-          >
-            <UserCheck size={16} />
-            <span>Accounts ({stats.pendingAccountsCount})</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('listings')}
-            className={`admin-tab-btn ${activeTab === 'listings' ? 'active' : ''}`}
-          >
-            <Store size={16} />
-            <span>Marketplace ({stats.pendingListingsCount})</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('communities')}
-            className={`admin-tab-btn ${activeTab === 'communities' ? 'active' : ''}`}
-          >
-            <Users size={16} />
-            <span>Communities ({stats.pendingCommunitiesCount})</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveTab('audit')}
-            className={`admin-tab-btn ${activeTab === 'audit' ? 'active' : ''}`}
-          >
-            <History size={16} />
-            <span>Audit Trail</span>
-          </button>
-        </div>
 
         {/* Tab 1: Materials Queue */}
         {activeTab === 'materials' && (
