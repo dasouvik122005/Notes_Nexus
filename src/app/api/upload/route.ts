@@ -101,6 +101,7 @@ export async function POST(request: NextRequest) {
 
     // 3. Check/Insert dynamic paper row & insert material into database
     let paperId: string | null = null;
+    const normalizedPaperCode = paperCode.replace(/\s+/g, '').toUpperCase();
 
     if (type === 'notes') {
       const { data: existingPaper } = await adminClient
@@ -108,7 +109,7 @@ export async function POST(request: NextRequest) {
         .select('id, is_active')
         .eq('department_id', departmentId)
         .eq('semester', semester)
-        .ilike('paper_code', paperCode.trim())
+        .ilike('paper_code', normalizedPaperCode)
         .maybeSingle();
 
       if (existingPaper) {
@@ -120,7 +121,7 @@ export async function POST(request: NextRequest) {
             department_id: departmentId,
             semester,
             paper_name: paperName.trim(),
-            paper_code: paperCode.trim().toUpperCase(),
+            paper_code: normalizedPaperCode,
             is_active: false,
           })
           .select('id')
@@ -142,7 +143,7 @@ export async function POST(request: NextRequest) {
       paper_id: paperId,
       semester,
       paper_name: paperName.trim(),
-      paper_code: paperCode.trim().toUpperCase(),
+      paper_code: normalizedPaperCode,
       title: title.trim(),
       description: description.trim(),
       faculty_name: facultyName ? facultyName.trim() : null,
