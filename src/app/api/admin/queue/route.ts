@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { applyRateLimit, adminQueueLimiter } from '@/lib/rate-limit';
 
 export async function GET(request: NextRequest) {
@@ -9,6 +10,7 @@ export async function GET(request: NextRequest) {
     if (rateLimited) return rateLimited;
 
     const supabase = await createClient();
+    const adminClient = createAdminClient();
 
     const {
       data: { user },
@@ -30,7 +32,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch pending materials
-    const { data: dbMaterials, error: matErr } = await supabase
+    const { data: dbMaterials, error: matErr } = await adminClient
       .from('materials')
       .select('*, users!uploaded_by(name, email)')
       .in('status', ['pending', 'approved', 'rejected'])
@@ -55,9 +57,7 @@ export async function GET(request: NextRequest) {
       createdAt: m.created_at,
     })).filter(m => m.status !== 'rejected'); // Filter out actual rejected materials from this view
 
-        if (matErr) console.error('[Admin Queue] Materials query error:', matErr);
-
-        const { data: dbUsers, error: usrErr } = await supabase
+        const { data: dbUsers, error: usrErr } = await adminClient
           .from('users')
           .select('*')
           .eq('account_status', 'pending')
@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
         if (usrErr) console.error('[Admin Queue] Users query error:', usrErr);
 
     // Fetch pending listings
-    const { data: dbListings, error: lstErr } = await supabase
+    const { data: dbListings, error: lstErr } = await adminClient
       .from('listings')
       .select('*')
       .eq('status', 'pending')
@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
     const formattedListings = (dbListings || []).map((l: any) => ({
       id: l.id,
       category: l.category,
-      condition: l.condition === 'like_new' ? 'Like New' : l.condition === 'fair' ? 'Fair' : 'Good',
+      condition: l.condition === 'like_new' ? 'Like New' : l.condition === 'fair' ? 'Good' : 'Fair',
       title: l.title,
       description: l.description,
       price: l.expected_price,
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
     }));
 
     // Fetch pending communities
-    const { data: dbCommunities, error: commErr } = await supabase
+    const { data: dbCommunities, error: commErr } = await adminClient
       .from('communities')
       .select('*')
       .in('status', ['pending', 'approved', 'rejected'])
@@ -110,7 +110,7 @@ export async function GET(request: NextRequest) {
         let dbLogs: any[] = [];
         let totalAuditLogs = 0;
         try {
-          const { data: logData, count } = await supabase
+          const { data: logData, count } = await adminClient
             .from('audit_log')
             .select('*', { count: 'exact' })
             .order('created_at', { ascending: false })
@@ -121,20 +121,20 @@ export async function GET(request: NextRequest) {
           // audit_log table may not exist yet
         }
 
-        const { count: totalAccountsCount } = await supabase
+        const { count: totalAccountsCount } = await adminClient
           .from('users')
           .select('*', { count: 'exact', head: true });
 
-        const { count: totalMaterialsCount } = await supabase
+        const { count: totalMaterialsCount } = await adminClient
           .from('materials')
           .select('*', { count: 'exact', head: true })
           .neq('status', 'rejected'); // optionally filter rejected or keep it all? Usually all is fine, let's just do all. Wait, let's keep it simple.
 
-        const { count: totalListingsCount } = await supabase
+        const { count: totalListingsCount } = await adminClient
           .from('listings')
           .select('*', { count: 'exact', head: true });
 
-        const { count: totalCommunitiesCount } = await supabase
+        const { count: totalCommunitiesCount } = await adminClient
           .from('communities')
           .select('*', { count: 'exact', head: true });
 
