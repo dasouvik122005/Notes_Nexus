@@ -1,8 +1,4 @@
-
+# Owner: Souvik
 creation_rules:
   - path_regex: \.env(\.enc)?$
     age: age1zvud50ya7ad3d6rsrhr00wrdy72yqpp3m8wj5y6z0rvzvc62uctqd3cl3z
-
-
-
-
