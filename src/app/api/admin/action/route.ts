@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { cloudinary, isCloudinaryConfigured } from '@/lib/storage/cloudinary';
 import { applyRateLimit, adminActionLimiter } from '@/lib/rate-limit';
+import { sendAccountVerifiedEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -173,14 +174,32 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Failed to delete material.' }, { status: 500 });
           }
         } else if (action === 'approve_user' || action === 'verify_user') {
-          await adminClient
+          const { data: updatedUser, error: updateErr } = await adminClient
             .from('users')
             .update({
               account_status: 'verified',
               verified_by: user.id,
               verified_at: new Date().toISOString(),
             })
-            .eq('id', id);
+            .eq('id', id)
+            .select('id, name, email')
+            .single();
+
+          if (updateErr) {
+            console.error('[Admin Action] Error verifying user:', updateErr);
+            return NextResponse.json({ error: 'Failed to verify user.' }, { status: 500 });
+          }
+
+          if (updatedUser?.email) {
+            try {
+              await sendAccountVerifiedEmail({
+                to: updatedUser.email,
+                name: updatedUser.name || undefined,
+              });
+            } catch (mailErr) {
+              console.error('[Admin Action] Error triggering verification email:', mailErr);
+            }
+          }
         } else if (action === 'block_user') {
           await adminClient
             .from('users')
