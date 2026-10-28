@@ -54,30 +54,30 @@ export async function sendAccountVerifiedEmail({ to, name }: SendAccountVerified
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Account Verified - Notes Nexus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800;900&family=Inter:wght@500;700&display=swap" rel="stylesheet">
 </head>
-<body style="margin: 0; padding: 0; background-color: #f1f5f9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #0f172a;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f1f5f9; padding: 40px 15px;">
+<body style="margin: 0; padding: 0; background-color: #FDFBF7; font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #000000;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #FDFBF7; padding: 40px 15px;">
     <tr>
       <td align="center">
-        <!-- Main Container -->
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #ffffff; border: 3px solid #0f172a; border-radius: 12px; box-shadow: 6px 6px 0px #0f172a; overflow: hidden;">
+        <!-- Main Neo-Brutalist Card -->
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #FFFFFF; border: 4px solid #000000; box-shadow: 8px 8px 0px 0px #000000; border-radius: 6px; overflow: hidden; text-align: left;">
           
-          <!-- Header Banner -->
+          <!-- Top Navbar Header -->
           <tr>
-            <td style="background-color: #0f172a; padding: 24px 32px; text-align: left;">
+            <td style="background-color: #FFFFFF; border-bottom: 3px solid #000000; padding: 18px 24px;">
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
                 <tr>
-                  <td>
-                    <h1 style="margin: 0; font-size: 24px; font-weight: 900; color: #ffffff; letter-spacing: -0.5px;">
-                      NOTES <span style="color: #60a5fa;">NEXUS</span>
-                    </h1>
-                    <p style="margin: 4px 0 0 0; font-size: 13px; color: #94a3b8; font-weight: 600;">
-                      JIS University Academic Resource & Study Exchange
-                    </p>
+                  <td align="left" style="vertical-align: middle;">
+                    <a href="${siteUrl}" style="text-decoration: none; display: inline-block;">
+                      <img src="${siteUrl}/icon2.png" alt="Notes Nexus" width="180" height="44" style="display: block; border: 0; max-width: 180px; height: auto;" />
+                    </a>
                   </td>
                   <td align="right" style="vertical-align: middle;">
-                    <span style="display: inline-block; background-color: #16a34a; color: #ffffff; font-size: 11px; font-weight: 800; text-transform: uppercase; padding: 6px 12px; border-radius: 20px; letter-spacing: 0.5px;">
-                      ✓ Verified
+                    <span style="display: inline-block; background-color: #F472B6; color: #000000; font-size: 11px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border: 2px solid #000000; box-shadow: 3px 3px 0px #000000; border-radius: 4px; letter-spacing: 0.5px;">
+                      JIS UNIVERSITY
                     </span>
                   </td>
                 </tr>
@@ -85,90 +85,120 @@ export async function sendAccountVerifiedEmail({ to, name }: SendAccountVerified
             </td>
           </tr>
 
-          <!-- Hero Image / Celebration Accent -->
+          <!-- Hero Celebration Box (Signature Neo-Brutalist Yellow) -->
           <tr>
-            <td style="background: linear-gradient(135deg, #2563eb, #1d4ed8); padding: 36px 32px; text-align: center; color: #ffffff;">
-              <div style="display: inline-block; width: 64px; height: 64px; line-height: 64px; background-color: #ffffff; border-radius: 50%; font-size: 32px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                🎉
+            <td style="background-color: #FDE047; border-bottom: 4px solid #000000; padding: 36px 24px; text-align: center;">
+              <!-- Verified Badge -->
+              <div style="display: inline-block; background-color: #4ADE80; color: #000000; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 16px; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; border-radius: 4px; margin-bottom: 16px;">
+                ✓ VERIFIED CONTRIBUTOR
               </div>
-              <h2 style="margin: 0 0 8px 0; font-size: 26px; font-weight: 800; color: #ffffff;">
-                You're Officially Verified!
-              </h2>
-              <p style="margin: 0; font-size: 15px; color: #e0e7ff; max-width: 440px; margin: 0 auto; line-height: 1.5;">
-                An administrator has reviewed your account and granted you full Verified Contributor access.
+              <h1 style="margin: 0 0 10px 0; font-size: 32px; font-weight: 900; color: #000000; line-height: 1.1; letter-spacing: -1px; text-transform: uppercase;">
+                YOU ARE VERIFIED!
+              </h1>
+              <p style="margin: 0 auto; font-size: 15px; font-weight: 700; color: #000000; line-height: 1.5; max-width: 440px;">
+                Your student profile has been reviewed and approved by the admin team.
               </p>
             </td>
           </tr>
 
-          <!-- Main Body -->
+          <!-- Main Body Content -->
           <tr>
-            <td style="padding: 36px 32px;">
-              <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 1.6; font-weight: 600; color: #1e293b;">
-                Hello ${studentName},
+            <td style="padding: 32px 28px; background-color: #FFFFFF;">
+              <p style="margin: 0 0 12px 0; font-size: 18px; font-weight: 900; color: #000000;">
+                Hey ${studentName},
               </p>
-              <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.6; color: #475569;">
-                Welcome to the trusted contributor circle of <strong>Notes Nexus</strong>. Your account (<code>${to}</code>) is now officially unlocked, meaning you can contribute study materials and help your fellow JIS University batchmates excel.
+              <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.6; font-weight: 500; color: #111111;">
+                Welcome to the trusted contributor circle of <strong>Notes Nexus</strong>! Your account (<code style="background-color: #FEF9C3; padding: 2px 6px; border: 1px solid #000000; font-weight: 700;">${to}</code>) is officially verified. You can now contribute study materials and help fellow JIS University students excel.
               </p>
 
-              <!-- Unlocked Perks Card -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; padding: 20px; margin-bottom: 28px;">
+              <!-- Section Title Pill -->
+              <div style="display: inline-block; background-color: #000000; color: #FFFFFF; font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; padding: 5px 12px; margin-bottom: 16px; border-radius: 3px;">
+                ⚡ UNLOCKED PRIVILEGES
+              </div>
+
+              <!-- Neo-Brutalist Feature Cards -->
+              <!-- Card 1: Upload Notes -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #FEF9C3; border: 3px solid #000000; box-shadow: 4px 4px 0px #000000; border-radius: 4px; margin-bottom: 14px;">
                 <tr>
-                  <td>
-                    <h3 style="margin: 0 0 14px 0; font-size: 14px; font-weight: 800; text-transform: uppercase; color: #0f172a; letter-spacing: 0.5px;">
-                      ✨ What You Can Do Now:
-                    </h3>
-                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
-                      <tr>
-                        <td style="padding: 6px 0; font-size: 14px; color: #334155;">
-                          📚 <strong>Upload Notes & PYQs:</strong> Share handwritten notes, organized modules, and previous years' question papers.
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 6px 0; font-size: 14px; color: #334155;">
-                          🎖️ <strong>Verified Badge:</strong> Your contributor badge will now display on your profile and every approved upload.
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 6px 0; font-size: 14px; color: #334155;">
-                          🛒 <strong>Student Marketplace:</strong> List engineering tools, drafters, aprons, and semester textbooks.
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="padding: 6px 0; font-size: 14px; color: #334155;">
-                          🏛️ <strong>Campus Communities:</strong> Register and lead official student departmental societies and clubs.
-                        </td>
-                      </tr>
-                    </table>
+                  <td style="padding: 14px 16px;">
+                    <strong style="font-size: 14px; font-weight: 900; color: #000000; text-transform: uppercase; display: block; margin-bottom: 4px;">
+                      📚 UPLOAD STUDY MATERIALS & PYQS
+                    </strong>
+                    <span style="font-size: 13px; font-weight: 600; color: #222222; line-height: 1.4;">
+                      Share handwritten notes, semester modules, and previous years' question papers with your batch.
+                    </span>
                   </td>
                 </tr>
               </table>
 
-              <!-- Call to Action Buttons -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="text-align: center; margin: 28px 0 20px 0;">
+              <!-- Card 2: Verified Badge -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #DCFCE7; border: 3px solid #000000; box-shadow: 4px 4px 0px #000000; border-radius: 4px; margin-bottom: 14px;">
+                <tr>
+                  <td style="padding: 14px 16px;">
+                    <strong style="font-size: 14px; font-weight: 900; color: #000000; text-transform: uppercase; display: block; margin-bottom: 4px;">
+                      🎖️ VERIFIED CONTRIBUTOR BADGE
+                    </strong>
+                    <span style="font-size: 13px; font-weight: 600; color: #222222; line-height: 1.4;">
+                      Your verified checkmark and contributor name will be proudly highlighted on all your approved uploads.
+                    </span>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Card 3: Marketplace -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #DBEAFE; border: 3px solid #000000; box-shadow: 4px 4px 0px #000000; border-radius: 4px; margin-bottom: 14px;">
+                <tr>
+                  <td style="padding: 14px 16px;">
+                    <strong style="font-size: 14px; font-weight: 900; color: #000000; text-transform: uppercase; display: block; margin-bottom: 4px;">
+                      🛒 STUDENT INSTRUMENT MARKETPLACE
+                    </strong>
+                    <span style="font-size: 13px; font-weight: 600; color: #222222; line-height: 1.4;">
+                      List engineering drafters, lab aprons, and semester textbooks directly for fellow students.
+                    </span>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Card 4: Communities -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #FCE7F3; border: 3px solid #000000; box-shadow: 4px 4px 0px #000000; border-radius: 4px; margin-bottom: 26px;">
+                <tr>
+                  <td style="padding: 14px 16px;">
+                    <strong style="font-size: 14px; font-weight: 900; color: #000000; text-transform: uppercase; display: block; margin-bottom: 4px;">
+                      🏛️ CAMPUS COMMUNITIES
+                    </strong>
+                    <span style="font-size: 13px; font-weight: 600; color: #222222; line-height: 1.4;">
+                      Register and lead official student departmental societies, study circles, and clubs.
+                    </span>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Primary Action CTA Button (Exact .neo-button.primary) -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="text-align: center; margin: 30px 0 16px 0;">
                 <tr>
                   <td align="center">
-                    <a href="${uploadUrl}" style="display: inline-block; background-color: #2563eb; color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 700; padding: 14px 32px; border-radius: 8px; border: 2px solid #0f172a; box-shadow: 4px 4px 0px #0f172a;">
-                      Upload Your First Note →
+                    <a href="${uploadUrl}" style="display: inline-block; background-color: #FDE047; color: #000000; font-family: 'Outfit', 'Inter', -apple-system, sans-serif; font-size: 16px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; padding: 16px 36px; border: 3px solid #000000; box-shadow: 5px 5px 0px #000000; border-radius: 4px; text-decoration: none;">
+                      UPLOAD YOUR FIRST NOTE →
                     </a>
                   </td>
                 </tr>
               </table>
 
               <!-- Security/Help Notice -->
-              <p style="margin: 28px 0 0 0; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 13px; line-height: 1.5; color: #64748b;">
-                If you did not request this or have questions regarding academic guidelines, you can reach out directly to the moderation team by replying to this email.
+              <p style="margin: 28px 0 0 0; padding-top: 20px; border-top: 3px dashed #000000; font-size: 12px; line-height: 1.5; font-weight: 600; color: #555555; text-align: center;">
+                Need help or have questions? You can reply directly to this email to reach the moderation team.
               </p>
             </td>
           </tr>
 
-          <!-- Footer -->
+          <!-- Neo-Brutalist Footer -->
           <tr>
-            <td style="background-color: #f8fafc; border-top: 2px solid #0f172a; padding: 20px 32px; text-align: center;">
-              <p style="margin: 0; font-size: 12px; color: #64748b; font-weight: 600;">
-                Notes Nexus • JIS University Campus Community
-              </p>
-              <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8;">
-                Built by students, for students. Kolkata, West Bengal.
+            <td style="background-color: #FDFBF7; border-top: 3px solid #000000; padding: 22px 24px; text-align: center;">
+              <div style="display: inline-block; background-color: #000000; color: #FFFFFF; font-size: 11px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 3px; margin-bottom: 8px;">
+                NOTES NEXUS • JIS UNIVERSITY
+              </div>
+              <p style="margin: 0; font-size: 12px; font-weight: 700; color: #333333;">
+                Built by students, for students. Peer-shared & open academic resources.
               </p>
             </td>
           </tr>
