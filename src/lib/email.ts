@@ -44,7 +44,6 @@ export async function sendAccountVerifiedEmail({ to, name }: SendAccountVerified
 
   const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://notes-nexus-jisu.vercel.app').replace(/\/$/, '');
   const uploadUrl = `${siteUrl}/upload`;
-  const profileUrl = `${siteUrl}/me`;
   const studentName = name?.trim() ? name.trim() : 'Student';
   const senderEmail = process.env.SMTP_FROM || `"Notes Nexus" <${process.env.SMTP_USER}>`;
 
@@ -153,13 +152,6 @@ export async function sendAccountVerifiedEmail({ to, name }: SendAccountVerified
                     </a>
                   </td>
                 </tr>
-                <tr>
-                  <td align="center" style="padding-top: 14px;">
-                    <a href="${profileUrl}" style="font-size: 13px; color: #64748b; text-decoration: underline; font-weight: 600;">
-                      View your contributor profile & stats
-                    </a>
-                  </td>
-                </tr>
               </table>
 
               <!-- Security/Help Notice -->
@@ -204,9 +196,6 @@ What you can do now:
 
 Get started by uploading your first study material:
 ${uploadUrl}
-
-View your profile:
-${profileUrl}
 
 Best regards,
 The Notes Nexus Team
