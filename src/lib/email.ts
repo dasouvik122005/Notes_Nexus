@@ -249,3 +249,220 @@ JIS University Campus Community
     return { success: false, error: error.message };
   }
 }
+
+export interface SendMaterialApprovedEmailParams {
+  to: string;
+  name?: string;
+  materialTitle: string;
+  paperName?: string;
+  paperCode: string;
+  departmentId: string;
+  semester?: number | string;
+  type?: string;
+}
+
+/**
+ * Sends a notification email to a student when their uploaded notes or PYQ paper is approved by an admin.
+ */
+export async function sendMaterialApprovedEmail({
+  to,
+  name,
+  materialTitle,
+  paperName,
+  paperCode,
+  departmentId,
+  semester,
+  type = 'notes',
+}: SendMaterialApprovedEmailParams) {
+  if (!isSmtpConfigured()) {
+    console.warn(
+      `[Email Service] SMTP is not configured. Skipped sending material approval email to ${to}.`
+    );
+    return { success: false, skipped: true, error: 'SMTP not configured' };
+  }
+
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://notes-nexus-jisu.vercel.app').replace(/\/$/, '');
+  const sectionType = type === 'pyq' ? 'pyq' : 'notes';
+  const directLink = `${siteUrl}/${sectionType}/${departmentId}/${encodeURIComponent(paperCode)}`;
+  const studentName = name?.trim() ? name.trim() : 'Contributor';
+  const senderEmail = process.env.SMTP_FROM || `"Notes Nexus" <${process.env.SMTP_USER}>`;
+  const displaySubject = paperName || materialTitle;
+
+  const whatsappMessage = `📚 Hey everyone! The ${sectionType.toUpperCase()} for ${displaySubject} (${paperCode}) are approved and live on Notes Nexus! Check them out here: ${directLink}`;
+  const whatsappShareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(whatsappMessage)}`;
+
+  const htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Upload is Live - Notes Nexus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800;900&family=Inter:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 0; background-color: #FDFBF7; font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #000000;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #FDFBF7; padding: 40px 15px;">
+    <tr>
+      <td align="center">
+        <!-- Main Neo-Brutalist Card -->
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #FFFFFF; border: 4px solid #000000; box-shadow: 8px 8px 0px 0px #000000; border-radius: 6px; overflow: hidden; text-align: left;">
+          
+          <!-- Top Navbar Header -->
+          <tr>
+            <td style="background-color: #FFFFFF; border-bottom: 3px solid #000000; padding: 18px 24px;">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td align="left" style="vertical-align: middle;">
+                    <a href="${siteUrl}" style="text-decoration: none; display: inline-block;">
+                      <img src="${siteUrl}/icon2.png" alt="Notes Nexus" width="180" height="44" style="display: block; border: 0; max-width: 180px; height: auto;" />
+                    </a>
+                  </td>
+                  <td align="right" style="vertical-align: middle;">
+                    <span style="display: inline-block; background-color: #F472B6; color: #000000; font-size: 11px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border: 2px solid #000000; box-shadow: 3px 3px 0px #000000; border-radius: 4px; letter-spacing: 0.5px;">
+                      JIS UNIVERSITY
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Hero Celebration Box (Green for Approval) -->
+          <tr>
+            <td style="background-color: #4ADE80; border-bottom: 4px solid #000000; padding: 36px 24px; text-align: center;">
+              <div style="display: inline-block; background-color: #FFFFFF; color: #000000; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 16px; border: 3px solid #000000; box-shadow: 3px 3px 0px #000000; border-radius: 4px; margin-bottom: 16px;">
+                ✓ UPLOAD APPROVED & LIVE
+              </div>
+              <h1 style="margin: 0 0 10px 0; font-size: 32px; font-weight: 900; color: #000000; line-height: 1.1; letter-spacing: -1px; text-transform: uppercase;">
+                CONGRATULATIONS!
+              </h1>
+              <p style="margin: 0 auto; font-size: 15px; font-weight: 700; color: #000000; line-height: 1.5; max-width: 460px;">
+                Your study material has passed moderation and is now published live for all JIS University students.
+              </p>
+            </td>
+          </tr>
+
+          <!-- Main Body Content -->
+          <tr>
+            <td style="padding: 32px 28px; background-color: #FFFFFF;">
+              <p style="margin: 0 0 12px 0; font-size: 18px; font-weight: 900; color: #000000;">
+                Hey ${studentName},
+              </p>
+              <p style="margin: 0 0 20px 0; font-size: 15px; line-height: 1.6; font-weight: 500; color: #111111;">
+                Great news! Your uploaded material for <strong>${displaySubject} (${paperCode})</strong> was reviewed by an administrator and is now officially live on <strong>Notes Nexus</strong>.
+              </p>
+
+              <!-- Material Details Card -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #FEF9C3; border: 3px solid #000000; box-shadow: 4px 4px 0px #000000; border-radius: 4px; margin-bottom: 24px;">
+                <tr>
+                  <td style="padding: 16px 20px;">
+                    <span style="display: inline-block; background-color: ${sectionType === 'pyq' ? '#F472B6' : '#FDE047'}; color: #000000; font-size: 11px; font-weight: 900; text-transform: uppercase; padding: 3px 8px; border: 2px solid #000000; margin-bottom: 8px;">
+                      ${sectionType.toUpperCase()}
+                    </span>
+                    <strong style="font-size: 16px; font-weight: 900; color: #000000; display: block; margin-bottom: 6px;">
+                      ${materialTitle}
+                    </strong>
+                    <div style="font-size: 13px; font-weight: 700; color: #444444;">
+                      <span>${paperName || ''} (${paperCode})</span>
+                      ${semester ? ` • <span>Semester ${semester}</span>` : ''}
+                      <span> • ${departmentId.toUpperCase()}</span>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Share Callout Box -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #F0FDF4; border: 3px dashed #16A34A; border-radius: 4px; margin-bottom: 24px; text-align: center;">
+                <tr>
+                  <td style="padding: 20px 16px;">
+                    <p style="margin: 0 0 12px 0; font-size: 15px; font-weight: 900; color: #15803D; text-transform: uppercase;">
+                      📢 Share with your classmates!
+                    </p>
+                    <p style="margin: 0 0 16px 0; font-size: 13px; font-weight: 600; color: #374151; line-height: 1.4;">
+                      Help your batch prepare for exams. Forward this link to your class WhatsApp or Discord group:
+                    </p>
+                    <!-- WhatsApp Share Button -->
+                    <a href="${whatsappShareUrl}" target="_blank" style="display: inline-block; background-color: #25D366; color: #FFFFFF; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; padding: 12px 24px; border: 3px solid #000000; box-shadow: 4px 4px 0px #000000; border-radius: 4px; text-decoration: none;">
+                      📲 SHARE TO CLASS WHATSAPP GROUP
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- View on Notes Nexus Button -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="text-align: center; margin-bottom: 24px;">
+                <tr>
+                  <td align="center">
+                    <a href="${directLink}" target="_blank" style="display: inline-block; background-color: #FDE047; color: #000000; font-size: 15px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; padding: 14px 32px; border: 3px solid #000000; box-shadow: 4px 4px 0px #000000; border-radius: 4px; text-decoration: none;">
+                      VIEW YOUR LIVE UPLOAD →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Footer Notice -->
+              <p style="margin: 24px 0 0 0; padding-top: 18px; border-top: 3px dashed #000000; font-size: 12px; line-height: 1.5; font-weight: 600; color: #555555; text-align: center;">
+                Thank you for contributing to the open academic repository at JIS University!
+              </p>
+            </td>
+          </tr>
+
+          <!-- Neo-Brutalist Footer -->
+          <tr>
+            <td style="background-color: #FDFBF7; border-top: 3px solid #000000; padding: 22px 24px; text-align: center;">
+              <div style="display: inline-block; background-color: #000000; color: #FFFFFF; font-size: 11px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 3px; margin-bottom: 8px;">
+                NOTES NEXUS • JIS UNIVERSITY
+              </div>
+              <p style="margin: 0; font-size: 12px; font-weight: 700; color: #333333;">
+                Built by students, for students. Peer-shared & open academic resources.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`;
+
+  const textContent = `
+Congratulations! Your upload is live on Notes Nexus!
+
+Hello ${studentName},
+
+Great news! Your uploaded material for "${displaySubject} (${paperCode})" has been reviewed by an administrator and is now officially live on Notes Nexus.
+
+View your live upload:
+${directLink}
+
+Share with your classmates on WhatsApp:
+${whatsappShareUrl}
+
+Thank you for contributing to the JIS University student community!
+
+Best regards,
+The Notes Nexus Team
+JIS University
+`;
+
+  try {
+    const transporter = getTransporter();
+    const info = await transporter.sendMail({
+      from: senderEmail,
+      to,
+      subject: `🎉 Approved! Your ${sectionType.toUpperCase()} for ${displaySubject} (${paperCode}) is live on Notes Nexus`,
+      text: textContent,
+      html: htmlContent,
+    });
+
+    console.log(`[Email Service] Material approval email sent successfully to ${to} (MessageId: ${info.messageId})`);
+    return { success: true, messageId: info.messageId };
+  } catch (error: any) {
+    console.error(`[Email Service] Failed to send material approval email to ${to}:`, error);
+    return { success: false, error: error.message };
+  }
+}
