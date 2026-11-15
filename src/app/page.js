@@ -187,6 +187,14 @@ export default function Home() {
         publisher: {
           '@id': `${siteConfig.url}/#organization`,
         },
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: {
+            '@type': 'EntryPoint',
+            urlTemplate: `${siteConfig.url}/notes?search={search_term_string}`,
+          },
+          'query-input': 'required name=search_term_string',
+        },
       },
       {
         '@type': 'ItemList',
@@ -208,9 +216,9 @@ export default function Home() {
           {
             '@type': 'SiteNavigationElement',
             position: 3,
-            name: 'Upload & Contribute',
-            description: 'Share your study materials and PYQs with the community.',
-            url: `${siteConfig.url}/upload`,
+            name: 'Campus Communities & Clubs',
+            description: 'Discover student societies, technical clubs, and peer study groups.',
+            url: `${siteConfig.url}/community`,
           },
           {
             '@type': 'SiteNavigationElement',
@@ -218,6 +226,13 @@ export default function Home() {
             name: 'Instruments Marketplace',
             description: 'Student second-hand board to buy and sell engineering and medical instruments.',
             url: `${siteConfig.url}/instruments`,
+          },
+          {
+            '@type': 'SiteNavigationElement',
+            position: 5,
+            name: 'Upload & Contribute',
+            description: 'Share your study materials and PYQs with the community.',
+            url: `${siteConfig.url}/upload`,
           }
         ]
       }

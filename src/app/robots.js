@@ -11,7 +11,7 @@ export default function robots() {
         disallow: ['/admin', '/api/admin', '/me'],
       },
       {
-        userAgent: ['GPTBot', 'CCBot', 'Google-Extended', 'Anthropic-ai', 'PerplexityBot'],
+        userAgent: ['GPTBot', 'CCBot', 'Google-Extended', 'Anthropic-ai', 'PerplexityBot', 'ClaudeBot', 'Applebot-Extended'],
         allow: '/',
         disallow: ['/admin', '/api/admin', '/me'],
       },

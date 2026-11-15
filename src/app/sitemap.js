@@ -33,16 +33,34 @@ export default async function sitemap() {
       priority: 0.8,
     },
     {
+      url: `${baseUrl}/community`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/about`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
-      priority: 0.5,
+      priority: 0.6,
     },
     {
       url: `${baseUrl}/upload`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
       priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/privacy`,
+      lastModified: currentDate,
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
+    {
+      url: `${baseUrl}/terms`,
+      lastModified: currentDate,
+      changeFrequency: 'yearly',
+      priority: 0.3,
     },
   ];
 
@@ -73,6 +91,13 @@ export default async function sitemap() {
             // Add to notes
             paperRoutes.push({
               url: `${baseUrl}/notes/${dept.id}/${paper.paperCode}`,
+              lastModified: currentDate,
+              changeFrequency: 'weekly',
+              priority: 0.7,
+            });
+            // Add to pyq
+            paperRoutes.push({
+              url: `${baseUrl}/pyq/${dept.id}/${paper.paperCode}`,
               lastModified: currentDate,
               changeFrequency: 'weekly',
               priority: 0.7,
