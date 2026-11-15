@@ -145,14 +145,6 @@ Check out our open issues tagged for new contributors:
 
 For full guidelines, please review our [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
-### ✨ Contributors
-
-Thank you to everyone helping make studying easier for JIS University students!
-
-<a href="https://github.com/dasouvik122005/Notes_Nexus/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=dasouvik122005/Notes_Nexus" alt="Notes Nexus Contributors" />
-</a>
-
 ## Team
 
 Built with ❤️ by students of JIS University.

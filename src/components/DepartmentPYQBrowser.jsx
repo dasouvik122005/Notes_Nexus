@@ -16,10 +16,51 @@ import {
   User,
 } from 'lucide-react';
 
-export default function DepartmentPYQBrowser({ department, initialMaterials = [] }) {
-  const [selectedSemester, setSelectedSemester] = useState(1);
-  const [selectedExamType, setSelectedExamType] = useState('mid_sem'); // 'mid_sem' | 'final_sem'
+export default function DepartmentPYQBrowser({
+  department,
+  initialMaterials = [],
+  initialSemester = 1,
+  initialExamType = 'mid_sem',
+  highlightId,
+  highlightCode,
+}) {
+  // If a highlight material is requested, find it to determine exact semester & exam type
+  const targetMaterial = useMemo(() => {
+    if (highlightId) {
+      return initialMaterials.find((m) => m.id === highlightId);
+    }
+    if (highlightCode) {
+      return initialMaterials.find(
+        (m) => m.paperCode?.toUpperCase() === highlightCode.toUpperCase()
+      );
+    }
+    return null;
+  }, [initialMaterials, highlightId, highlightCode]);
+
+  const [selectedSemester, setSelectedSemester] = useState(() => {
+    if (targetMaterial?.semester) return targetMaterial.semester;
+    return initialSemester || 1;
+  });
+  const [selectedExamType, setSelectedExamType] = useState(() => {
+    if (targetMaterial?.examType) return targetMaterial.examType;
+    return initialExamType || 'mid_sem'; // 'mid_sem' | 'final_sem'
+  });
   const [activeModal, setActiveModal] = useState(null);
+
+  // Auto-scroll to highlighted material if present
+  React.useEffect(() => {
+    if (highlightId || highlightCode) {
+      const el =
+        (highlightId && document.getElementById(`material-${highlightId}`)) ||
+        (highlightCode && document.querySelector(`[data-paper-code="${highlightCode}"]`));
+      if (el) {
+        const timer = setTimeout(() => {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 200);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [highlightId, highlightCode, selectedSemester, selectedExamType]);
 
   // Group materials by semester and exam type
   const availableMaterials = useMemo(() => {
@@ -235,49 +276,82 @@ export default function DepartmentPYQBrowser({ department, initialMaterials = []
 
         {availableMaterials.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            {availableMaterials.map((material) => (
-              <div
-                key={material.id}
-                className="neo-card"
-                style={{
-                  padding: '1.5rem',
-                  backgroundColor: 'var(--white)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  flexWrap: 'wrap',
-                  gap: '1.25rem',
-                }}
-              >
-                {/* Left details */}
-                <div style={{ flex: 1, minWidth: '240px' }}>
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.75rem',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    <span
+            {availableMaterials.map((material) => {
+              const isHighlighted =
+                (highlightId && material.id === highlightId) ||
+                (highlightCode && material.paperCode?.toUpperCase() === highlightCode.toUpperCase());
+
+              return (
+                <div
+                  key={material.id}
+                  id={`material-${material.id}`}
+                  data-paper-code={material.paperCode}
+                  className="neo-card"
+                  style={{
+                    padding: '1.5rem',
+                    backgroundColor: isHighlighted ? '#FEFCE8' : 'var(--white)',
+                    border: isHighlighted ? '3.5px solid #16A34A' : '3px solid var(--black)',
+                    boxShadow: isHighlighted
+                      ? '5px 5px 0px 0px #16A34A'
+                      : '4px 4px 0px 0px var(--black)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '1.25rem',
+                    transition: 'border 0.2s ease, box-shadow 0.2s ease',
+                  }}
+                >
+                  {/* Left details */}
+                  <div style={{ flex: 1, minWidth: '240px' }}>
+                    <div
                       style={{
-                        backgroundColor: 'var(--primary-yellow)',
-                        border: '2px solid var(--black)',
-                        boxShadow: '2px 2px 0px 0px var(--black)',
-                        fontWeight: 900,
-                        fontSize: '0.9rem',
-                        padding: '0.2rem 0.6rem',
-                        display: 'inline-flex',
+                        display: 'flex',
                         alignItems: 'center',
-                        gap: '0.3rem',
+                        gap: '0.75rem',
+                        marginBottom: '0.5rem',
+                        flexWrap: 'wrap',
                       }}
                     >
-                      <Calendar size={14} />
-                      {(() => {
-                        const titleYearMatch = material.title?.match(/\b(20[1-2][0-9])\b/);
-                        return titleYearMatch ? titleYearMatch[1] : (material.year || 'Unknown Year');
-                      })()}
-                    </span>
+                      {isHighlighted && (
+                        <span
+                          style={{
+                            backgroundColor: '#22C55E',
+                            color: '#FFFFFF',
+                            border: '2px solid var(--black)',
+                            boxShadow: '2px 2px 0px 0px var(--black)',
+                            fontWeight: 900,
+                            fontSize: '0.75rem',
+                            padding: '0.2rem 0.6rem',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.3rem',
+                            textTransform: 'uppercase',
+                          }}
+                        >
+                          ✓ Your Uploaded Paper
+                        </span>
+                      )}
+
+                      <span
+                        style={{
+                          backgroundColor: 'var(--primary-yellow)',
+                          border: '2px solid var(--black)',
+                          boxShadow: '2px 2px 0px 0px var(--black)',
+                          fontWeight: 900,
+                          fontSize: '0.9rem',
+                          padding: '0.2rem 0.6rem',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.3rem',
+                        }}
+                      >
+                        <Calendar size={14} />
+                        {(() => {
+                          const titleYearMatch = material.title?.match(/\b(20[1-2][0-9])\b/);
+                          return titleYearMatch ? titleYearMatch[1] : (material.year || 'Unknown Year');
+                        })()}
+                      </span>
 
                     <span
                       style={{
@@ -379,7 +453,8 @@ export default function DepartmentPYQBrowser({ department, initialMaterials = []
                         </button>
                 </div>
               </div>
-            ))}
+            );
+          })}
           </div>
         ) : (
           /* Empty State: Never show placeholder years */
