@@ -117,9 +117,9 @@ async function LatestUploadsFeed() {
                 </div>
               </div>
 
-              <h4 style={{ fontSize: '1.15rem', fontWeight: 900, marginBottom: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 900, marginBottom: '0.5rem' }}>
                 {item.title}
-              </h4>
+              </h3>
 
               <p style={{ fontSize: '0.85rem', fontWeight: 700, color: '#555', marginBottom: '1rem' }}>
                 {item.paperName} ({item.paperCode}) • Sem {item.semester}
