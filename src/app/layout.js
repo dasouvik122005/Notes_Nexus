@@ -103,6 +103,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <head>
         <link rel="icon" type="image/png" href="/favicon.png" />
+        <meta name="msvalidate.01" content="DD4DED0DB2D0CF0F9B208B18239E024E" />
       </head>
       <body suppressHydrationWarning style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <AuthProvider>
