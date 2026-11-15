@@ -1,0 +1,27 @@
+{
+  "$schema": "https://raw.githubusercontent.com/ards-project/ard-spec/main/spec/schemas/ai-catalog.schema.json",
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Notes Nexus",
+    "identifier": "https://notes-nexus-jisu.vercel.app",
+    "documentationUrl": "https://notes-nexus-jisu.vercel.app/about"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:notes-nexus-jisu.vercel.app:api:study-hub",
+      "displayName": "Notes Nexus Study Materials & PYQs",
+      "type": "application/json",
+      "url": "https://notes-nexus-jisu.vercel.app/notes",
+      "description": "Comprehensive module notes, syllabus archives, and previous year question papers for university students.",
+      "capabilities": [
+        "getNotes",
+        "getPyqs",
+        "browseMarketplace"
+      ],
+      "representativeQueries": [
+        "find notes for computer science",
+        "download previous year question papers"
+      ]
+    }
+  ]
+}

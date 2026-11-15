@@ -3,9 +3,11 @@
 Notes Nexus is an open-source educational platform designed to provide free comprehensive study materials, lecture notes, previous year question papers (PYQs), and a student marketplace for JIS University.
 
 ## Core Features
-- Module Notes: Organized lecture notes and module summaries.
-- Exam Archive: Previous year question papers (Mid Sem & Final Sem).
-- Marketplace: A student-to-student noticeboard to buy/sell second-hand instruments like drafters, lab aprons, and textbooks.
+- [Module Notes](https://notes-nexus-jisu.vercel.app/notes): Organized lecture notes and module summaries.
+- [Exam Archive (PYQs)](https://notes-nexus-jisu.vercel.app/pyqs): Previous year question papers for Mid Sem & Final Sem.
+- [Marketplace](https://notes-nexus-jisu.vercel.app/marketplace): A student-to-student noticeboard to buy/sell second-hand instruments like drafters, lab aprons, and textbooks.
+- [Campus Communities](https://notes-nexus-jisu.vercel.app/community): Discover student clubs, technical societies, and campus groups.
+- [Upload Material](https://notes-nexus-jisu.vercel.app/upload): Submit study notes and previous year question papers.
 
 ## Platform Details
 - Organization: JIS University (Student Initiative)
