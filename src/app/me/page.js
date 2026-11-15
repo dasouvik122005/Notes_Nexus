@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth/AuthContext';
 import EditCommunityButton from '@/components/EditCommunityButton';
 import {
   User,
+  Users,
   CheckCircle2,
   Clock,
   XCircle,
