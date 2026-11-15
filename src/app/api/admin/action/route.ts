@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { cloudinary, isCloudinaryConfigured } from '@/lib/storage/cloudinary';
 import { applyRateLimit, adminActionLimiter } from '@/lib/rate-limit';
-import { sendAccountVerifiedEmail, sendMaterialApprovedEmail } from '@/lib/email';
+import { sendAccountVerifiedEmail } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
               reviewed_at: new Date().toISOString(),
             })
             .eq('id', id)
-            .select('id, title, type, paper_name, paper_id, department_id, semester, paper_code, uploaded_by, users!uploaded_by(name, email)')
+            .select('paper_id, department_id, semester, paper_code')
             .single();
 
           if (updatedMaterial?.paper_id) {
@@ -78,25 +78,6 @@ export async function POST(request: NextRequest) {
               .eq('department_id', updatedMaterial.department_id)
               .eq('semester', updatedMaterial.semester)
               .ilike('paper_code', updatedMaterial.paper_code);
-          }
-
-          // Trigger automated notification email to the student with direct link & WhatsApp share
-          const uploader = (updatedMaterial as any)?.users;
-          if (updatedMaterial && uploader?.email) {
-            try {
-              await sendMaterialApprovedEmail({
-                to: uploader.email,
-                name: uploader.name || undefined,
-                materialTitle: updatedMaterial.title || 'Study Material',
-                paperName: updatedMaterial.paper_name || updatedMaterial.title || '',
-                paperCode: updatedMaterial.paper_code || '',
-                departmentId: updatedMaterial.department_id || '',
-                semester: updatedMaterial.semester,
-                type: updatedMaterial.type || 'notes',
-              });
-            } catch (mailErr) {
-              console.error('[Admin Action] Error triggering material approval email:', mailErr);
-            }
           }
         } else if (action === 'hide_material') {
           const { error: hideErr } = await adminClient
