@@ -14,6 +14,7 @@ import {
   Upload,
   GraduationCap,
   User,
+  Share2,
 } from 'lucide-react';
 
 export default function DepartmentPYQBrowser({
@@ -24,6 +25,8 @@ export default function DepartmentPYQBrowser({
   highlightId,
   highlightCode,
 }) {
+  const [copiedId, setCopiedId] = useState(null);
+
   // If a highlight material is requested, find it to determine exact semester & exam type
   const targetMaterial = useMemo(() => {
     if (highlightId) {
@@ -46,6 +49,37 @@ export default function DepartmentPYQBrowser({
     return initialExamType || 'mid_sem'; // 'mid_sem' | 'final_sem'
   });
   const [activeModal, setActiveModal] = useState(null);
+
+  const handleShare = async (material) => {
+    const url = typeof window !== 'undefined' ? `${window.location.origin}/pyq/${department.id}` : '';
+    const semText = selectedSemester ? `Semester ${selectedSemester} ` : '';
+    const examLabel = selectedExamType === 'mid_sem' ? 'Mid Sem' : 'Final Sem';
+    const title = `${department.shortCode} ${semText}${examLabel} PYQ — Notes Nexus`;
+    const text = `📝 ${department.name} ${semText}(${examLabel}) Previous Year Question paper is live on Notes Nexus:`;
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text,
+          url,
+        });
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+      }
+    }
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        setCopiedId(material.id);
+        setTimeout(() => setCopiedId(null), 2500);
+      }
+    } catch {
+      // Ignore clipboard error
+    }
+  };
 
   // Auto-scroll to highlighted material if present
   React.useEffect(() => {
@@ -434,23 +468,45 @@ export default function DepartmentPYQBrowser({
                 </div>
 
                 {/* Right CTA */}
-                <div>
-                        <button
-                          onClick={() => handleOpenViewer(material)}
-                          className="neo-button primary"
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            padding: '0.65rem 1.25rem',
-                            fontSize: '0.95rem',
-                            fontWeight: 900,
-                            cursor: 'pointer',
-                          }}
-                        >
-                          <Eye size={16} />
-                          <span>Read →</span>
-                        </button>
+                <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={() => handleShare(material)}
+                    className="neo-button"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.4rem',
+                      padding: '0.65rem 0.95rem',
+                      fontSize: '0.9rem',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                      backgroundColor: copiedId === material.id ? '#DCFCE7' : 'var(--white)',
+                      transition: 'background-color 0.2s ease',
+                    }}
+                    title="Share PYQ on WhatsApp"
+                    aria-label="Share PYQ on WhatsApp"
+                  >
+                    <Share2 size={15} />
+                    <span>{copiedId === material.id ? 'Copied!' : 'Share'}</span>
+                  </button>
+
+                  <button
+                    onClick={() => handleOpenViewer(material)}
+                    className="neo-button primary"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      padding: '0.65rem 1.25rem',
+                      fontSize: '0.95rem',
+                      fontWeight: 900,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Eye size={16} />
+                    <span>Read →</span>
+                  </button>
                 </div>
               </div>
             );

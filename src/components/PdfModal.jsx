@@ -16,6 +16,7 @@ import {
   AlertTriangle,
   Layers,
   Monitor,
+  Share2,
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -59,6 +60,36 @@ export default function PdfModal({
   const [pageErrors, setPageErrors] = useState({});
   const [maxRendered, setMaxRendered] = useState(3);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [copiedShare, setCopiedShare] = useState(false);
+
+  const handleShare = async () => {
+    const url = typeof window !== 'undefined' ? window.location.href : '';
+    const shareTitle = title ? `Notes Nexus — ${title}` : 'Notes Nexus Study Material';
+    const text = `📄 Read and download "${title || 'Study Material'}" on Notes Nexus (JIS University):`;
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text,
+          url,
+        });
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+      }
+    }
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        setCopiedShare(true);
+        setTimeout(() => setCopiedShare(false), 2500);
+      }
+    } catch {
+      // Ignore
+    }
+  };
 
   const handleDownload = async (e) => {
     e.preventDefault();
@@ -234,6 +265,20 @@ export default function PdfModal({
 
           {/* Right Side: Action Buttons (Guaranteed flex-shrink: 0, NEVER pushed off screen) */}
           <div className="pdf-header-actions">
+            <button
+              type="button"
+              onClick={handleShare}
+              className="pdf-action-btn pdf-share-btn"
+              title="Share on WhatsApp"
+              aria-label="Share on WhatsApp"
+              style={{
+                backgroundColor: copiedShare ? '#DCFCE7' : 'var(--white)',
+              }}
+            >
+              <Share2 size={14} />
+              <span className="pdf-btn-label">{copiedShare ? 'Copied!' : 'Share'}</span>
+            </button>
+
             <button
               onClick={handleDownload}
               disabled={isDownloading}

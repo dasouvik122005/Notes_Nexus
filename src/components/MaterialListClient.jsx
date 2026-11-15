@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FileText, Star, Eye, ExternalLink, Calendar, User } from 'lucide-react';
+import { FileText, Star, Eye, ExternalLink, Calendar, User, Share2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 const PdfModal = dynamic(() => import('@/components/PdfModal'), { ssr: false });
 import StarRating from '@/components/StarRating';
@@ -12,6 +12,36 @@ export default function MaterialListClient({
   emptyMessage = 'No peer-uploaded study materials yet for this subject.',
 }) {
   const [activeModal, setActiveModal] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
+
+  const handleShare = async (mat) => {
+    const url = typeof window !== 'undefined' ? window.location.href : '';
+    const title = `Notes Nexus — ${mat.title}`;
+    const text = `📚 Read and download "${mat.title}" on Notes Nexus (JIS University):`;
+
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({
+          title,
+          text,
+          url,
+        });
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+      }
+    }
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        setCopiedId(mat.id);
+        setTimeout(() => setCopiedId(null), 2500);
+      }
+    } catch {
+      // Ignore clipboard fallback error
+    }
+  };
 
   const openViewer = (material) => {
     setActiveModal({
@@ -178,7 +208,29 @@ export default function MaterialListClient({
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: '0.65rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => handleShare(mat)}
+                  className="neo-button"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    padding: '0.65rem 0.95rem',
+                    fontSize: '0.9rem',
+                    fontWeight: 800,
+                    cursor: 'pointer',
+                    backgroundColor: copiedId === mat.id ? '#DCFCE7' : 'var(--white)',
+                    transition: 'background-color 0.2s ease',
+                  }}
+                  title="Share with batch on WhatsApp"
+                  aria-label="Share with batch on WhatsApp"
+                >
+                  <Share2 size={15} />
+                  <span>{copiedId === mat.id ? 'Copied!' : 'Share'}</span>
+                </button>
+
                 <button
                   onClick={() => openViewer(mat)}
                   className="neo-button primary"
