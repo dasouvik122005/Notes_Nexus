@@ -20,6 +20,12 @@
   <img src="https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E?logo=supabase" alt="Supabase" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/Deployed_on-Vercel-000?logo=vercel" alt="Vercel" />
+  <a href="https://github.com/dasouvik122005/Notes_Nexus/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22">
+    <img src="https://img.shields.io/github/issues/dasouvik122005/Notes_Nexus/good%20first%20issue?color=7057ff&label=Good%20First%20Issues" alt="Good First Issues" />
+  </a>
+  <a href="https://github.com/dasouvik122005/Notes_Nexus/pulls">
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" />
+  </a>
   <img src="https://img.shields.io/github/license/dasouvik122005/Notes_Nexus" alt="License" />
 </p>
 
@@ -105,17 +111,47 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-## Contributing
+## 🤝 Contributing & Open-Source
 
-Contributions are welcome! Whether it's a bug fix, new feature, or documentation improvement — all PRs are appreciated.
+We actively welcome contributions from developers, students, and open-source enthusiasts! Whether you want to fix a bug, enhance the UI, or add new features, here is how to get started:
 
-1. **Fork** the repository
-2. **Create** a feature branch — `git checkout -b feature/your-feature`
-3. **Commit** your changes — `git commit -m "feat: add your feature"`
-4. **Push** to the branch — `git push origin feature/your-feature`
-5. **Open** a Pull Request
+### 🎯 Find an Issue to Work On
+Check out our open issues tagged for new contributors:
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) before contributing.
+- [![Good First Issues](https://img.shields.io/github/issues/dasouvik122005/Notes_Nexus/good%20first%20issue?color=7057ff&label=Good%20First%20Issues)](https://github.com/dasouvik122005/Notes_Nexus/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) — Beginner-friendly tasks with clear instructions.
+- [![Help Wanted](https://img.shields.io/github/issues/dasouvik122005/Notes_Nexus/help%20wanted?color=008672&label=Help%20Wanted)](https://github.com/dasouvik122005/Notes_Nexus/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) — Important community enhancements.
+- [![Bugs](https://img.shields.io/github/issues/dasouvik122005/Notes_Nexus/bug?color=d73a4a&label=Bugs)](https://github.com/dasouvik122005/Notes_Nexus/issues?q=is%3Aissue+is%3Aopen+label%3A%22bug%22) — Verified issues needing a fix.
+
+👉 **[Browse all open issues](https://github.com/dasouvik122005/Notes_Nexus/issues)**
+
+---
+
+### 🚀 Quick Contribution Workflow
+
+1. **Pick or Claim an Issue:**
+   Comment on the issue you would like to work on so we can assign it to you.
+2. **Fork & Branch:**
+   ```bash
+   git checkout -b feature/amazing-improvement
+   ```
+3. **Make Your Changes:**
+   Follow our Neo-Brutalist design tokens in `globals.css` (high contrast, bold borders, sharp drop shadows).
+4. **Verify Locally:**
+   ```bash
+   npm run lint
+   ```
+5. **Submit a Pull Request:**
+   Push your branch and open a PR against `main`. Tag the issue number (e.g. `Fixes #2`) in your description.
+
+For full guidelines, please review our [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+
+### ✨ Contributors
+
+Thank you to everyone helping make studying easier for JIS University students!
+
+<a href="https://github.com/dasouvik122005/Notes_Nexus/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=dasouvik122005/Notes_Nexus" alt="Notes Nexus Contributors" />
+</a>
 
 ## Team
 
