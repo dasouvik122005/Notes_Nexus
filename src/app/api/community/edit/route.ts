@@ -2,11 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
+import { applyRateLimit, uploadLimiter } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
 export async function PUT(request: NextRequest) {
   try {
+    // Rate limit: 5 edits per minute per IP
+    const rateLimited = await applyRateLimit(uploadLimiter, request);
+    if (rateLimited) return rateLimited;
+
     const body = await request.json();
     const { id, ...updateData } = body;
 

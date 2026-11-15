@@ -69,8 +69,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 4. Photo uploads (handled client-side via Cloudinary)
-    // The client now uploads directly to Cloudinary and passes the URLs in photoLinks array.
+    // 4. Photo uploads validation (Cloudinary only)
+    if (Array.isArray(photoLinks) && photoLinks.length > 0) {
+      const allCloudinary = photoLinks.every(
+        (url) => typeof url === 'string' && url.startsWith('https://res.cloudinary.com/')
+      );
+      if (!allCloudinary) {
+        return NextResponse.json(
+          { error: 'Invalid photo URL. Only Cloudinary URLs are accepted.' },
+          { status: 400 }
+        );
+      }
+    }
 
     // 5. Map values to satisfy database CHECK constraints
     let dbCategory = category;

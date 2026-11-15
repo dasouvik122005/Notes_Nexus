@@ -16,6 +16,16 @@ export interface TeamMember {
 
 export const teamMembers: TeamMember[] = [
   {
+    name: "Souvik Das",
+    initials: "SD",
+    socials: {
+      linkedin: "https://www.linkedin.com/in/souvikdas12102005/",
+      github: "https://github.com/dasouvik122005",
+      instagram: ["https://instagram.com/das_ouvik"],
+    },   
+  },
+
+  {
     name: "Kumaresh Jana",
     initials: "KJ",
     socials: {
@@ -27,15 +37,7 @@ export const teamMembers: TeamMember[] = [
       ],
     },
   },
-  {
-    name: "Souvik Das",
-    initials: "SD",
-    socials: {
-      linkedin: "https://www.linkedin.com/in/souvikdas12102005/",
-      github: "https://github.com/dasouvik122005",
-      instagram: ["https://instagram.com/das_ouvik"],
-    },
-  },
+
   {
     name: "Rajdip Garai",
     initials: "RG",
@@ -45,4 +47,5 @@ export const teamMembers: TeamMember[] = [
       instagram: ["https://instagram.com/rajdipgarai_"],
     },
   },
+
 ];

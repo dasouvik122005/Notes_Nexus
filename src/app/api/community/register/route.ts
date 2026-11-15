@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { applyRateLimit, uploadLimiter } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit: 5 registrations per minute per IP
+    const rateLimited = await applyRateLimit(uploadLimiter, request);
+    if (rateLimited) return rateLimited;
+
     const body = await request.json();
 
     const {
@@ -32,6 +37,14 @@ export async function POST(request: NextRequest) {
     // 1. Basic validation
     if (!name || !logo_url || !description || !category || !department_id || !target_audience || !community_type || !focus_areas || !verification_proof) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // OWASP A03 / A08: Validate Cloudinary asset URLs
+    if (!logo_url.startsWith('https://res.cloudinary.com/')) {
+      return NextResponse.json({ error: 'Invalid logo URL. Only Cloudinary URLs are accepted.' }, { status: 400 });
+    }
+    if (!verification_proof.startsWith('https://res.cloudinary.com/')) {
+      return NextResponse.json({ error: 'Invalid proof URL. Only Cloudinary URLs are accepted.' }, { status: 400 });
     }
 
     if (!leadership_team || !Array.isArray(leadership_team) || leadership_team.length === 0) {

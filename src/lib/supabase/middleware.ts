@@ -26,6 +26,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   const isAdminRoute = pathname.startsWith('/admin');
+  const isAdminApiRoute = pathname.startsWith('/api/admin');
 
   // Check if cookies contain any active Supabase auth tokens
   const allCookies = request.cookies.getAll();
@@ -35,7 +36,7 @@ export async function updateSession(request: NextRequest) {
 
   // BOTTLENECK FIX: Public routes with no auth cookies bypass remote network calls to Supabase completely.
   // This eliminates 200-600ms network delay per page navigation and prefetch request.
-  if (!isAdminRoute && !hasAuthCookie) {
+  if (!isAdminRoute && !isAdminApiRoute && !hasAuthCookie) {
     return response;
   }
 
@@ -56,13 +57,16 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  // Only the admin portal requires server-side blocking redirect
-  if (isAdminRoute) {
+  // Only the admin portal and admin APIs require server-side blocking checks
+  if (isAdminRoute || isAdminApiRoute) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (!user) {
+      if (isAdminApiRoute) {
+        return NextResponse.json({ error: 'Unauthorized. Sign in required.' }, { status: 401 });
+      }
       const url = request.nextUrl.clone();
       url.pathname = '/';
       url.searchParams.set('redirect', pathname);
@@ -79,6 +83,9 @@ export async function updateSession(request: NextRequest) {
     const isAdmin = adminEmails.includes(userEmail);
 
     if (!isAdmin) {
+      if (isAdminApiRoute) {
+        return NextResponse.json({ error: 'Forbidden. Admin access required.' }, { status: 403 });
+      }
       const url = request.nextUrl.clone();
       url.pathname = '/';
       url.searchParams.set('error', 'unauthorized');
