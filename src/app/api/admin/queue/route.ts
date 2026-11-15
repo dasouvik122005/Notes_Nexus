@@ -97,12 +97,11 @@ export async function GET(request: NextRequest) {
     if (commErr) console.error('[Admin Queue] Communities query error:', commErr);
 
     const formattedCommunities = (dbCommunities || []).map((c: any) => ({
-      id: c.id,
-      name: c.name,
-      category: c.category,
+      ...c,
       departmentId: c.department_id,
       communityType: c.community_type,
       leadershipTeam: c.leadership_team,
+      proofType: c.proof_type || (c.verification_proof?.includes('res.cloudinary.com') ? 'upload' : 'link'),
       status: c.status === 'rejected' && c.reject_reason === 'HIDDEN_BY_ADMIN' ? 'hidden' : c.status,
       createdAt: c.created_at,
     })).filter(c => c.status !== 'rejected'); // Only keep pending, approved, hidden

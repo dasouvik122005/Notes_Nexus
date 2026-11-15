@@ -1,5 +1,5 @@
 import React from 'react';
-import { X } from 'lucide-react';
+import { X, ExternalLink, FileText, Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 
 export default function CommunityPreviewModal({ community, onClose }) {
@@ -180,16 +180,160 @@ export default function CommunityPreviewModal({ community, onClose }) {
 
           {/* Verification & Leads */}
           <div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 900, textTransform: 'uppercase', marginBottom: '0.5rem', borderBottom: '2px solid var(--black)', paddingBottom: '0.25rem' }}>
-              Verification Proof
-            </h3>
-            <a href={community.verification_proof} target="_blank" rel="noreferrer" style={{ fontWeight: 700, color: '#2563EB' }}>
-              View Provided Proof Document / Link
-            </a>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', borderBottom: '2px solid var(--black)', paddingBottom: '0.4rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 900, textTransform: 'uppercase', margin: 0 }}>
+                Verification Proof
+              </h3>
+              {(() => {
+                const proofUrl = community.verification_proof || community.proofUrl;
+                const isUpload = community.proofType === 'upload' || community.proof_type === 'upload' || (proofUrl && proofUrl.includes('res.cloudinary.com'));
+                const isPdf = proofUrl && (proofUrl.toLowerCase().endsWith('.pdf') || proofUrl.toLowerCase().includes('.pdf?') || proofUrl.includes('/raw/'));
+                return (
+                  <span
+                    style={{
+                      backgroundColor: isUpload ? 'var(--primary-yellow)' : 'var(--primary-blue, #60A5FA)',
+                      border: '2px solid var(--black)',
+                      boxShadow: '2px 2px 0px 0px var(--black)',
+                      padding: '0.15rem 0.5rem',
+                      fontSize: '0.75rem',
+                      fontWeight: 900,
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {isUpload ? (isPdf ? 'Uploaded Document (PDF)' : 'Uploaded Proof (Image)') : 'Official Link'}
+                  </span>
+                );
+              })()}
+            </div>
+
+            {(() => {
+              const proofUrl = community.verification_proof || community.proofUrl;
+              if (!proofUrl) {
+                return <p style={{ color: '#6B7280', fontWeight: 600, fontStyle: 'italic' }}>No proof URL provided.</p>;
+              }
+
+              const isUpload = community.proofType === 'upload' || community.proof_type === 'upload' || proofUrl.includes('res.cloudinary.com');
+              const isPdf = proofUrl.toLowerCase().endsWith('.pdf') || proofUrl.toLowerCase().includes('.pdf?') || proofUrl.includes('/raw/');
+
+              if (isUpload) {
+                if (isPdf) {
+                  return (
+                    <div style={{ border: '2px solid var(--black)', padding: '1rem', backgroundColor: '#FEF9C3', boxShadow: '3px 3px 0px 0px var(--black)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                        <div style={{ backgroundColor: '#EF4444', color: 'white', padding: '0.5rem', border: '2px solid var(--black)', display: 'flex' }}>
+                          <FileText size={24} />
+                        </div>
+                        <div style={{ overflow: 'hidden' }}>
+                          <div style={{ fontWeight: 800, fontSize: '0.9rem', wordBreak: 'break-all' }}>Verification Document (PDF)</div>
+                          <div style={{ fontSize: '0.75rem', color: '#6B7280', fontWeight: 600 }}>Hosted on Cloudinary</div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+                        <a
+                          href={proofUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem',
+                            backgroundColor: 'var(--white)',
+                            border: '2px solid var(--black)',
+                            boxShadow: '2px 2px 0px 0px var(--black)',
+                            padding: '0.4rem 0.8rem',
+                            fontWeight: 800,
+                            fontSize: '0.85rem',
+                            color: '#1F2937',
+                          }}
+                        >
+                          <ExternalLink size={16} /> Open PDF in New Tab
+                        </a>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div>
+                    <div
+                      style={{
+                        position: 'relative',
+                        maxWidth: '420px',
+                        maxHeight: '300px',
+                        border: '3px solid var(--black)',
+                        boxShadow: '4px 4px 0px 0px var(--black)',
+                        backgroundColor: '#F3F4F6',
+                        overflow: 'hidden',
+                        marginBottom: '0.75rem',
+                      }}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={proofUrl}
+                        alt="Verification Proof Thumbnail"
+                        style={{ width: '100%', height: 'auto', maxHeight: '300px', objectFit: 'contain', display: 'block' }}
+                      />
+                    </div>
+                    <a
+                      href={proofUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        fontWeight: 700,
+                        color: '#2563EB',
+                        fontSize: '0.9rem',
+                      }}
+                    >
+                      <ExternalLink size={16} /> View Full Size Image
+                    </a>
+                  </div>
+                );
+              }
+
+              // Mode A: Public Link
+              return (
+                <div style={{ border: '2px solid var(--black)', padding: '1rem', backgroundColor: '#F9FAFB', boxShadow: '3px 3px 0px 0px var(--black)' }}>
+                  <div style={{ fontSize: '0.8rem', fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
+                    Official Community Page / Identity Link
+                  </div>
+                  <a
+                    href={proofUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      fontWeight: 800,
+                      color: '#2563EB',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      wordBreak: 'break-all',
+                      fontSize: '0.95rem',
+                    }}
+                  >
+                    <ExternalLink size={16} style={{ flexShrink: 0 }} /> {proofUrl}
+                  </a>
+                </div>
+              );
+            })()}
+
             {community.representative_linkedin && (
-              <div style={{ marginTop: '0.5rem' }}>
-                <a href={community.representative_linkedin} target="_blank" rel="noreferrer" style={{ fontWeight: 700, color: '#0A66C2' }}>
-                  Representative's LinkedIn
+              <div style={{ marginTop: '1rem' }}>
+                <a
+                  href={community.representative_linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    fontWeight: 700,
+                    color: '#0A66C2',
+                  }}
+                >
+                  <ExternalLink size={16} /> Representative&apos;s LinkedIn Profile
                 </a>
               </div>
             )}

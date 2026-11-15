@@ -42,6 +42,8 @@ export interface Community {
   contact_number: string | null;
   faculty_coordinator: string | null;
   verification_proof: string;
+  proof_type?: 'link' | 'upload';
+  proofType?: 'link' | 'upload';
   representative_linkedin: string | null;
   submitted_by: string;
   status: 'pending' | 'approved' | 'rejected';

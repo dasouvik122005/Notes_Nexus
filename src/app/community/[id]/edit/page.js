@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -14,7 +14,11 @@ import {
   AlertTriangle,
   Save,
   ChevronLeft,
-  Plus
+  Plus,
+  UploadCloud,
+  Link2,
+  FileText,
+  Loader2,
 } from 'lucide-react';
 
 export default function CommunityEditPage() {
@@ -71,6 +75,18 @@ export default function CommunityEditPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+
+  // Verification Proof State (Dual-Mode)
+  const [proofMode, setProofMode] = useState('link'); // 'link' | 'upload'
+  const [proofFile, setProofFile] = useState(null);
+  const [proofPreviewUrl, setProofPreviewUrl] = useState(null);
+  const [proofFileName, setProofFileName] = useState('');
+  const [proofFileSize, setProofFileSize] = useState(0);
+  const [isUploadingProof, setIsUploadingProof] = useState(false);
+
+  const proofFieldRef = useRef(null);
+  const proofInputRef = useRef(null);
+  const proofFileInputRef = useRef(null);
 
   // Fetch Existing Data
   useEffect(() => {
@@ -138,6 +154,10 @@ export default function CommunityEditPage() {
         });
 
         setExistingLogoUrl(community.logo_url);
+
+        const initialProof = community.verification_proof || '';
+        const isUpload = community.proof_type === 'upload' || community.proofType === 'upload' || initialProof.includes('res.cloudinary.com');
+        setProofMode(isUpload ? 'upload' : 'link');
       } catch (err) {
         console.error(err);
         setFetchError("Failed to load community details.");
@@ -148,7 +168,8 @@ export default function CommunityEditPage() {
 
     if (!isLoading) {
       if (!user) {
-        setInitialLoading(false);
+        const timer = setTimeout(() => setInitialLoading(false), 0);
+        return () => clearTimeout(timer);
       } else {
         fetchData();
       }
@@ -158,6 +179,110 @@ export default function CommunityEditPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (submitError) setSubmitError(null);
+  };
+
+  const handleModeToggle = (mode) => {
+    setProofMode(mode);
+    setSubmitError(null);
+    if (mode === 'link') {
+      setTimeout(() => proofInputRef.current?.focus(), 50);
+    }
+  };
+
+  const handleProofFileSelect = async (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSubmitError(null);
+
+      // 1. File Type Validation
+      const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.pdf'];
+      const fileNameLower = file.name.toLowerCase();
+      const isAllowedExt = allowedExtensions.some((ext) => fileNameLower.endsWith(ext));
+      const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+      const isAllowedMime = !file.type || allowedMimes.includes(file.type);
+
+      if (!isAllowedExt || !isAllowedMime) {
+        setSubmitError('Invalid file format. Please upload a JPG, PNG, WEBP image or a PDF.');
+        proofFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // 2. File Size Validation (Max 5 MB)
+      const maxSizeBytes = 5 * 1024 * 1024;
+      if (file.size > maxSizeBytes) {
+        setSubmitError('Upload failed. Please try a smaller image (max 5 MB) or paste a link instead.');
+        proofFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      setProofFile(file);
+      setProofFileName(file.name);
+      setProofFileSize(file.size);
+
+      // Preview
+      if (file.type.startsWith('image/') || /\.(jpg|jpeg|png|webp)$/i.test(file.name)) {
+        setProofPreviewUrl(URL.createObjectURL(file));
+      } else {
+        setProofPreviewUrl(null);
+      }
+
+      // Upload to Cloudinary
+      setIsUploadingProof(true);
+      try {
+        const signRes = await fetch('/api/cloudinary/sign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ folder: 'notes-nexus/communities/proof' }),
+        });
+
+        if (!signRes.ok) {
+          const errData = await signRes.json().catch(() => ({}));
+          throw new Error(errData.error || 'Failed to get upload credentials.');
+        }
+
+        const { signature, timestamp, folder, apiKey, cloudName } = await signRes.json();
+
+        const cloudFormData = new FormData();
+        cloudFormData.append('file', file);
+        cloudFormData.append('api_key', apiKey);
+        cloudFormData.append('timestamp', timestamp);
+        cloudFormData.append('signature', signature);
+        cloudFormData.append('folder', folder);
+
+        const cloudRes = await fetch(
+          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+          { method: 'POST', body: cloudFormData }
+        );
+
+        if (!cloudRes.ok) {
+          throw new Error('Upload failed. Please try a smaller image (max 5 MB) or paste a link instead.');
+        }
+
+        const cloudData = await cloudRes.json();
+        setFormData((prev) => ({ ...prev, verification_proof: cloudData.secure_url }));
+        setSubmitError(null);
+      } catch (err) {
+        console.error('[Proof Upload] Error:', err);
+        setSubmitError(err.message || 'Upload failed. Please try a smaller image (max 5 MB) or paste a link instead.');
+        setProofFile(null);
+        setProofPreviewUrl(null);
+      } finally {
+        setIsUploadingProof(false);
+      }
+    }
+  };
+
+  const handleRemoveProof = () => {
+    setProofFile(null);
+    setProofPreviewUrl(null);
+    setProofFileName('');
+    setProofFileSize(0);
+    setFormData((prev) => ({ ...prev, verification_proof: '' }));
+    setSubmitError(null);
+    if (proofFileInputRef.current) {
+      proofFileInputRef.current.value = '';
+    }
   };
 
   const handleLogoChange = (e) => {
@@ -180,6 +305,66 @@ export default function CommunityEditPage() {
     if (!hasJoinLink) {
       setSubmitError('You must provide at least one valid Join Link (e.g., WhatsApp, Discord, or Registration Form).');
       return;
+    }
+
+    // Proof Validation
+    if (isUploadingProof) {
+      setSubmitError('Please wait for your verification proof to finish uploading.');
+      proofFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const trimmedProof = (formData.verification_proof || '').trim();
+
+    if (proofMode === 'link') {
+      if (!trimmedProof) {
+        setSubmitError('Please paste a valid https:// link to your official community page.');
+        proofFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        proofInputRef.current?.focus();
+        return;
+      }
+
+      const lowerProof = trimmedProof.toLowerCase();
+      if (
+        lowerProof.startsWith('javascript:') ||
+        lowerProof.startsWith('data:') ||
+        lowerProof.startsWith('file:') ||
+        lowerProof.startsWith('vbscript:')
+      ) {
+        setSubmitError('Dangerous URL scheme detected. Only valid https:// links are accepted.');
+        proofFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        proofInputRef.current?.focus();
+        return;
+      }
+
+      if (!trimmedProof.startsWith('https://')) {
+        setSubmitError('Please paste a valid https:// link to your official community page.');
+        proofFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        proofInputRef.current?.focus();
+        return;
+      }
+
+      try {
+        const parsed = new URL(trimmedProof);
+        if (!parsed.hostname || !parsed.hostname.includes('.') || parsed.hostname.length < 3) {
+          setSubmitError('Please paste a valid https:// link to your official community page.');
+          proofFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          proofInputRef.current?.focus();
+          return;
+        }
+      } catch {
+        setSubmitError('Please paste a valid https:// link to your official community page.');
+        proofFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        proofInputRef.current?.focus();
+        return;
+      }
+    } else {
+      // Upload mode
+      if (!trimmedProof) {
+        setSubmitError('Please upload a screenshot / ID card (max 5 MB) or switch to link mode.');
+        proofFieldRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -252,7 +437,9 @@ export default function CommunityEditPage() {
         membership_fee: formData.membership_fee,
         leadership_team: formData.leadership_team,
         faculty_coordinator: formData.faculty_coordinator,
-        verification_proof: formData.verification_proof,
+        verification_proof: trimmedProof,
+        proof_type: proofMode,
+        proofType: proofMode,
         representative_linkedin: formData.representative_linkedin,
       };
 
@@ -567,19 +754,226 @@ export default function CommunityEditPage() {
           </div>
 
           {/* Section 6: Verification */}
-          <div className="neo-card" style={{ backgroundColor: 'var(--white)', padding: '2.5rem 2rem', marginBottom: '2.5rem' }}>
+          <div ref={proofFieldRef} className="neo-card" style={{ backgroundColor: 'var(--white)', padding: '2.5rem 2rem', marginBottom: '2.5rem' }}>
             <h2 style={{ fontSize: '1.5rem', fontWeight: 900, borderBottom: '3px solid var(--black)', paddingBottom: '0.75rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <span style={{ backgroundColor: 'var(--black)', color: 'var(--white)', width: '28px', height: '28px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', borderRadius: '50%' }}>6</span> Verification & Terms
             </h2>
 
+            <div style={{ marginBottom: '2rem' }}>
+              <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.6rem' }}>
+                Proof of official community page / Identity *
+              </label>
+
+              {/* Dual-Mode Toggle */}
+              <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => handleModeToggle('link')}
+                  style={{
+                    flex: '1 1 200px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    padding: '0.75rem 1rem',
+                    border: '3px solid var(--black)',
+                    boxShadow: proofMode === 'link' ? '2px 2px 0px 0px var(--black)' : '4px 4px 0px 0px var(--black)',
+                    backgroundColor: proofMode === 'link' ? 'var(--primary-yellow)' : 'var(--white)',
+                    fontWeight: 900,
+                    fontSize: '0.9rem',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    transform: proofMode === 'link' ? 'translate(2px, 2px)' : 'none',
+                    transition: 'all 0.1s ease',
+                  }}
+                >
+                  <Link2 size={18} /> Paste a Link
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleModeToggle('upload')}
+                  style={{
+                    flex: '1 1 200px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem',
+                    padding: '0.75rem 1rem',
+                    border: '3px solid var(--black)',
+                    boxShadow: proofMode === 'upload' ? '2px 2px 0px 0px var(--black)' : '4px 4px 0px 0px var(--black)',
+                    backgroundColor: proofMode === 'upload' ? 'var(--primary-yellow)' : 'var(--white)',
+                    fontWeight: 900,
+                    fontSize: '0.9rem',
+                    textTransform: 'uppercase',
+                    cursor: 'pointer',
+                    transform: proofMode === 'upload' ? 'translate(2px, 2px)' : 'none',
+                    transition: 'all 0.1s ease',
+                  }}
+                >
+                  <UploadCloud size={18} /> Upload Screenshot / ID Proof
+                </button>
+              </div>
+
+              {/* Mode A: Link Input */}
+              {proofMode === 'link' && (
+                <div>
+                  <input
+                    ref={proofInputRef}
+                    type="url"
+                    name="verification_proof"
+                    value={formData.verification_proof}
+                    onChange={handleChange}
+                    placeholder="https://instagram.com/yourgroup or https://yourcommunity.org..."
+                    style={{
+                      width: '100%',
+                      padding: '0.85rem',
+                      border: '3px solid var(--black)',
+                      boxShadow: '3px 3px 0px 0px var(--black)',
+                      fontWeight: 700,
+                      outline: 'none',
+                      backgroundColor: 'var(--white)',
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Mode B: Upload Area */}
+              {proofMode === 'upload' && (
+                <div>
+                  <input
+                    ref={proofFileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf"
+                    onChange={handleProofFileSelect}
+                    style={{ display: 'none' }}
+                    disabled={isUploadingProof}
+                  />
+
+                  {!formData.verification_proof ? (
+                    <div
+                      onClick={() => !isUploadingProof && proofFileInputRef.current?.click()}
+                      style={{
+                        border: '3px dashed var(--black)',
+                        backgroundColor: isUploadingProof ? '#FEF9C3' : '#F9FAFB',
+                        padding: '2rem 1.5rem',
+                        textAlign: 'center',
+                        cursor: isUploadingProof ? 'wait' : 'pointer',
+                        transition: 'background-color 0.15s ease',
+                      }}
+                    >
+                      {isUploadingProof ? (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.75rem' }}>
+                          <Loader2 size={32} style={{ animation: 'spin 1s linear infinite' }} />
+                          <span style={{ fontWeight: 900, fontSize: '1rem', textTransform: 'uppercase' }}>
+                            Uploading proof to Cloudinary...
+                          </span>
+                          <span style={{ fontSize: '0.8rem', color: '#6B7280', fontWeight: 600 }}>
+                            Please wait while your document is securely uploaded.
+                          </span>
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.6rem' }}>
+                          <div style={{ backgroundColor: 'var(--primary-yellow)', border: '2px solid var(--black)', padding: '0.6rem', boxShadow: '2px 2px 0px 0px var(--black)', display: 'inline-flex' }}>
+                            <UploadCloud size={28} />
+                          </div>
+                          <div style={{ fontWeight: 900, fontSize: '1rem', textTransform: 'uppercase' }}>
+                            Click to select screenshot or ID proof
+                          </div>
+                          <div style={{ fontSize: '0.8rem', color: '#4B5563', fontWeight: 700 }}>
+                            Supports JPG, PNG, WEBP, or PDF (Max 5 MB)
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div style={{ border: '3px solid var(--black)', boxShadow: '4px 4px 0px 0px var(--black)', padding: '1.25rem', backgroundColor: 'var(--white)' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '1rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <CheckCircle2 size={20} color="#15803D" />
+                          <span style={{ fontWeight: 900, fontSize: '0.85rem', textTransform: 'uppercase', color: '#15803D' }}>
+                            Proof Document Available
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <button
+                            type="button"
+                            onClick={() => proofFileInputRef.current?.click()}
+                            style={{
+                              border: '2px solid var(--black)',
+                              backgroundColor: '#F3F4F6',
+                              boxShadow: '2px 2px 0px 0px var(--black)',
+                              padding: '0.35rem 0.75rem',
+                              fontWeight: 800,
+                              fontSize: '0.8rem',
+                              cursor: 'pointer',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            Replace
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleRemoveProof}
+                            style={{
+                              border: '2px solid var(--black)',
+                              backgroundColor: '#FEE2E2',
+                              color: '#DC2626',
+                              boxShadow: '2px 2px 0px 0px var(--black)',
+                              padding: '0.35rem 0.75rem',
+                              fontWeight: 800,
+                              fontSize: '0.8rem',
+                              cursor: 'pointer',
+                              textTransform: 'uppercase',
+                            }}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* File Preview */}
+                      {proofFileName?.toLowerCase().endsWith('.pdf') || formData.verification_proof?.toLowerCase().includes('.pdf') ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', backgroundColor: '#FEF9C3', border: '2px solid var(--black)', padding: '0.75rem' }}>
+                          <div style={{ backgroundColor: '#EF4444', color: 'white', padding: '0.5rem', border: '2px solid var(--black)', display: 'flex' }}>
+                            <FileText size={24} />
+                          </div>
+                          <div style={{ overflow: 'hidden' }}>
+                            <div style={{ fontWeight: 800, fontSize: '0.9rem', wordBreak: 'break-all' }}>
+                              {proofFileName || 'Official Proof Document.pdf'}
+                            </div>
+                            {proofFileSize > 0 && (
+                              <div style={{ fontSize: '0.75rem', color: '#6B7280', fontWeight: 600 }}>
+                                {(proofFileSize / (1024 * 1024)).toFixed(2)} MB
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : (
+                        <div style={{ position: 'relative', maxWidth: '360px', maxHeight: '240px', border: '2px solid var(--black)', boxShadow: '3px 3px 0px 0px var(--black)', backgroundColor: '#F3F4F6', overflow: 'hidden' }}>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={proofPreviewUrl || formData.verification_proof}
+                            alt="Uploaded Proof Preview"
+                            style={{ width: '100%', height: 'auto', maxHeight: '240px', objectFit: 'contain', display: 'block' }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Helper text under field */}
+              <p style={{ fontSize: '0.85rem', color: '#4B5563', fontWeight: 600, marginTop: '0.6rem', lineHeight: 1.4 }}>
+                Add a link to your official community page (website, Instagram, LinkedIn, etc.) OR upload a screenshot / ID card proving you represent the group.
+              </p>
+            </div>
+
             <div style={{ display: 'grid', gap: '1.5rem', marginBottom: '2rem' }}>
               <div>
-                <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Proof of official community page / Identity *</label>
-                <input required type="url" name="verification_proof" value={formData.verification_proof} onChange={handleChange} style={{ width: '100%', padding: '0.75rem', border: '3px solid var(--black)', boxShadow: '3px 3px 0px 0px var(--black)', fontWeight: 700, outline: 'none' }} />
-              </div>
-              <div>
-                <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Representative's LinkedIn/Profile (optional)</label>
-                <input type="url" name="representative_linkedin" value={formData.representative_linkedin} onChange={handleChange} style={{ width: '100%', padding: '0.75rem', border: '2px solid var(--black)', fontWeight: 600, outline: 'none' }} />
+                <label style={{ display: 'block', fontWeight: 800, fontSize: '0.85rem', textTransform: 'uppercase', marginBottom: '0.4rem' }}>Representative&apos;s LinkedIn/Profile (optional)</label>
+                <input type="url" name="representative_linkedin" value={formData.representative_linkedin} onChange={handleChange} placeholder="https://linkedin.com/in/..." style={{ width: '100%', padding: '0.75rem', border: '2px solid var(--black)', fontWeight: 600, outline: 'none' }} />
               </div>
             </div>
           </div>
@@ -596,10 +990,10 @@ export default function CommunityEditPage() {
           <NeoButton
             type="submit"
             variant="primary"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isUploadingProof}
             style={{ width: '100%', padding: '1.25rem', fontSize: '1.2rem', justifyContent: 'center', backgroundColor: 'var(--primary-pink)', color: 'var(--white)' }}
           >
-            {isSubmitting ? 'SAVING CHANGES...' : 'SAVE CHANGES'}
+            {isUploadingProof ? 'UPLOADING PROOF...' : isSubmitting ? 'SAVING CHANGES...' : 'SAVE CHANGES'}
           </NeoButton>
         </form>
       </div>

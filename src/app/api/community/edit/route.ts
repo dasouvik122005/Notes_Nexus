@@ -72,20 +72,68 @@ export async function PUT(request: NextRequest) {
       }
     }
 
+    if (updateData.verification_proof !== undefined) {
+      const rawProof = typeof updateData.verification_proof === 'string' ? updateData.verification_proof.trim() : '';
+      if (!rawProof) {
+        return NextResponse.json({ error: 'Verification proof cannot be empty.' }, { status: 400 });
+      }
+      const lowerProof = rawProof.toLowerCase();
+      if (
+        lowerProof.startsWith('javascript:') ||
+        lowerProof.startsWith('data:') ||
+        lowerProof.startsWith('file:') ||
+        lowerProof.startsWith('vbscript:')
+      ) {
+        return NextResponse.json({ error: 'Dangerous URL scheme detected. Only valid https:// links or Cloudinary uploads are accepted.' }, { status: 400 });
+      }
+      if (!rawProof.startsWith('https://')) {
+        return NextResponse.json({ error: 'Please paste a valid https:// link to your official community page.' }, { status: 400 });
+      }
+      try {
+        const parsedProof = new URL(rawProof);
+        if (!parsedProof.hostname || !parsedProof.hostname.includes('.') || parsedProof.hostname.length < 3) {
+          return NextResponse.json({ error: 'Please paste a valid https:// link with a complete domain name.' }, { status: 400 });
+        }
+      } catch {
+        return NextResponse.json({ error: 'Please paste a valid https:// link to your official community page.' }, { status: 400 });
+      }
+      updateData.verification_proof = rawProof;
+      if (!updateData.proof_type && !updateData.proofType) {
+        updateData.proof_type = rawProof.includes('res.cloudinary.com') ? 'upload' : 'link';
+      }
+    }
+
     // 4. Update the database
     // Clean up data before update
-    const cleanedData = { ...updateData };
+    const cleanedData: Record<string, any> = { ...updateData };
     if (cleanedData.name) cleanedData.name = cleanedData.name.trim();
     if (cleanedData.description) cleanedData.description = cleanedData.description.trim();
     if (cleanedData.category) cleanedData.category = cleanedData.category.trim();
     if (cleanedData.department_id === 'all') cleanedData.department_id = null;
+    if (cleanedData.proofType && !cleanedData.proof_type) {
+      cleanedData.proof_type = cleanedData.proofType;
+    }
+    delete cleanedData.proofType;
 
-    const { data, error } = await adminClient
+    let { data, error } = await adminClient
       .from('communities')
       .update(cleanedData)
       .eq('id', id)
       .select()
       .single();
+
+    // Fallback if proof_type column is not yet present in the live database
+    if (error && (error.message?.includes('proof_type') || error.code === '42703')) {
+      delete cleanedData.proof_type;
+      const retryResult = await adminClient
+        .from('communities')
+        .update(cleanedData)
+        .eq('id', id)
+        .select()
+        .single();
+      data = retryResult.data;
+      error = retryResult.error;
+    }
 
     if (error) {
       console.error('[Community Edit] Update error:', error);
