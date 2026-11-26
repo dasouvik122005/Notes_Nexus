@@ -15,9 +15,22 @@ export async function generateMetadata({ params }) {
   const dept = await getDepartmentBySlug(resolvedParams.dept);
   if (!dept) return { title: 'Department Not Found' };
 
+  const title = `${dept.name} Notes & Study Materials`;
+  const description = `Find semester notes, syllabus guides, modules, and study materials for ${dept.name} (${dept.shortCode}) at ${siteConfig.university}.`;
+  const url = `${siteConfig.url}/notes/${dept.id}`;
+
   return {
-    title: `${dept.shortCode} Notes | ${siteConfig.name}`,
-    description: `Browse semester notes, syllabus guides, and modules for ${dept.name} at ${siteConfig.university}.`,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'website',
+      siteName: siteConfig.name,
+    },
+    twitter: { card: 'summary_large_image', title, description },
   };
 }
 

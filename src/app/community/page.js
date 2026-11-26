@@ -12,8 +12,20 @@ const AnimateInView = nextDynamic(() => import('@/components/AnimateInView'));
 export const revalidate = 60; // Revalidate every 60 seconds
 
 export const metadata = {
-  title: `Communities & Clubs | ${siteConfig.name}`,
+  title: `Communities & Clubs`,
   description: `Discover official student clubs, department communities, and independent groups at ${siteConfig.university}.`,
+  alternates: { canonical: '/community' },
+  openGraph: {
+    title: `Communities & Clubs | ${siteConfig.name}`,
+    description: `Discover official student clubs, department communities, and independent groups at ${siteConfig.university}.`,
+    url: '/community',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Communities & Clubs | ${siteConfig.name}`,
+    description: `Discover official student clubs, department communities, and independent groups at ${siteConfig.university}.`,
+  },
 };
 
 export default async function CommunityDirectoryPage() {

@@ -11,7 +11,7 @@ import { getLatestMaterials } from '@/lib/data/materials';
 import { BookOpen, GraduationCap, Store, Star, ArrowRight, Users } from 'lucide-react';
 
 export const metadata = {
-  title: `Home | ${siteConfig.name}`,
+  title: 'Home',
   description: `${siteConfig.name} - Free comprehensive study materials, notes, and previous year questions across all departments at ${siteConfig.university}.`,
   alternates: {
     canonical: '/',

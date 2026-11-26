@@ -19,6 +19,7 @@ export const metadata = {
     default: `${siteConfig.name} - JIS University Study Materials`,
   },
   description: siteConfig.description,
+  category: 'Education',
   applicationName: siteConfig.name,
   generator: 'Next.js',
   keywords: [
@@ -99,11 +100,43 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const jsonLd = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'EducationalOrganization',
+      name: siteConfig.name,
+      alternateName: siteConfig.university,
+      url: siteConfig.url,
+      description: siteConfig.description,
+      logo: `${siteConfig.url}/icon.png`,
+      sameAs: [siteConfig.links.github],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: siteConfig.name,
+      alternateName: siteConfig.tagline,
+      url: siteConfig.url,
+      inLanguage: 'en',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: `${siteConfig.url}/notes?search={search_term_string}`,
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ];
+
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`}>
       <head>
         <link rel="icon" type="image/png" href="/favicon.png" />
         <meta name="msvalidate.01" content="DD4DED0DB2D0CF0F9B208B18239E024E" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
+          }}
+        />
       </head>
       <body suppressHydrationWarning style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <AuthProvider>

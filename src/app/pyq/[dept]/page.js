@@ -15,7 +15,7 @@ export async function generateMetadata({ params }) {
   const dept = await getDepartmentBySlug(resolvedParams.dept);
   if (!dept) return { title: 'Department Not Found' };
 
-  const title = `${dept.shortCode} Previous Year Questions | ${siteConfig.name}`;
+  const title = `${dept.shortCode} Previous Year Questions`;
   const description = `Access Mid Sem and Final Sem previous year questions for ${dept.name} at ${siteConfig.university}.`;
   const url = `${siteConfig.url}/pyq/${dept.id}`;
 

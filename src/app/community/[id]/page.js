@@ -31,12 +31,26 @@ export async function generateMetadata({ params }) {
   const community = await getCommunityById(id);
   
   if (!community || community.status !== 'approved') {
-    return { title: 'Community Not Found' };
+    return { title: 'Community Not Found', robots: { index: false, follow: false } };
   }
   
+  const title = community.name;
+  const description = community.description || `Explore ${community.name}, a verified student community at ${siteConfig.university}.`;
+  const url = `${siteConfig.url}/community/${id}`;
+
   return {
-    title: `${community.name} | ${siteConfig.name}`,
-    description: community.description,
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      type: 'website',
+      siteName: siteConfig.name,
+      images: community.logo_url ? [{ url: community.logo_url, alt: `${community.name} logo` }] : undefined,
+    },
+    twitter: { card: 'summary_large_image', title, description },
   };
 }
 

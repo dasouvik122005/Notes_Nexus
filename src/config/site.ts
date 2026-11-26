@@ -7,7 +7,7 @@ export const siteConfig = {
   shortName: "NotesNexus",
   tagline: "Notes Nexus - Your JIS University Study Hub",
   description:
-    "Free comprehensive study materials, notes, and previous year questions (PYQs) across all university departments.",
+    "Free JIS University notes, syllabus resources, previous year question papers (PYQ), study materials, and student communities across all departments.",
   university: "JIS University",
   url: "https://notes-nexus-jisu.vercel.app",
   links: {

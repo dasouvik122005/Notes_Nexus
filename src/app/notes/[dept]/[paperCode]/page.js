@@ -13,11 +13,13 @@ export const revalidate = 60;
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
   const dept = await getDepartmentBySlug(resolvedParams.dept);
+  if (!dept) return { title: 'Subject Not Found', robots: { index: false, follow: false } };
+
   const paper = await getPaperByCode(dept.id, resolvedParams.paperCode);
 
   if (!dept || !paper) return { title: 'Subject Not Found' };
 
-  const title = `${paper.paperName} (${paper.paperCode}) Notes | ${siteConfig.name}`;
+  const title = `${paper.paperName} (${paper.paperCode}) Notes`;
   const description = `Study materials, module guides, and lecture notes for ${paper.paperName} (${paper.paperCode}) at ${siteConfig.university}.`;
   const url = `${siteConfig.url}/notes/${dept.id}/${paper.paperCode}`;
 

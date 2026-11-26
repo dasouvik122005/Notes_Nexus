@@ -1,6 +1,8 @@
 export const metadata = {
   title: 'Terms of Use',
-  description: 'Terms of Use for Notes Nexus',
+  description: 'Read the terms of use for sharing, uploading, and using study resources on Notes Nexus.',
+  alternates: { canonical: '/terms' },
+  robots: { index: true, follow: true },
 };
 
 export default function TermsOfUse() {

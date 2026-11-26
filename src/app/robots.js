@@ -8,12 +8,12 @@ export default function robots() {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/api/admin', '/me'],
+        disallow: ['/admin', '/api/admin', '/me', '/auth/', '/community/register', '/community/*/edit', '/instruments/new'],
       },
       {
         userAgent: ['GPTBot', 'CCBot', 'Google-Extended', 'Anthropic-ai', 'PerplexityBot', 'ClaudeBot', 'Applebot-Extended'],
         allow: '/',
-        disallow: ['/admin', '/api/admin', '/me'],
+        disallow: ['/admin', '/api/admin', '/me', '/auth/', '/community/register', '/community/*/edit', '/instruments/new'],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,

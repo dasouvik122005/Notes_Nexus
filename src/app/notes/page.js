@@ -8,6 +8,18 @@ import { siteConfig } from '@/config/site';
 export const metadata = {
   title: 'Notes by Department',
   description: `Browse lecture notes and study materials by department at ${siteConfig.university}.`,
+  alternates: { canonical: '/notes' },
+  openGraph: {
+    title: `Notes by Department | ${siteConfig.name}`,
+    description: `Browse lecture notes and study materials by department at ${siteConfig.university}.`,
+    url: '/notes',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Notes by Department | ${siteConfig.name}`,
+    description: `Browse lecture notes and study materials by department at ${siteConfig.university}.`,
+  },
 };
 
 export default async function NotesDepartmentPickerPage() {

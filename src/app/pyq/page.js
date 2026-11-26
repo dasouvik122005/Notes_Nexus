@@ -8,6 +8,18 @@ import { siteConfig } from '@/config/site';
 export const metadata = {
   title: 'PYQ by Department',
   description: `Browse Mid Sem and Final Sem previous year questions across all departments at ${siteConfig.university}.`,
+  alternates: { canonical: '/pyq' },
+  openGraph: {
+    title: `Previous Year Questions by Department | ${siteConfig.name}`,
+    description: `Browse Mid Sem and Final Sem previous year questions across all departments at ${siteConfig.university}.`,
+    url: '/pyq',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Previous Year Questions by Department | ${siteConfig.name}`,
+    description: `Browse Mid Sem and Final Sem previous year questions across all departments at ${siteConfig.university}.`,
+  },
 };
 
 export default async function PYQDepartmentPickerPage() {

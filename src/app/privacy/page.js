@@ -1,6 +1,8 @@
 export const metadata = {
   title: 'Privacy Policy',
-  description: 'Privacy Policy for Notes Nexus',
+  description: 'Read the Notes Nexus privacy policy and learn how student data is collected and protected.',
+  alternates: { canonical: '/privacy' },
+  robots: { index: true, follow: true },
 };
 
 export default function PrivacyPolicy() {
