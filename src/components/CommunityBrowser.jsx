@@ -129,7 +129,7 @@ export default function CommunityBrowser({ initialCommunities }) {
           }}
         >
           <h3 style={{ fontSize: '1.5rem', fontWeight: 900, marginBottom: '0.5rem' }}>No communities found</h3>
-          <p style={{ color: '#6B7280', fontWeight: 600 }}>Try adjusting your filters or search query to find what you're looking for.</p>
+          <p style={{ color: '#6B7280', fontWeight: 600 }}>Try adjusting your filters or search query to find what you&apos;re looking for.</p>
         </div>
       )}
     </div>
